@@ -1,5 +1,9 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+
+import 'mainPage.dart';
 
 
 class GoogleLoginApp extends StatefulWidget {
@@ -24,19 +28,27 @@ class _GoogleLoginAppState extends State<GoogleLoginApp> {
         ),
         body: Center(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ElevatedButton(child: Text('Sign In'),
                   onPressed: () async {
                     await _googleSignIn.signIn();
-                    setState(() {});
+                    setState(() async {
+                      GoogleSignInAccount? _user = _googleSignIn.currentUser;
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => MainPage(user: _user,)),
+                      );
+                    });
+
                   }
               ),
-              ElevatedButton(child: Text('Sign Out'),
+/*              ElevatedButton(child: Text('Sign Out'),
                   onPressed: () async {
                     await _googleSignIn.signOut();
                     setState(() {});
                   }
-              ),
+              ),*/
             ],
           ), // Column
         ), // Center

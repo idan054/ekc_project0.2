@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'LoginPage.dart';
+import 'Pages/loginPage.dart';
+import 'Pages/mainPage.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,7 +19,8 @@ class MyApp extends StatelessWidget {
 
         primarySwatch: Colors.blue,
       ),
-      home: const GoogleLoginApp(),
+      // home: const GoogleLoginApp(),
+      home: MainPage(),
     );
   }
 }
