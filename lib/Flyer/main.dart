@@ -1,26 +1,23 @@
 import 'package:flutter/material.dart';
-
-import 'Pages/loginPage.dart';
-import 'Pages/mainPage.dart';
+import 'rooms.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Firebase Chat',
       theme: ThemeData(
-
         primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: const GoogleLoginApp(),
-      // home: MainPage(),
+      home: const RoomsPage(),
     );
   }
 }
