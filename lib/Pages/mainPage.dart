@@ -19,7 +19,11 @@ class _MainPageState extends State<MainPage> {
   List msgIndex = [1, 2, 3];
 
   // Dict Sample
-  Map<String, Map> chatsDict = {
+  // Map 1 = Chats as key
+  // Map 2 = meUser / guestUser as key
+  // Map 3 = msgs as key (Not available cuz emailUser Key)
+  // Map<String, Map<String, Map<String, Map>>> chatsDict = {
+  Map<String, Map<String, Map>> chatsDict = {
     'chats': {
       'meUser': {
         'emailUser': 'idanbit80@gmail.com',
@@ -56,9 +60,10 @@ class _MainPageState extends State<MainPage> {
 
   @override
   void initState() {
-    print('init Coming!');
+    print('\ninit Coming!');
     print(chatsDict['chats']?['meUser']);
-    print('init Done');
+    print(chatsDict);
+    print('init Done \n');
     super.initState();
   }
 
@@ -82,15 +87,16 @@ class _MainPageState extends State<MainPage> {
                 itemBuilder: (context, i) {
                   return ListTile(
                       title: Text('Project ${projectNum[i]}'),
-                      leading: CachedNetworkImage(
+      /*                leading: CachedNetworkImage(
                         imageUrl: "http://aarongorka.com/eks-orig.jpg",
                         placeholder: (context, url) =>
                             CircularProgressIndicator(),
                         errorWidget: (context, url, error) {
-                          print(error);
+                          // print(error);
                           return Icon(Icons.error);
                         },
-                      )
+                      )*/
+                    // >> << \\
                       /*             Image(
                             width: 50,
                               image: AssetImage('Assets/eks-thumb.jpg'))
@@ -134,7 +140,7 @@ class _MainPageState extends State<MainPage> {
                       leading: Container(
                         width: 50,
                         height: 50,
-                        child: Image(image: AssetImage('Assets/eks-thumb.jpg')),
+                        // child: Image(image: AssetImage('Assets/eks-thumb.jpg')),
                       ));
                 },
               ),
