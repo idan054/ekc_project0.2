@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-Widget myDrawer(context, {onPressed_newProject, onPressed_allUsers,  projectNum}) {
+Widget myDrawer(context, {onPressed_newProject,  projectNum}) {
   return Drawer(
       child: Column(
     children: [
@@ -34,7 +34,6 @@ Widget myDrawer(context, {onPressed_newProject, onPressed_allUsers,  projectNum}
         ),
       ),
       TextButton(onPressed: onPressed_newProject, child: const Text('Create New Project')),
-      TextButton(onPressed: onPressed_allUsers, child: const Text('Check other users'))
     ],
   ));
 }

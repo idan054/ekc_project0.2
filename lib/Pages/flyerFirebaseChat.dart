@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
@@ -25,8 +26,8 @@ class FireBaseChatPage extends StatefulWidget {
 
   final types.Room room;
 
-  // final  GoogleSignInAccount? currentUser;
-  final UserCredential? currentUser;
+  final  GoogleSignInAccount? currentUser;
+  // final UserCredential? currentUser;
 
   // final currentUser;
 
@@ -203,7 +204,7 @@ class _FireBaseChatPageState extends State<FireBaseChatPage> {
   @override
   void initState() {
     widget.room.users.forEach((user) {
-      if (widget.currentUser?.user?.email
+      if (widget.currentUser?.email
           != user.lastName){ // Lastname is MAIL!
         setState(() {
           guestUser = user;
@@ -224,16 +225,7 @@ class _FireBaseChatPageState extends State<FireBaseChatPage> {
           projectNum.add(projectNum.length + 1);
           print(projectNum);
         });
-      }, onPressed_allUsers: () {
-/*            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => AllUsersPage(
-                  // builder: (context) => const UsersPage(
-                  )),
-              // MaterialPageRoute(builder: (context) => MainPage(user: _user,)),
-            );*/
-      }),
+      }, ),
       // appBar: myAppBar('Chat with ${widget.room.users.first.lastName}'),
       appBar: myAppBar('Chat with ${guestUser.lastName}'),
       body: StreamBuilder<types.Room>(

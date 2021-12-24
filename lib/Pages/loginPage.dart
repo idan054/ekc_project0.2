@@ -1,14 +1,14 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:ekc_project/Widgets/myAppBar.dart';
 import 'package:faker/faker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
 import 'allUsersPage.dart';
-import 'flyerChat.dart';
-import 'mainPage.dart';
 
 class GoogleLoginApp extends StatefulWidget {
   const GoogleLoginApp({Key? key}) : super(key: key);
@@ -26,16 +26,15 @@ class _GoogleLoginAppState extends State<GoogleLoginApp> {
 
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          title: Text('Auth: ' +
-              (user == null
-                  ? 'Please Log in'
-                  : user.displayName ?? 'user.displayName is Null')),
-        ),
+        appBar: myAppBar('Auth: ' +
+        (user == null
+        ? 'Please Log in'
+            : user.displayName ?? 'user.displayName is Null')),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              // Random Sign with google
               ElevatedButton(
                   child: Text('Sign In with google'),
                   onPressed: () async {
@@ -60,12 +59,19 @@ class _GoogleLoginAppState extends State<GoogleLoginApp> {
                         context,
                         MaterialPageRoute(
                             builder: (context) => AllUsersPage(
+                              googleSign_user: _user,
                             )),
                         // MaterialPageRoute(builder: (context) => MainPage(user: _user,)),
                       );
                     });
                   }),
-              ElevatedButton(
+
+
+              // Random Sign up
+     /*         ElevatedButton(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(dark) ,
+                ),
                   child: Text('New Random account'),
                   onPressed: () async {
                     final faker = Faker();
@@ -92,16 +98,25 @@ class _GoogleLoginAppState extends State<GoogleLoginApp> {
                           'firebaseDatabase_basedFlyer Completed \n(FirebaseChatCore.instance.createUserInFirestore)'))
                           .onError((error, stackTrace) => print(
                           'firebaseDatabase_basedFlyer FAILED: $error \n-|- $stackTrace \n(FirebaseChatCore.instance.createUserInFirestore)'));
+
+
+
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(
+                          Provider(
+                          create: (_) => Person(name: "Yohan", age: 25),
+                      child: MyApp(),
+    */
+              //
+              /*                    MaterialPageRoute(
                             builder: (context) => AllUsersPage(
-                              currentUser: _user,
-                            )),
+                              // classic_currentUser: _user,
+                            )),*//*
                         // MaterialPageRoute(builder: (context) => MainPage(user: _user,)),
                       );
                     });
-                  }),
+                  }),*/
+
 /*              ElevatedButton(child: Text('Sign Out'),
                   onPressed: () async {
                     await _googleSignIn.signOut();

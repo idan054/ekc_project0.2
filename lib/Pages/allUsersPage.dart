@@ -20,17 +20,21 @@ import 'package:uuid/uuid.dart';
 import 'flyerFirebaseChat.dart';
 
 class AllUsersPage extends StatefulWidget {
-  // GoogleSignInAccount? currentUser;
-  UserCredential? currentUser;
+  // bool isGoogleSign_user;
+  GoogleSignInAccount? googleSign_user;
+  // UserCredential? classic_currentUser;
   // final currentUser;
-
-  AllUsersPage({this.currentUser});
+  //
+  // AllUsersPage({this.currentUser, required this.isGoogleSign_user});
+  AllUsersPage({this.googleSign_user});
 
   // const AllUsersPage({Key? key}) : super(key: key);
 
   @override
   _AllUsersPageState createState() => _AllUsersPageState();
 }
+
+
 
 
 
@@ -46,19 +50,28 @@ class _AllUsersPageState extends State<AllUsersPage> {
       MaterialPageRoute(
           builder: (context) => FireBaseChatPage(
             room: room,
-            currentUser: widget.currentUser,
+            currentUser: widget.googleSign_user,
             // user: _user,
           )),
     );
 
     // Navigate to the Chat screen
   }
-
+  List projectNum = [1, 2]; // For Drawer Menu
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: myDrawer(context,
+          projectNum: projectNum,
+          onPressed_newProject: () {
+            setState(() {
+              projectNum.add(projectNum.length + 1);
+              print(projectNum);
+            });
+          },
+      ),
       // appBar: myAppBar('Find someone to chat'),
-      appBar: myAppBar('Hello ${widget.currentUser?.user?.email}'),
+      appBar: myAppBar('Hello ${widget.googleSign_user?.email}'),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: StreamBuilder<List<types.User>>(
@@ -71,35 +84,38 @@ class _AllUsersPageState extends State<AllUsersPage> {
               itemCount: users.length,
               itemBuilder: (context, i) {
                 final user = snapshot.data![i];
-                return ListTile(
-                  onTap: () {
-                    // print(user);
-                    _handlePressed(user, context);
-                  },
-                  title: Text('${users[i].firstName}'),
-                  trailing: IconButton(
-                    onPressed: () {
-                      print(user);
-                      setState(() {
-                        var _user = user;
-                        _handlePressed(_user, context);
-                      });
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: ListTile(
+                    onTap: () {
+                      // print(user);
+                      _handlePressed(user, context);
                     },
-                    icon: const Icon(
-                      Icons.send,
-                      color: dark,
-                    ),
-                  ),
-                  leading: ClipRRect(
-                    borderRadius: BorderRadius.circular(15.0),
-                    child: CachedNetworkImage(
-                      imageUrl: '${users[i].imageUrl}',
-                      placeholder: (context, url) =>
-                          CircularProgressIndicator(),
-                      errorWidget: (context, url, error) {
-                        // print(error);
-                        return Icon(Icons.error);
+                    title: Text('${users[i].firstName}'),
+                    trailing: IconButton(
+                      onPressed: () {
+                        print(user);
+                        setState(() {
+                          var _user = user;
+                          _handlePressed(_user, context);
+                        });
                       },
+                      icon: const Icon(
+                        Icons.send,
+                        color: dark,
+                      ),
+                    ),
+                    leading: ClipRRect(
+                      borderRadius: BorderRadius.circular(15.0),
+                      child: CachedNetworkImage(
+                        imageUrl: '${users[i].imageUrl}',
+                        placeholder: (context, url) =>
+                            CircularProgressIndicator(),
+                        errorWidget: (context, url, error) {
+                          // print(error);
+                          return Icon(Icons.error);
+                        },
+                      ),
                     ),
                   ),
                 );
