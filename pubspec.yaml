@@ -29,20 +29,29 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  firebase_auth: ^3.3.4
   flutter_signin_button:
   cached_network_image: ^3.2.0
   faker: ^2.0.0
   file_picker: ^4.2.7
-  firebase_core: ^1.10.5
   firebase_storage: ^10.2.3
   flutter_chat_ui: ^1.5.3
-  flutter_firebase_chat_core:
+  flutter_firebase_chat_core: ^1.5.1
   http: ^0.13.4
   image_picker: ^0.8.4+4
   mime: ^1.0.1
   open_file: ^3.2.1
   path_provider: ^2.0.8
+
+  # FIREBASE PACKAGES
+  firebase_core:
+  firebase_analytics: 8.1.0
+  firebase_auth:
+  cloud_firestore:
+  firebase_remote_config:
+  firebase_dynamic_links:
+  firestore_ui:
+  firebase_database:
+
 
 
   # The following adds the Cupertino Icons font to your application.
