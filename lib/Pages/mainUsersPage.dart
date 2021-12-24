@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:ekc_project/Widgets/myAlertDialog.dart';
 import 'package:ekc_project/Widgets/myAppBar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +18,7 @@ import 'package:mime/mime.dart';
 import 'package:open_file/open_file.dart';
 import 'package:uuid/uuid.dart';
 
-import 'flyerFirebaseChat.dart';
+import 'flyerChat.dart';
 
 class AllUsersPage extends StatefulWidget {
   // bool isGoogleSign_user;
@@ -36,11 +37,12 @@ class AllUsersPage extends StatefulWidget {
 }
 
 class _AllUsersPageState extends State<AllUsersPage> {
+  final TextEditingController projectNameController = TextEditingController();
+
   // Create a user with an ID of UID if you don't use
 // `FirebaseChatCore.instance.users()` stream
   void _createRoom(types.User otherUser, BuildContext context) async {
     final room = await FirebaseChatCore.instance.createRoom(otherUser);
-
 
     Navigator.push(
       context,
@@ -94,21 +96,23 @@ class _AllUsersPageState extends State<AllUsersPage> {
                 child: ListView.builder(
                   itemCount: snapshot.data?.length,
                   itemBuilder: (context, i) {
-                    return ListTile(
-                      onTap: () {
-                        print(snapshot.data?[i].id);
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => FireBaseChatPage(
-                                room: snapshot.data![i],
-                                currentUser: widget.googleSign_user,
-                                // user: _user,
-                              )),
-                        );
-                      },
-                      title: Text('Project ${i + 1}'),
-                      /*                leading: CachedNetworkImage(
+                    if (snapshot.data![i].type.toString() == 'RoomType.group') {
+                      return ListTile(
+                        onTap: () {
+                          print(snapshot.data?[i].id);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => FireBaseChatPage(
+                                      room: snapshot.data![i],
+                                      currentUser: widget.googleSign_user,
+                                      // user: _user,
+                                    )),
+                          );
+                        },
+                        title: Text(
+                            'Project ${i + 1}: "${snapshot.data![i].name}"'),
+                        /*                leading: CachedNetworkImage(
                         imageUrl: "http://aarongorka.com/eks-orig.jpg",
                         placeholder: (context, url) =>
                             CircularProgressIndicator(),
@@ -117,12 +121,14 @@ class _AllUsersPageState extends State<AllUsersPage> {
                           return Icon(Icons.error);
                         },
                       )*/
-                      // >> << \\
-                      /*             Image(
+                        // >> << \\
+                        /*             Image(
                             width: 50,
                               image: AssetImage('Assets/eks-thumb.jpg'))
                               */
-                    );
+                      );
+                    }
+                    return Container();
                   },
                 ),
               );
@@ -131,13 +137,50 @@ class _AllUsersPageState extends State<AllUsersPage> {
           ),
           TextButton(
               onPressed: () async {
-                await _createGroupRoom(context, 'new group');
+                showDialog(
+                    context: context,
+                    builder: (BuildContext dialogContext) {
+                      return MyAlertDialog(
+                        title: 'New Project Name',
+                        onPressed: () {},
+                        projectNameController: projectNameController,
+                        actions: [
+                          Transform.translate(
+                            offset: const Offset(40, 0),
+                            child: Row(
+                              children: [
+                                TextButton(
+                                  child: Text('Dismiss'),
+                                  onPressed: () => Navigator.pop(context),
+                                ),
+                                Container(
+                                  height: 60,
+                                  width: 180,
+                                  child: TextButton(
+                                    child: Text('Create'),
+                                    onPressed: () async {
+                                      Navigator.pop(context);
+                                      await _createGroupRoom(context,
+                                              projectNameController.text)
+                                          .whenComplete(
+                                              () => print('New Project Added!'))
+                                          .onError((error, stackTrace) => print(
+                                              'New Project Error: $error // $stackTrace'));
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      );
+                    });
               },
               child: const Text('Create New Project')),
         ],
       )),
       // appBar: myAppBar('Find someone to chat'),
-      appBar: myAppBar('Hello ${widget.googleSign_user?.email}'),
+      appBar: myAppBar('Hello ${widget.googleSign_user?.displayName}'),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: StreamBuilder<List<types.User>>(
