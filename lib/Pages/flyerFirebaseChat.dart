@@ -201,16 +201,29 @@ class _FireBaseChatPageState extends State<FireBaseChatPage> {
   // GoogleSignInAccount? guestUser;
   // UserCredential? guestUser;
   var guestUser;
+  String? appBarTitle;
   @override
   void initState() {
-    widget.room.users.forEach((user) {
+    print('widget.room.type');
+    print(widget.room.type.toString());
+    print(widget.room.name);
+    // RoomType.direct
+    // RoomType.group
+    if (widget.room.type.toString() == 'RoomType.direct') {
+      widget.room.users.forEach((user) {
       if (widget.currentUser?.email
           != user.lastName){ // Lastname is MAIL!
         setState(() {
           guestUser = user;
+          appBarTitle = 'Chat with ${guestUser.lastName}';
         });
       }
     });
+    }else{
+      setState(() {
+        appBarTitle = widget.room.name;
+      });
+    }
 
     super.initState();
   }
@@ -227,7 +240,7 @@ class _FireBaseChatPageState extends State<FireBaseChatPage> {
         });
       }, ),
       // appBar: myAppBar('Chat with ${widget.room.users.first.lastName}'),
-      appBar: myAppBar('Chat with ${guestUser.lastName}'),
+      appBar: myAppBar(appBarTitle),
       body: StreamBuilder<types.Room>(
         initialData: widget.room,
         stream: FirebaseChatCore.instance.room(widget.room.id),

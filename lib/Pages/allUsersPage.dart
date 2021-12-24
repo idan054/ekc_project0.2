@@ -22,6 +22,7 @@ import 'flyerFirebaseChat.dart';
 class AllUsersPage extends StatefulWidget {
   // bool isGoogleSign_user;
   GoogleSignInAccount? googleSign_user;
+
   // UserCredential? classic_currentUser;
   // final currentUser;
   //
@@ -34,42 +35,107 @@ class AllUsersPage extends StatefulWidget {
   _AllUsersPageState createState() => _AllUsersPageState();
 }
 
-
-
-
-
 class _AllUsersPageState extends State<AllUsersPage> {
-
   // Create a user with an ID of UID if you don't use
 // `FirebaseChatCore.instance.users()` stream
-  void _handlePressed(types.User otherUser, BuildContext context) async {
+  void _createRoom(types.User otherUser, BuildContext context) async {
     final room = await FirebaseChatCore.instance.createRoom(otherUser);
+
 
     Navigator.push(
       context,
       MaterialPageRoute(
           builder: (context) => FireBaseChatPage(
-            room: room,
-            currentUser: widget.googleSign_user,
-            // user: _user,
-          )),
+                room: room,
+                currentUser: widget.googleSign_user,
+                // user: _user,
+              )),
     );
 
     // Navigate to the Chat screen
   }
-  List projectNum = [1, 2]; // For Drawer Menu
+
+  // Create a user with an ID of UID if you don't use
+// `FirebaseChatCore.instance.users()` stream
+  Future _createGroupRoom(BuildContext context, String name) async {
+    final room =
+        await FirebaseChatCore.instance.createGroupRoom(name: name, users: []);
+    print(room.id);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => FireBaseChatPage(
+                room: room,
+                currentUser: widget.googleSign_user,
+                // user: _user,
+              )),
+    );
+
+    // Navigate to the Chat screen
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: myDrawer(context,
-          projectNum: projectNum,
-          onPressed_newProject: () {
-            setState(() {
-              projectNum.add(projectNum.length + 1);
-              print(projectNum);
-            });
-          },
-      ),
+      drawer: Drawer(
+          child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.only(top: 8.0),
+            height: MediaQuery.of(context).size.height * 0.13,
+            child: const DrawerHeader(child: Text("Projects")),
+          ),
+          StreamBuilder<List<types.Room>>(
+            stream: FirebaseChatCore.instance.rooms(),
+            initialData: const [],
+            builder: (context, snapshot) {
+              // print(snapshot.data);
+              return Expanded(
+                child: ListView.builder(
+                  itemCount: snapshot.data?.length,
+                  itemBuilder: (context, i) {
+                    return ListTile(
+                      onTap: () {
+                        print(snapshot.data?[i].id);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => FireBaseChatPage(
+                                room: snapshot.data![i],
+                                currentUser: widget.googleSign_user,
+                                // user: _user,
+                              )),
+                        );
+                      },
+                      title: Text('Project ${i + 1}'),
+                      /*                leading: CachedNetworkImage(
+                        imageUrl: "http://aarongorka.com/eks-orig.jpg",
+                        placeholder: (context, url) =>
+                            CircularProgressIndicator(),
+                        errorWidget: (context, url, error) {
+                          // print(error);
+                          return Icon(Icons.error);
+                        },
+                      )*/
+                      // >> << \\
+                      /*             Image(
+                            width: 50,
+                              image: AssetImage('Assets/eks-thumb.jpg'))
+                              */
+                    );
+                  },
+                ),
+              );
+              // ...
+            },
+          ),
+          TextButton(
+              onPressed: () async {
+                await _createGroupRoom(context, 'new group');
+              },
+              child: const Text('Create New Project')),
+        ],
+      )),
       // appBar: myAppBar('Find someone to chat'),
       appBar: myAppBar('Hello ${widget.googleSign_user?.email}'),
       body: Padding(
@@ -89,7 +155,7 @@ class _AllUsersPageState extends State<AllUsersPage> {
                   child: ListTile(
                     onTap: () {
                       // print(user);
-                      _handlePressed(user, context);
+                      _createRoom(user, context);
                     },
                     title: Text('${users[i].firstName}'),
                     trailing: IconButton(
@@ -97,7 +163,7 @@ class _AllUsersPageState extends State<AllUsersPage> {
                         print(user);
                         setState(() {
                           var _user = user;
-                          _handlePressed(_user, context);
+                          _createRoom(_user, context);
                         });
                       },
                       icon: const Icon(
