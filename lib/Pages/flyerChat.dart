@@ -1,5 +1,7 @@
 import 'dart:convert';
-import 'package:ekc_project/Widgets/Drawer.dart';
+import 'package:ekc_project/Pages/allUsersPage.dart';
+import 'package:ekc_project/Widgets/myAppBar.dart';
+import 'package:ekc_project/Widgets/myDrawer.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
@@ -11,6 +13,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:mime/mime.dart';
 import 'package:open_file/open_file.dart';
 import 'package:uuid/uuid.dart';
+
 
 class ChatPage extends StatefulWidget {
   GoogleSignInAccount? user;
@@ -184,20 +187,24 @@ class _ChatPageState extends State<ChatPage> {
     return Scaffold(
       drawer: myDrawer(context,
       projectNum: projectNum,
-      onPressed: () {
+      onPressed_newProject: () {
         setState(() {
           projectNum.add(projectNum.length + 1);
           print(projectNum);
         });
-      },),
-      appBar: AppBar(
-        backgroundColor: neutral0,
-        shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-        bottom: Radius.circular(20),
-    )),
-      title: Text('Hello ${_user.firstName}'),
+      },
+        onPressed_allUsers: () {
+/*          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => AllUsersPage(
+                // builder: (context) => const UsersPage(
+                )),
+            // MaterialPageRoute(builder: (context) => MainPage(user: _user,)),
+          );*/
+        }
       ),
+      appBar: myAppBar('Hello ${_user.firstName}'),
       body: SafeArea(
         bottom: false,
         child: Chat(
