@@ -58,7 +58,7 @@ class _AllUsersPageState extends State<AllUsersPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: projectsDrawer(context, widget.googleSign_user),
+      drawer: projectTaskDrawer(context, widget.googleSign_user, true, null),
 
       // appBar: myAppBar('Find someone to chat'),
       appBar: myAppBar('Hello ${widget.googleSign_user?.displayName}'),

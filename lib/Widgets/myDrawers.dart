@@ -24,11 +24,8 @@ import 'package:uuid/uuid.dart';
 
 import '../myUtil.dart';
 
-
-
-Widget sampleDrawer(context, {onPressed_newProject,  projectNum}) {
-  return
-    Drawer(
+Widget sampleDrawer(context, {onPressed_newProject, projectNum}) {
+  return Drawer(
       child: Column(
     children: [
       Container(
@@ -60,111 +57,130 @@ Widget sampleDrawer(context, {onPressed_newProject,  projectNum}) {
           },
         ),
       ),
-      TextButton(onPressed: onPressed_newProject, child: const Text('Create New Project')),
+      TextButton(
+          onPressed: onPressed_newProject,
+          child: const Text('Create New Project')),
     ],
   ));
 }
 
-Widget projectsDrawer(context, currentUser) {
-  return
-    Drawer(
-        child: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.only(top: 8.0),
-              height: MediaQuery.of(context).size.height * 0.13,
-              child: const DrawerHeader(child: Text("Projects")),
-            ),
-            StreamBuilder<List<types.Room>>(
-              stream: FirebaseChatCore.instance.rooms(),
-              initialData: const [],
-              builder: (context, snapshot) {
-                // print(snapshot.data);
-                return Expanded(
-                  child: ListView.builder(
-                    itemCount: snapshot.data?.length,
-                    itemBuilder: (context, i) {
-                      if (snapshot.data![i].type.toString() == 'RoomType.group') {
-                        return ListTile(
-                          onTap: () {
-                            print(snapshot.data?[i].id);
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => FireBaseChatPage(
-                                    room: snapshot.data![i],
-                                    currentUser: currentUser,
-                                    // user: _user,
-                                  )),
-                            );
-                          },
-                          title: Text(
-                              'Project ${i + 1}: "${snapshot.data![i].name}"'),
-                          /*                leading: CachedNetworkImage(
-                        imageUrl: "http://aarongorka.com/eks-orig.jpg",
-                        placeholder: (context, url) =>
-                            CircularProgressIndicator(),
-                        errorWidget: (context, url, error) {
-                          // print(error);
-                          return Icon(Icons.error);
-                        },
-                      )*/
-                          // >> << \\
-                          /*             Image(
-                            width: 50,
-                              image: AssetImage('Assets/eks-thumb.jpg'))
-                              */
-                        );
-                      }
-                      return Container();
+// Project or Task Drawer
+Widget projectTaskDrawer(context, currentUser, bool isProject, String? roomId) {
+  return Drawer(
+      child: Column(
+    children: [
+      Container(
+        padding: const EdgeInsets.only(top: 8.0),
+        height: MediaQuery.of(context).size.height * 0.13,
+        child: DrawerHeader(child: Text( isProject ? "Projects" : 'Tasks')),
+      ),
+      StreamBuilder<List<types.Room>>( /// Those 2 comments below is [Beta] To make this Drawer show Tasks
+        // StreamBuilder<QuerySnapshot<Map<String, dynamic>>>( // Tasks
+      stream: FirebaseChatCore.instance.rooms(),
+        // stream: streamTasks(roomId: roomId),
+        initialData: const [],
+        builder: (context, snapshot) {
+          // print(snapshot.data);
+          return Expanded(
+            child: (ListView.builder(
+              itemCount: snapshot.data?.length,
+              itemBuilder: (context, i) {
+                if (snapshot.data![i].type.toString() == 'RoomType.group') {
+                  return ListTile(
+                    onTap: () {
+                      print(snapshot.data?[i].id);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => FireBaseChatPage(
+                                  room: snapshot.data![i],
+                                  currentUser: currentUser,
+                                  // user: _user,
+                                )),
+                      );
                     },
-                  ),
-                );
-                // ...
+                    title:
+                        Text('Project ${i + 1}: "${snapshot.data![i].name}"'),
+                    /*                leading: CachedNetworkImage(
+                            imageUrl: "http://aarongorka.com/eks-orig.jpg",
+                            placeholder: (context, url) =>
+                                CircularProgressIndicator(),
+                            errorWidget: (context, url, error) {
+                              // print(error);
+                              return Icon(Icons.error);
+                            },
+                        )*/
+                    // >> << \\
+                    /*             Image(
+                                width: 50,
+                                  image: AssetImage('Assets/eks-thumb.jpg'))
+                                  */
+                  );
+                }
+                return Container();
               },
-            ),
-            TextButton(
-                onPressed: () async {
-                  showDialog(
-                      context: context,
-                      builder: (BuildContext dialogContext) {
-                        return MyAlertDialog(
-                          title: 'New Project Name',
-                          onPressed: () {},
-                          projectNameController: projectNameController,
-                          actions: [
-                            Transform.translate(
-                              offset: const Offset(40, 0),
-                              child: Row(
-                                children: [
-                                  TextButton(
-                                    child: Text('Dismiss'),
-                                    onPressed: () => Navigator.pop(context),
-                                  ),
-                                  Container(
-                                    height: 60,
-                                    width: 180,
-                                    child: TextButton(
-                                      child: Text('Create'),
-                                      onPressed: () async {
-                                        Navigator.pop(context);
-                                        await createGroupRoom(context,
-                                            projectNameController.text, currentUser)
-                                            .whenComplete(
-                                                () => print('New Project Added!'))
-                                            .onError((error, stackTrace) => print(
-                                            'New Project Error: $error // $stackTrace'));
-                                      },
-                                    ),
-                                  ),
-                                ],
+            )),
+          );
+          // ...
+        },
+      ),
+      TextButton(
+          onPressed: () async {
+            showDialog(
+                context: context,
+                builder: (BuildContext dialogContext) {
+                  return MyAlertDialog(
+                    isProject: isProject,
+                    title: isProject ? 'New Project Name' : 'New Task Name',
+                    onPressed: () {},
+                    nameFieldController: nameControllerPt,
+                    contentFieldController: contentControllerPt,
+                    actions: [
+                      Transform.translate(
+                        offset: const Offset(40, 0),
+                        child: Row(
+                          children: [
+                            TextButton(
+                              child: Text('Dismiss'),
+                              onPressed: () => Navigator.pop(context),
+                            ),
+                            Container(
+                              height: 60,
+                              width: 180,
+                              child: TextButton(
+                                child: Text('Create'),
+                                onPressed: () async {
+                                  Navigator.pop(context);
+                                  isProject
+                                      ? await addProjectRoom(
+                                              context,
+                                              nameControllerPt.text,
+                                              currentUser)
+                                          .whenComplete(() => print(isProject
+                                              ? 'New Project Added!'
+                                              : 'New Task Added'))
+                                          .onError((error, stackTrace) => print(
+                                              'New Project Error: $error // $stackTrace'))
+                                      : await addTask(
+                                              roomId,
+                                              nameControllerPt.text,
+                                              contentControllerPt.text)
+                                          .whenComplete(() => print(isProject
+                                              ? 'New Project Added!'
+                                              : 'New Task Added'))
+                                          .onError((error, stackTrace) => print(
+                                              'New Project Error: $error // $stackTrace'));
+                                },
                               ),
                             ),
                           ],
-                        );
-                      });
-                },
-                child: const Text('Create New Project')),
-          ],
-        ));
+                        ),
+                      ),
+                    ],
+                  );
+                });
+          },
+          child: Text(isProject ? 'Create New Project' : 'Create New Task')),
+    ],
+  ));
 }

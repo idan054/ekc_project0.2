@@ -21,11 +21,12 @@ void main() async {
 }
 
 class AddUser extends StatelessWidget {
-  final String? fullName;
-  final String? company;
-  final int? age;
+  String? fullName;
+  String? company;
+  int? age;
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toJson() {
+    // AKA toMap()
     return {
       'fullName': fullName,
       'company': company,
@@ -33,52 +34,60 @@ class AddUser extends StatelessWidget {
     };
   }
 
+  AddUser fromJson(Map<String, dynamic> json) {
+    // AKA fromMap()
+    return AddUser(
+      fullName: json['fullName'],
+      company: json['company'],
+      age: json['age'],
+    );
+  }
+
   AddUser({this.fullName, this.company, this.age});
 
   @override
   Widget build(BuildContext context) {
-    Future<void> addUser() {
+    Future<void> _addUser() {
       CollectionReference users =
-      FirebaseFirestore.instance.collection('users');
+          FirebaseFirestore.instance.collection('users');
 
       return users
           .add({
-        'full_name': fullName, // John Doe
-        'company': company, // Stokes and Sons
-        'age': age // 42
-      })
+            'full_name': fullName, // John Doe
+            'company': company, // Stokes and Sons
+            'age': age // 42
+          })
           .then((value) => print("User Added"))
           .catchError((error) => print("Failed to add user: $error"));
     }
 
-    Future<void> addTask(roomId) {
+    Future<void> _addTask(roomId) {
       return FirebaseFirestore.instance
           .collection('rooms/$roomId/tasks')
-          .add(AddUser(company: 'spit', age: 69, fullName: 'idan').toMap())
+          .add(AddUser(company: 'spit', age: 69, fullName: 'idan').toJson())
           .then((value) => print("Task Added."))
           .catchError((error) => print("Failed to add user: $error"));
     }
 
     /// Returns a stream of messages from Firebase for a given room
     Future<QuerySnapshot<Map<String, dynamic>>> futureTasks({String? roomId}) {
-      return FirebaseFirestore.instance
-          .collection('rooms/$roomId/tasks').get();
+      return FirebaseFirestore.instance.collection('rooms/$roomId/tasks').get();
     }
 
     /// Returns a stream of messages from Firebase for a given room
     Stream<QuerySnapshot<Map<String, dynamic>>> streamTasks({String? roomId}) {
       return FirebaseFirestore.instance
           .collection('rooms/$roomId/tasks')
-      // .orderBy('createdAt', descending: true)
+          // .orderBy('createdAt', descending: true)
           .snapshots()
           .map(
-            (snapshot) {
-              // print('streamTasks:');
-              // // print(snapshot.data?.docs.first.data());
-              // snapshot.docs.forEach((element) {
-              //   print(element.data());
-              // });
-              // print('---------------');
+        (snapshot) {
+          // print('streamTasks:');
+          // // print(snapshot.data?.docs.first.data());
+          // snapshot.docs.forEach((element) {
+          //   print(element.data());
+          // });
+          // print('---------------');
           return snapshot;
         },
       );
@@ -87,48 +96,47 @@ class AddUser extends StatelessWidget {
     return Scaffold(
         body: Center(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                TextButton(
-                  onPressed: addUser,
-                  child: const Text(
-                    "Add User",
-                  ),
-                ),
-                TextButton(
-                  onPressed: () => addTask('Nl9iHDaJsd1rXTsOxQuA'),
-                  child: const Text(
-                    "Add Task",
-                  ),
-                ),
-                FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                  future: futureTasks(roomId: 'Nl9iHDaJsd1rXTsOxQuA'),
-                  builder: (context, snapshot) {
-                  print(snapshot);
-                  print('future snapshot.data:');
-                  // print(snapshot.data?.docs.first.data());
-                  snapshot.data?.docs.forEach((element) {
-                    print(element.data());
-                  });
-                  print('-----------------');
-                  return Text('Future: ${snapshot.data?.docs.length}');
-                },),
-                StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                  // initialData: const {},
-                  stream: streamTasks(roomId: 'Nl9iHDaJsd1rXTsOxQuA'),
-                  builder: (context, snapshot) {
-                    print('stream snapshot.data:');
-                    // print(snapshot.data?.docs.first.data());
-                    snapshot.data?.docs.forEach((element) {
-                      print(element.data());
-                    });
-                    print('-----------------');
-                    return Text('Stream: ${snapshot.data?.docs.length}');
-
-
-                  },
-                ),
-              ],
-            )));
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        TextButton(
+          onPressed: _addUser,
+          child: const Text(
+            "Add User",
+          ),
+        ),
+        TextButton(
+          onPressed: () => _addTask('Nl9iHDaJsd1rXTsOxQuA'),
+          child: const Text(
+            "Add Task",
+          ),
+        ),
+        FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
+          future: futureTasks(roomId: 'Nl9iHDaJsd1rXTsOxQuA'),
+          builder: (context, snapshot) {
+            print(snapshot);
+            print('future snapshot.data:');
+            // print(snapshot.data?.docs.first.data());
+            snapshot.data?.docs.forEach((element) {
+              print(element.data());
+            });
+            print('-----------------');
+            return Text('Future: ${snapshot.data?.docs.length}');
+          },
+        ),
+        StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+          // initialData: const {},
+          stream: streamTasks(roomId: 'Nl9iHDaJsd1rXTsOxQuA'),
+          builder: (context, snapshot) {
+            print('stream snapshot.data:');
+            // print(snapshot.data?.docs.first.data());
+            snapshot.data?.docs.forEach((element) {
+              print(element.data());
+            });
+            print('-----------------');
+            return Text('Stream: ${snapshot.data?.docs.length}');
+          },
+        ),
+      ],
+    )));
   }
 }
