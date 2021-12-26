@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:ekc_project/Widgets/myAppBar.dart';
-import 'package:ekc_project/Widgets/myDrawer.dart';
+import 'package:ekc_project/Widgets/myDrawers.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -39,6 +39,73 @@ class FireBaseChatPage extends StatefulWidget {
 
 class _FireBaseChatPageState extends State<FireBaseChatPage> {
   bool _isAttachmentUploading = false;
+
+  // GoogleSignInAccount? guestUser;
+  // UserCredential? guestUser;
+  var guestUser;
+  String? appBarTitle;
+  @override
+  void initState() {
+    print('widget.room.type');
+    print(widget.room.type.toString());
+    print(widget.room.name);
+    // RoomType.direct
+    // RoomType.group
+    if (widget.room.type.toString() == 'RoomType.direct') {
+      widget.room.users.forEach((user) {
+      if (widget.currentUser?.email
+          != user.lastName){ // Lastname is MAIL!
+        setState(() {
+          guestUser = user;
+          appBarTitle = 'Chat with ${guestUser.lastName}';
+        });
+      }
+    });
+    }else{
+      setState(() {
+        appBarTitle = widget.room.name;
+      });
+    }
+
+    super.initState();
+  }
+
+  List projectNum = [1, 2]; // For Drawer Menu
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      drawer:
+      projectsDrawer(context, widget.currentUser),
+      // appBar: myAppBar('Chat with ${widget.room.users.first.lastName}'),
+      appBar: myAppBar(appBarTitle),
+      body: StreamBuilder<types.Room>(
+        initialData: widget.room,
+        stream: FirebaseChatCore.instance.room(widget.room.id),
+        builder: (context, snapshot) {
+          return StreamBuilder<List<types.Message>>(
+            initialData: const [],
+            stream: FirebaseChatCore.instance.messages(snapshot.data!),
+            builder: (context, snapshot) {
+              return SafeArea(
+                bottom: false,
+                child: Chat(
+                  isAttachmentUploading: _isAttachmentUploading,
+                  messages: snapshot.data ?? [],
+                  onAttachmentPressed: _handleAtachmentPressed,
+                  onMessageTap: _handleMessageTap,
+                  onPreviewDataFetched: _handlePreviewDataFetched,
+                  onSendPressed: _handleSendPressed,
+                  user: types.User(
+                    id: FirebaseChatCore.instance.firebaseUser?.uid ?? '',
+                  ),
+                ),
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
 
   void _handleAtachmentPressed() {
     showModalBottomSheet<void>(
@@ -177,9 +244,9 @@ class _FireBaseChatPageState extends State<FireBaseChatPage> {
   }
 
   void _handlePreviewDataFetched(
-    types.TextMessage message,
-    types.PreviewData previewData,
-  ) {
+      types.TextMessage message,
+      types.PreviewData previewData,
+      ) {
     final updatedMessage = message.copyWith(previewData: previewData);
 
     FirebaseChatCore.instance.updateMessage(updatedMessage, widget.room.id);
@@ -196,77 +263,5 @@ class _FireBaseChatPageState extends State<FireBaseChatPage> {
     setState(() {
       _isAttachmentUploading = uploading;
     });
-  }
-
-  // GoogleSignInAccount? guestUser;
-  // UserCredential? guestUser;
-  var guestUser;
-  String? appBarTitle;
-  @override
-  void initState() {
-    print('widget.room.type');
-    print(widget.room.type.toString());
-    print(widget.room.name);
-    // RoomType.direct
-    // RoomType.group
-    if (widget.room.type.toString() == 'RoomType.direct') {
-      widget.room.users.forEach((user) {
-      if (widget.currentUser?.email
-          != user.lastName){ // Lastname is MAIL!
-        setState(() {
-          guestUser = user;
-          appBarTitle = 'Chat with ${guestUser.lastName}';
-        });
-      }
-    });
-    }else{
-      setState(() {
-        appBarTitle = widget.room.name;
-      });
-    }
-
-    super.initState();
-  }
-
-  List projectNum = [1, 2]; // For Drawer Menu
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      drawer:
-          myDrawer(context, projectNum: projectNum, onPressed_newProject: () {
-        setState(() {
-          projectNum.add(projectNum.length + 1);
-          print(projectNum);
-        });
-      }, ),
-      // appBar: myAppBar('Chat with ${widget.room.users.first.lastName}'),
-      appBar: myAppBar(appBarTitle),
-      body: StreamBuilder<types.Room>(
-        initialData: widget.room,
-        stream: FirebaseChatCore.instance.room(widget.room.id),
-        builder: (context, snapshot) {
-          return StreamBuilder<List<types.Message>>(
-            initialData: const [],
-            stream: FirebaseChatCore.instance.messages(snapshot.data!),
-            builder: (context, snapshot) {
-              return SafeArea(
-                bottom: false,
-                child: Chat(
-                  isAttachmentUploading: _isAttachmentUploading,
-                  messages: snapshot.data ?? [],
-                  onAttachmentPressed: _handleAtachmentPressed,
-                  onMessageTap: _handleMessageTap,
-                  onPreviewDataFetched: _handlePreviewDataFetched,
-                  onSendPressed: _handleSendPressed,
-                  user: types.User(
-                    id: FirebaseChatCore.instance.firebaseUser?.uid ?? '',
-                  ),
-                ),
-              );
-            },
-          );
-        },
-      ),
-    );
   }
 }

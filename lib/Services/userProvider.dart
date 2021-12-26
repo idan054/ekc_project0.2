@@ -1,35 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -38,7 +7,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 // 3. Get Details any time!
 class UserDetails extends ChangeNotifier {
 // Set Up Values
-  String? email; 
+  String? email;
   String? name;
   String? id;
   String? photoUrl;
@@ -48,24 +17,30 @@ class UserDetails extends ChangeNotifier {
   UserCredential? classic_currentUser;
 
 // To Get Provider Values any time
-  String? get getEmail { 
+  String? get getEmail {
     return email;
   }
-  String? get getName { 
+
+  String? get getName {
     return name;
   }
-  String? get getId { 
+
+  String? get getId {
     return id;
   }
-  String? get getPhotoUrl { 
+
+  String? get getPhotoUrl {
     return photoUrl;
   }
+
   bool? get getIsGoogleSign_user {
     return isGoogleSign_user;
   }
+
   GoogleSignInAccount? get getGoogleSign_user {
     return googleSign_user;
   }
+
   UserCredential? get getClassic_currentUser {
     return classic_currentUser;
   }
@@ -80,11 +55,11 @@ class UserDetails extends ChangeNotifier {
     notifyListeners();
   }
 
-  // USAGE 2 (Source: https://flutterbyexample.com/lesson/the-most-basic-example-using-provider)
-  // Just like regular Stateful attributes
-  // But create save it to use the values any time.
-  // instaed MyApp(name: "Yohan", age: 25)
-  // create a Person class and update it there
+// USAGE 2 (Source: https://flutterbyexample.com/lesson/the-most-basic-example-using-provider)
+// Just like regular Stateful attributes
+// But create save it to use the values any time.
+// instaed MyApp(name: "Yohan", age: 25)
+// create a Person class and update it there
 /*  Provider(
   create: (_) => Person(name: "Yohan", age: 25),
   child: MyApp(),

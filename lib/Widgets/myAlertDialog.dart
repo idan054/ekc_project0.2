@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 
-import 'my_util.dart';
+import '../myUtil.dart';
 
 class MyAlertDialog extends StatelessWidget {
   final String? title;

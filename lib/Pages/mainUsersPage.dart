@@ -5,7 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
 import 'dart:convert';
-import 'package:ekc_project/Widgets/myDrawer.dart';
+import 'package:ekc_project/Widgets/myDrawers.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
@@ -37,8 +37,6 @@ class AllUsersPage extends StatefulWidget {
 }
 
 class _AllUsersPageState extends State<AllUsersPage> {
-  final TextEditingController projectNameController = TextEditingController();
-
   // Create a user with an ID of UID if you don't use
 // `FirebaseChatCore.instance.users()` stream
   void _createRoom(types.User otherUser, BuildContext context) async {
@@ -57,128 +55,11 @@ class _AllUsersPageState extends State<AllUsersPage> {
     // Navigate to the Chat screen
   }
 
-  // Create a user with an ID of UID if you don't use
-// `FirebaseChatCore.instance.users()` stream
-  Future _createGroupRoom(BuildContext context, String name) async {
-    final room =
-        await FirebaseChatCore.instance.createGroupRoom(name: name, users: []);
-    print(room.id);
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => FireBaseChatPage(
-                room: room,
-                currentUser: widget.googleSign_user,
-                // user: _user,
-              )),
-    );
-
-    // Navigate to the Chat screen
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: Drawer(
-          child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.only(top: 8.0),
-            height: MediaQuery.of(context).size.height * 0.13,
-            child: const DrawerHeader(child: Text("Projects")),
-          ),
-          StreamBuilder<List<types.Room>>(
-            stream: FirebaseChatCore.instance.rooms(),
-            initialData: const [],
-            builder: (context, snapshot) {
-              // print(snapshot.data);
-              return Expanded(
-                child: ListView.builder(
-                  itemCount: snapshot.data?.length,
-                  itemBuilder: (context, i) {
-                    if (snapshot.data![i].type.toString() == 'RoomType.group') {
-                      return ListTile(
-                        onTap: () {
-                          print(snapshot.data?[i].id);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => FireBaseChatPage(
-                                      room: snapshot.data![i],
-                                      currentUser: widget.googleSign_user,
-                                      // user: _user,
-                                    )),
-                          );
-                        },
-                        title: Text(
-                            'Project ${i + 1}: "${snapshot.data![i].name}"'),
-                        /*                leading: CachedNetworkImage(
-                        imageUrl: "http://aarongorka.com/eks-orig.jpg",
-                        placeholder: (context, url) =>
-                            CircularProgressIndicator(),
-                        errorWidget: (context, url, error) {
-                          // print(error);
-                          return Icon(Icons.error);
-                        },
-                      )*/
-                        // >> << \\
-                        /*             Image(
-                            width: 50,
-                              image: AssetImage('Assets/eks-thumb.jpg'))
-                              */
-                      );
-                    }
-                    return Container();
-                  },
-                ),
-              );
-              // ...
-            },
-          ),
-          TextButton(
-              onPressed: () async {
-                showDialog(
-                    context: context,
-                    builder: (BuildContext dialogContext) {
-                      return MyAlertDialog(
-                        title: 'New Project Name',
-                        onPressed: () {},
-                        projectNameController: projectNameController,
-                        actions: [
-                          Transform.translate(
-                            offset: const Offset(40, 0),
-                            child: Row(
-                              children: [
-                                TextButton(
-                                  child: Text('Dismiss'),
-                                  onPressed: () => Navigator.pop(context),
-                                ),
-                                Container(
-                                  height: 60,
-                                  width: 180,
-                                  child: TextButton(
-                                    child: Text('Create'),
-                                    onPressed: () async {
-                                      Navigator.pop(context);
-                                      await _createGroupRoom(context,
-                                              projectNameController.text)
-                                          .whenComplete(
-                                              () => print('New Project Added!'))
-                                          .onError((error, stackTrace) => print(
-                                              'New Project Error: $error // $stackTrace'));
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      );
-                    });
-              },
-              child: const Text('Create New Project')),
-        ],
-      )),
+      drawer: projectsDrawer(context, widget.googleSign_user),
+
       // appBar: myAppBar('Find someone to chat'),
       appBar: myAppBar('Hello ${widget.googleSign_user?.displayName}'),
       body: Padding(
@@ -219,7 +100,7 @@ class _AllUsersPageState extends State<AllUsersPage> {
                       child: CachedNetworkImage(
                         imageUrl: '${users[i].imageUrl}',
                         placeholder: (context, url) =>
-                            CircularProgressIndicator(),
+                            const CircularProgressIndicator(),
                         errorWidget: (context, url, error) {
                           // print(error);
                           return Icon(Icons.error);
