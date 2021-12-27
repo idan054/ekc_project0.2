@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:ekc_project/Services/myFirebaseFlyer.dart';
 import 'package:ekc_project/Widgets/myAppBar.dart';
 import 'package:ekc_project/Widgets/myDrawers.dart';
 import 'package:file_picker/file_picker.dart';
@@ -16,7 +17,7 @@ import 'package:mime/mime.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 
-import 'mainUsersPage.dart';
+import 'usersPage.dart';
 
 class FireBaseChatPage extends StatefulWidget {
 /*  const FireBaseChatPage({
@@ -77,21 +78,35 @@ class _FireBaseChatPageState extends State<FireBaseChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer:
-          // true = Projects Drawer
-          projectTaskDrawer(context, widget.currentUser, true, widget.room.id),
+      // true = Projects Drawer
+      projectTaskDrawer(context, widget.currentUser, true, widget.room.id),
       endDrawer:
-          // false = Task Drawer
-          projectTaskDrawer(context, widget.currentUser, false, widget.room.id),
+      // false = Task Drawer
+      projectTaskDrawer(context, widget.currentUser, false, widget.room.id),
       //
       // appBar: myAppBar('Chat with ${widget.room.users.first.lastName}'),
       appBar: myAppBar(appBarTitle, actions: <Widget>[
         Builder(
           // builder needed for Scaffold.of(context).openEndDrawer()
-          builder: (context) => IconButton(
-            icon: const Icon(Icons.list),
-            onPressed: () => Scaffold.of(context).openEndDrawer(),
-            tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
-          ),
+          builder: (context) =>
+              IconButton(
+                icon: const Icon(Icons.group_add),
+                onPressed: () {
+                  addUsers2Project(widget
+                      .room.id);
+                },
+              ),
+        ),
+        Builder(
+          // builder needed for Scaffold.of(context).openEndDrawer()
+          builder: (context) =>
+              IconButton(
+                icon: const Icon(Icons.list),
+                onPressed: () => Scaffold.of(context).openEndDrawer(),
+                tooltip: MaterialLocalizations
+                    .of(context)
+                    .openAppDrawerTooltip,
+              ),
         ),
       ]),
       body: StreamBuilder<types.Room>(
@@ -259,10 +274,8 @@ class _FireBaseChatPageState extends State<FireBaseChatPage> {
     }
   }
 
-  void _handlePreviewDataFetched(
-    types.TextMessage message,
-    types.PreviewData previewData,
-  ) {
+  void _handlePreviewDataFetched(types.TextMessage message,
+      types.PreviewData previewData,) {
     final updatedMessage = message.copyWith(previewData: previewData);
 
     FirebaseChatCore.instance.updateMessage(updatedMessage, widget.room.id);

@@ -8,7 +8,8 @@ import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
-import 'mainUsersPage.dart';
+import 'usersPage.dart';
+import 'mainPage.dart';
 
 class GoogleLoginApp extends StatefulWidget {
   const GoogleLoginApp({Key? key}) : super(key: key);
@@ -58,7 +59,7 @@ class _GoogleLoginAppState extends State<GoogleLoginApp> {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => AllUsersPage(
+                            builder: (context) => MainPage(
                               googleSign_user: _user,
                             )),
                         // MaterialPageRoute(builder: (context) => MainPage(user: _user,)),

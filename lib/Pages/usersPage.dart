@@ -20,7 +20,7 @@ import 'package:uuid/uuid.dart';
 
 import 'flyerChat.dart';
 
-class AllUsersPage extends StatefulWidget {
+class UsersPage extends StatefulWidget {
   // bool isGoogleSign_user;
   GoogleSignInAccount? googleSign_user;
 
@@ -28,15 +28,15 @@ class AllUsersPage extends StatefulWidget {
   // final currentUser;
   //
   // AllUsersPage({this.currentUser, required this.isGoogleSign_user});
-  AllUsersPage({this.googleSign_user});
+  UsersPage({this.googleSign_user});
 
   // const AllUsersPage({Key? key}) : super(key: key);
 
   @override
-  _AllUsersPageState createState() => _AllUsersPageState();
+  _UsersPageState createState() => _UsersPageState();
 }
 
-class _AllUsersPageState extends State<AllUsersPage> {
+class _UsersPageState extends State<UsersPage> {
   // Create a user with an ID of UID if you don't use
 // `FirebaseChatCore.instance.users()` stream
   void _createRoom(types.User otherUser, BuildContext context) async {
@@ -60,8 +60,8 @@ class _AllUsersPageState extends State<AllUsersPage> {
     return Scaffold(
       drawer: projectTaskDrawer(context, widget.googleSign_user, true, null),
 
-      // appBar: myAppBar('Find someone to chat'),
-      appBar: myAppBar('Hello ${widget.googleSign_user?.displayName}'),
+      appBar: myAppBar('Find someone to chat'),
+      // appBar: myAppBar(''),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: StreamBuilder<List<types.User>>(

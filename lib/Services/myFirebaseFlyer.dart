@@ -68,6 +68,21 @@ Future addProjectRoom(
   // Navigate to the Chat screen
 }
 
+// User? firebaseUser = FirebaseAuth.instance.currentUser;
+// final currentUser = await fetchUser(
+//   firebaseUser!.uid,
+//   config.usersCollectionName,
+// );
+
+Future<void> addUsers2Project(roomId) {
+  return FirebaseFirestore.instance
+      .collection('rooms')
+      .doc(roomId)
+      .update({'metadata': 'MyExampleData'})
+      .then((value) => print("Task Added."))
+      .catchError((error) => print("Failed to add user: $error"));
+}
+
 Future<void> addTask(
   roomId,
   name,
@@ -86,5 +101,8 @@ Future<void> addTask(
 
 /// Returns a stream of messages from Firebase for a given room
 Stream<QuerySnapshot<Map<String, dynamic>>> streamTasks({String? roomId}) {
-  return FirebaseFirestore.instance.collection('rooms/$roomId/tasks').get().asStream();
+  return FirebaseFirestore.instance
+      .collection('rooms/$roomId/tasks')
+      .get()
+      .asStream();
 }
