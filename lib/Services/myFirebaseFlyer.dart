@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ekc_project/Pages/flyerChat.dart';
-import 'package:ekc_project/Widgets/myAlertDialog.dart';
+import 'package:ekc_project/Widgets/addPtDialog.dart';
 import 'package:ekc_project/Widgets/myAppBar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -74,18 +74,39 @@ Future addProjectRoom(
 //   config.usersCollectionName,
 // );
 
-Future<void> addUsers2Project(roomId) async {
+Future<void> addUsers2Project(roomId, String? user2search) async {
   var thisRoom =
       await FirebaseFirestore.instance.collection('rooms').doc(roomId).get();
   List currentUsers = thisRoom.get('userIds');
 
-  var newUserId = 'q4iaRKgFydSjpR4OprLn7k1aDuE3'; // get newUserId by newUserEmail
-  currentUsers.add(newUserId);
+  var userSearch = FirebaseFirestore.instance
+      .collection('users')
+      .where('lastName', isEqualTo: user2search)
+      .snapshots();
+
+  print('userSearch Email & ID:');
+  String? newUserId; // get newUserId by newUserEmail
+  // var newUserId = 'q4iaRKgFydSjpR4OprLn7k1aDuE3'; // get newUserId by newUserEmail
+  userSearch.forEach((element) {
+    if (element.docs.length != 1) {
+      return print('Failed to add user: ${element.docs.length} users found!');
+    }
+    print(element.docs.length);
+    print(element.docs[0].id);
+    newUserId = element.docs[0].id;
+    print('newUserId $newUserId');
+  });
+    // currentUsers.add(newUserId);
+    currentUsers.add('q4iaRKgFydSjpR4OprLn7k1aDuE3');
+
+  print('currentUsers $currentUsers');
 
   return await FirebaseFirestore.instance
       .collection('rooms')
       .doc(roomId)
-      .update({'userIds': ['pYjX6sdsQxQplnkMxmhoHYI8C513']})
+      .update({
+        'userIds': currentUsers
+      })
       .then((value) => print("User Added."))
       .catchError((error) => print("Failed to add user: $error"));
 }

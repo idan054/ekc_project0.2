@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 final TextEditingController nameControllerPt = TextEditingController();
 final TextEditingController contentControllerPt = TextEditingController();
 
+final TextEditingController projectAddUserController = TextEditingController();
+
 // [const [neutral0] = Color(0xff1d1c21);]
 const darkBlue = Color(0xff223450);
 const eckDarkBlue = Color(0xff1e2d40);

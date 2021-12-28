@@ -49,7 +49,7 @@ class _GoogleLoginAppState extends State<GoogleLoginApp> {
                               id: _user?.id ?? UniqueKey().toString(),
                               // UID from Firebase Authentication
                               imageUrl: 'https://i.pravatar.cc/300',
-                              lastName: '${_user?.email}',
+                              lastName: '${_user?.email}'.toLowerCase(),
                             ),
                           )
                           .whenComplete(() => print(

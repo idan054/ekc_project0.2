@@ -3,7 +3,8 @@ import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 
 import '../myUtil.dart';
 
-class MyAlertDialog extends StatelessWidget {
+// Pt = Project or Task
+class AddPtDialog extends StatelessWidget {
   final bool isProject;
   final String? title;
   final VoidCallback? onPressed;
@@ -11,7 +12,7 @@ class MyAlertDialog extends StatelessWidget {
   final TextEditingController? contentFieldController;
   final List<Widget> actions;
 
-  MyAlertDialog({
+  AddPtDialog({
     required this.isProject,
     this.title,
     this.onPressed,

@@ -4,7 +4,7 @@ import 'package:ekc_project/Services/myFirebaseFlyer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:ekc_project/Widgets/myAlertDialog.dart';
+import 'package:ekc_project/Widgets/addPtDialog.dart';
 import 'package:ekc_project/Widgets/myAppBar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -130,7 +130,7 @@ Widget projectDrawer(context, currentUser, bool isProject, String? roomId) {
                 showDialog(
                     context: context,
                     builder: (BuildContext dialogContext) {
-                      return MyAlertDialog(
+                      return AddPtDialog(
                         isProject: isProject,
                         title: isProject ? 'New Project Name' : 'New Task Name',
                         onPressed: () {},
@@ -240,7 +240,7 @@ Widget taskDrawer(context, currentUser, bool isProject, String? roomId) {
                 showDialog(
                     context: context,
                     builder: (BuildContext dialogContext) {
-                      return MyAlertDialog(
+                      return AddPtDialog(
                         isProject: isProject,
                         title: isProject ? 'New Project Name' : 'New Task Name',
                         onPressed: () {},

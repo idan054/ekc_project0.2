@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:ekc_project/Services/myFirebaseFlyer.dart';
+import 'package:ekc_project/Widgets/addUserDialog.dart';
 import 'package:ekc_project/Widgets/myAppBar.dart';
 import 'package:ekc_project/Widgets/myDrawers.dart';
 import 'package:file_picker/file_picker.dart';
@@ -17,6 +18,7 @@ import 'package:mime/mime.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../myUtil.dart';
 import 'usersPage.dart';
 
 class FireBaseChatPage extends StatefulWidget {
@@ -41,10 +43,10 @@ class FireBaseChatPage extends StatefulWidget {
 
 class _FireBaseChatPageState extends State<FireBaseChatPage> {
   bool _isAttachmentUploading = false;
-
+  var roomEmailUsers = ['example@fakeMail.com'];
+  var guestUser;
   // GoogleSignInAccount? guestUser;
   // UserCredential? guestUser;
-  var guestUser;
   String? appBarTitle;
 
   @override
@@ -70,42 +72,55 @@ class _FireBaseChatPageState extends State<FireBaseChatPage> {
       });
     }
 
+    // Get all users:
+    widget.room.users.forEach((element) {
+      roomEmailUsers.add(element.lastName.toString());
+    }
+    );
+    print('roomEmailUsers: ${roomEmailUsers.length} ${roomEmailUsers.runtimeType} $roomEmailUsers');
+
     super.initState();
   }
 
-  List projectNum = [1, 2]; // For Drawer Menu
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       drawer:
-      // true = Projects Drawer
-      projectDrawer(context, widget.currentUser, true, widget.room.id),
+          // true = Projects Drawer
+          projectDrawer(context, widget.currentUser, true, widget.room.id),
       endDrawer:
-      // false = Task Drawer
-      taskDrawer(context, widget.currentUser, false, widget.room.id),
+          // false = Task Drawer
+          taskDrawer(context, widget.currentUser, false, widget.room.id),
       //
       // appBar: myAppBar('Chat with ${widget.room.users.first.lastName}'),
       appBar: myAppBar(appBarTitle, actions: <Widget>[
         Builder(
           // builder needed for Scaffold.of(context).openEndDrawer()
-          builder: (context) =>
-              IconButton(
-                icon: const Icon(Icons.group_add),
-                onPressed: () async {
-                  await addUsers2Project(widget.room.id);
-                },
-              ),
+          builder: (context) => IconButton(
+            icon: const Icon(Icons.group_add),
+            onPressed: () async {
+              showDialog(
+                  context: context,
+                  builder: (BuildContext dialogContext) {
+                    return AddUserDialog(
+                      currentUsers: roomEmailUsers,
+                      contentFieldController: projectAddUserController,
+                      onPressed: () async {
+              await addUsers2Project(widget.room.id, projectAddUserController.text);
+
+                      },
+                    );
+                  });
+            },
+          ),
         ),
         Builder(
           // builder needed for Scaffold.of(context).openEndDrawer()
-          builder: (context) =>
-              IconButton(
-                icon: const Icon(Icons.list),
-                onPressed: () => Scaffold.of(context).openEndDrawer(),
-                tooltip: MaterialLocalizations
-                    .of(context)
-                    .openAppDrawerTooltip,
-              ),
+          builder: (context) => IconButton(
+            icon: const Icon(Icons.list),
+            onPressed: () => Scaffold.of(context).openEndDrawer(),
+            tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
+          ),
         ),
       ]),
       body: StreamBuilder<types.Room>(
@@ -273,8 +288,10 @@ class _FireBaseChatPageState extends State<FireBaseChatPage> {
     }
   }
 
-  void _handlePreviewDataFetched(types.TextMessage message,
-      types.PreviewData previewData,) {
+  void _handlePreviewDataFetched(
+    types.TextMessage message,
+    types.PreviewData previewData,
+  ) {
     final updatedMessage = message.copyWith(previewData: previewData);
 
     FirebaseChatCore.instance.updateMessage(updatedMessage, widget.room.id);
