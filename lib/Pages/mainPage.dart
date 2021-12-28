@@ -59,7 +59,7 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        drawer: projectTaskDrawer(context, widget.googleSign_user, true, null),
+        drawer: projectDrawer(context, widget.googleSign_user, true, null),
 
         // appBar: myAppBar('Find someone to chat'),
         appBar: myAppBar('Home Page',

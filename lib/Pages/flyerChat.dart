@@ -79,10 +79,10 @@ class _FireBaseChatPageState extends State<FireBaseChatPage> {
     return Scaffold(
       drawer:
       // true = Projects Drawer
-      projectTaskDrawer(context, widget.currentUser, true, widget.room.id),
+      projectDrawer(context, widget.currentUser, true, widget.room.id),
       endDrawer:
       // false = Task Drawer
-      projectTaskDrawer(context, widget.currentUser, false, widget.room.id),
+      taskDrawer(context, widget.currentUser, false, widget.room.id),
       //
       // appBar: myAppBar('Chat with ${widget.room.users.first.lastName}'),
       appBar: myAppBar(appBarTitle, actions: <Widget>[
@@ -91,9 +91,8 @@ class _FireBaseChatPageState extends State<FireBaseChatPage> {
           builder: (context) =>
               IconButton(
                 icon: const Icon(Icons.group_add),
-                onPressed: () {
-                  addUsers2Project(widget
-                      .room.id);
+                onPressed: () async {
+                  await addUsers2Project(widget.room.id);
                 },
               ),
         ),

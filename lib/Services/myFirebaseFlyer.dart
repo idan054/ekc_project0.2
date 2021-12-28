@@ -53,8 +53,8 @@ class Task {
 // Room Project is actually a 1 user Group Room in Flyer
 Future addProjectRoom(
     BuildContext context, String name, GoogleSignInAccount currentUser) async {
-  final room =
-      await FirebaseChatCore.instance.createGroupRoom(name: name, users: []);
+  final room = await FirebaseChatCore.instance.createGroupRoom(
+      name: name, users: [], metadata: {'defaultKey': 'defaultValue'});
   print(room.id);
   Navigator.push(
     context,
@@ -74,12 +74,19 @@ Future addProjectRoom(
 //   config.usersCollectionName,
 // );
 
-Future<void> addUsers2Project(roomId) {
-  return FirebaseFirestore.instance
+Future<void> addUsers2Project(roomId) async {
+  var thisRoom =
+      await FirebaseFirestore.instance.collection('rooms').doc(roomId).get();
+  List currentUsers = thisRoom.get('userIds');
+
+  var newUserId = 'q4iaRKgFydSjpR4OprLn7k1aDuE3'; // get newUserId by newUserEmail
+  currentUsers.add(newUserId);
+
+  return await FirebaseFirestore.instance
       .collection('rooms')
       .doc(roomId)
-      .update({'metadata': 'MyExampleData'})
-      .then((value) => print("Task Added."))
+      .update({'userIds': ['pYjX6sdsQxQplnkMxmhoHYI8C513']})
+      .then((value) => print("User Added."))
       .catchError((error) => print("Failed to add user: $error"));
 }
 
