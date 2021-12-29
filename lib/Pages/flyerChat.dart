@@ -43,7 +43,7 @@ class FireBaseChatPage extends StatefulWidget {
 
 class _FireBaseChatPageState extends State<FireBaseChatPage> {
   bool _isAttachmentUploading = false;
-  var roomEmailUsers = ['example@fakeMail.com'];
+  List<String>? roomEmailUsers;
   var guestUser;
   // GoogleSignInAccount? guestUser;
   // UserCredential? guestUser;
@@ -74,10 +74,10 @@ class _FireBaseChatPageState extends State<FireBaseChatPage> {
 
     // Get all users:
     widget.room.users.forEach((element) {
-      roomEmailUsers.add(element.lastName.toString());
+      roomEmailUsers?.add(element.lastName.toString());
     }
     );
-    print('roomEmailUsers: ${roomEmailUsers.length} ${roomEmailUsers.runtimeType} $roomEmailUsers');
+    print('roomEmailUsers: ${roomEmailUsers?.length} ${roomEmailUsers.runtimeType} $roomEmailUsers');
 
     super.initState();
   }
@@ -107,6 +107,9 @@ class _FireBaseChatPageState extends State<FireBaseChatPage> {
                       contentFieldController: projectAddUserController,
                       onPressed: () async {
               await addUsers2Project(widget.room.id, projectAddUserController.text);
+                            // Scaffold.of(context).showSnackBar(SnackBar(
+                            //   content: Text('User ${projectAddUserController.text} Added'),
+                            // ));
 
                       },
                     );

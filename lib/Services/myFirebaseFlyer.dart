@@ -78,6 +78,7 @@ Future<void> addUsers2Project(roomId, String? user2search) async {
   var thisRoom =
       await FirebaseFirestore.instance.collection('rooms').doc(roomId).get();
   List currentUsers = thisRoom.get('userIds');
+  print('currentUsersA ${currentUsers.length} $currentUsers');
 
   var userSearch = FirebaseFirestore.instance
       .collection('users')
@@ -87,28 +88,32 @@ Future<void> addUsers2Project(roomId, String? user2search) async {
   print('userSearch Email & ID:');
   String? newUserId; // get newUserId by newUserEmail
   // var newUserId = 'q4iaRKgFydSjpR4OprLn7k1aDuE3'; // get newUserId by newUserEmail
-  userSearch.forEach((element) {
+  await userSearch.forEach((element) async {
     if (element.docs.length != 1) {
       return print('Failed to add user: ${element.docs.length} users found!');
     }
+    print('currentUsersB ${currentUsers.length} $currentUsers');
     print(element.docs.length);
     print(element.docs[0].id);
     newUserId = element.docs[0].id;
     print('newUserId $newUserId');
-  });
+    currentUsers.add(newUserId);
+
+    print('currentUsersC ${currentUsers.length} $currentUsers');
+
     // currentUsers.add(newUserId);
-    currentUsers.add('q4iaRKgFydSjpR4OprLn7k1aDuE3');
+    // currentUsers.add('q4iaRKgFydSjpR4OprLn7k1aDuE3');
 
-  print('currentUsers $currentUsers');
+    return await FirebaseFirestore.instance
+        .collection('rooms')
+        .doc(roomId)
+        .update({
+      'userIds': currentUsers
+    })
+        .then((value) => print("User Added."))
+        .catchError((error) => print("Failed to add user: $error"));
 
-  return await FirebaseFirestore.instance
-      .collection('rooms')
-      .doc(roomId)
-      .update({
-        'userIds': currentUsers
-      })
-      .then((value) => print("User Added."))
-      .catchError((error) => print("Failed to add user: $error"));
+  });
 }
 
 Future<void> addTask(

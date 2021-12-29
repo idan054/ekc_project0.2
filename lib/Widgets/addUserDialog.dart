@@ -43,30 +43,32 @@ class AddUserDialog extends StatelessWidget {
       title: Column(
         children: [
           _myTextField(
-              controller: contentFieldController,
-              name: 'Insert user email'),
+              controller: contentFieldController, name: 'Insert user email'),
         ],
       ),
       actions: actions,
       content: Container(
-        height: 96,
+        height: 110,
         child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Text(currentUsers.toString().replaceAll('[', '').replaceAll(']', ''),
-              style: const TextStyle(color: eckLightBlue),),
-              const SizedBox(height: 10,),
-
               ElevatedButton(
-                onPressed: onPressed,
-                child: const Text('Add user', style: TextStyle(color: Colors.white)),
+                onPressed:onPressed,
+                child: const Text('Add user',
+                    style: TextStyle(color: Colors.white)),
+              ),
+              Text(
+                '(${currentUsers?.length})\n${currentUsers.toString().replaceAll('[', '').replaceAll(']', '')}',
+                style: const TextStyle(color: eckLightBlue),
+              ),
+              const SizedBox(
+                height: 10,
               ),
             ],
           ),
         ),
       ),
-
     );
   }
 }

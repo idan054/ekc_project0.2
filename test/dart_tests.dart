@@ -4,7 +4,8 @@ void main(){
   // Map 2 = meUser / guestUser as key
   // Map 3 = msgs as key (Not available cuz emailUser Key)
   // Map<String, Map<String, Map<String, Map>>> chatsDict = {
-  Map<String, Map<String, Map>> chatsDict = {
+  Map chatsDict = {
+  // Map<String, Map<String, Map>> chatsDict = {
     'chats': {
       'meUser': {
         'emailUser': 'idanbit80@gmail.com',
@@ -37,11 +38,19 @@ void main(){
     }
   };
 
-// ValueNotifier<List> _counter = ValueNotifier<List>([1,2,3,4,5,6,7]);
+  List a = ['a', 'b', 'c'];
+  List b = ['a', 'b', 'c'];
 
-    print('\ninit Coming!');
-    print(chatsDict['chats']?['meUser']);
-    print(chatsDict);
-    print('init Done \n');
+  List<List> c = [a, b];
 
+  var newUserId;
+
+  c.forEach((element) {
+    element.forEach((element) {
+      newUserId = element;
+    });
+  });
+
+  a.add(newUserId);
+  print(a);
 }

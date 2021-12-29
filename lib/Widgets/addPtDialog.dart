@@ -27,6 +27,7 @@ class AddPtDialog extends StatelessWidget {
     Widget _myTextField({controller, name}) {
       return TextField(
         controller: controller,
+        style: const TextStyle(color: eckLightBlue),
         decoration: InputDecoration(
             hintText: name,
             hintStyle: const TextStyle(color: eckLightBlue),
