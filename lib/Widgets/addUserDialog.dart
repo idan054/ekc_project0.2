@@ -1,20 +1,43 @@
+import 'package:ekc_project/Pages/flyerChat.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
-
+import 'package:google_sign_in/google_sign_in.dart';
+import 'dart:io';
+import 'package:ekc_project/Services/myFirebaseFlyer.dart';
+import 'package:ekc_project/Widgets/addUserDialog.dart';
+import 'package:ekc_project/Widgets/myAppBar.dart';
+import 'package:ekc_project/Widgets/myDrawers.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:flutter_chat_ui/flutter_chat_ui.dart';
+import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
+import 'package:mime/mime.dart';
+import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
 import '../myUtil.dart';
 
 class AddUserDialog extends StatelessWidget {
   final List<String>? currentUsers;
   final TextEditingController? contentFieldController;
-  final VoidCallback? onPressed;
+  // final Future<VoidCallback>? onPressed;
   final List<Widget> actions;
+  final types.Room room;
+  final GoogleSignInAccount? currentUser;
 
   AddUserDialog({
     this.currentUsers,
-    this.onPressed,
     this.contentFieldController,
     this.actions = const [],
+    required this.room,
+    this.currentUser
   });
 
   //  final TextEditingController _passwordController = TextEditingController();
@@ -54,14 +77,27 @@ class AddUserDialog extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               ElevatedButton(
-                onPressed:onPressed,
+                onPressed: () async {
+                  // popPress;
+                  addUsers2Project(room.id, projectAddUserController.text);
+
+/*                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => FireBaseChatPage(
+                      room: room,
+                          currentUser: currentUser,
+                          // user: _user,
+                        )),
+                  );*/
+                },
                 child: const Text('Add user',
                     style: TextStyle(color: Colors.white)),
               ),
-           /*   Text(
+              Text(
                 '(${currentUsers?.length})\n${currentUsers.toString().replaceAll('[', '').replaceAll(']', '')}',
                 style: const TextStyle(color: eckLightBlue),
-              ),*/
+              ),
               const SizedBox(
                 height: 10,
               ),

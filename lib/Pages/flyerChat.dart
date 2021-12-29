@@ -43,17 +43,19 @@ class FireBaseChatPage extends StatefulWidget {
 
 class _FireBaseChatPageState extends State<FireBaseChatPage> {
   bool _isAttachmentUploading = false;
-  List<String>? roomEmailUsers;
   var guestUser;
   // GoogleSignInAccount? guestUser;
   // UserCredential? guestUser;
   String? appBarTitle;
+  List<String>? roomEmailUsers;
 
   @override
   void initState() {
     print('widget.room.type');
     print(widget.room.type.toString());
     print(widget.room.name);
+
+
     // RoomType.direct
     // RoomType.group
     if (widget.room.type.toString() == 'RoomType.direct') {
@@ -62,7 +64,7 @@ class _FireBaseChatPageState extends State<FireBaseChatPage> {
           // Lastname is MAIL!
           setState(() {
             guestUser = user;
-            appBarTitle = 'Chat with ${guestUser.lastName}';
+            appBarTitle = '${guestUser.lastName}';
           });
         }
       });
@@ -73,11 +75,13 @@ class _FireBaseChatPageState extends State<FireBaseChatPage> {
     }
 
     // Get all users:
-    widget.room.users.forEach((element) {
-      roomEmailUsers?.add(element.lastName.toString());
+    widget.room.users.forEach((user) {
+      print('XXX user.lastName ${user.lastName}');
+      // roomEmailUsers?.add(user.lastName.toString());
+      roomEmailUsers = [...?roomEmailUsers, user.lastName.toString()];
     }
     );
-    // print('roomEmailUsers: ${roomEmailUsers?.length} ${roomEmailUsers.runtimeType} $roomEmailUsers');
+    print('roomEmailUsers: ${roomEmailUsers?.length} ${roomEmailUsers.runtimeType} $roomEmailUsers');
 
     super.initState();
   }
@@ -94,7 +98,7 @@ class _FireBaseChatPageState extends State<FireBaseChatPage> {
       //
       // appBar: myAppBar('Chat with ${widget.room.users.first.lastName}'),
       appBar: myAppBar(appBarTitle, actions: <Widget>[
-        Builder(
+        widget.room.type.toString() == 'RoomType.direct' ? Container() : Builder(
           // builder needed for Scaffold.of(context).openEndDrawer()
           builder: (context) => IconButton(
             icon: const Icon(Icons.group_add),
@@ -105,13 +109,9 @@ class _FireBaseChatPageState extends State<FireBaseChatPage> {
                     return AddUserDialog(
                       currentUsers: roomEmailUsers,
                       contentFieldController: projectAddUserController,
-                      onPressed: () async {
-              await addUsers2Project(widget.room.id, projectAddUserController.text);
-                            // Scaffold.of(context).showSnackBar(SnackBar(
-                            //   content: Text('User ${projectAddUserController.text} Added'),
-                            // ));
+                      currentUser: widget.currentUser,
+                      room: widget.room,
 
-                      },
                     );
                   });
             },
