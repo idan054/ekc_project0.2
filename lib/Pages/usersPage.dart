@@ -47,9 +47,7 @@ class _UsersPageState extends State<UsersPage> {
       MaterialPageRoute(
           builder: (context) => FireBaseChatPage(
                 room: room,
-                currentUser: widget.googleSign_user,
-                // user: _user,
-              )),
+                currentUser: widget.googleSign_user,         )),
     );
 
     // Navigate to the Chat screen

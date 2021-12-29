@@ -39,32 +39,59 @@ class _GoogleLoginAppState extends State<GoogleLoginApp> {
               ElevatedButton(
                   child: Text('Sign In with google'),
                   onPressed: () async {
-                    await _googleSignIn.signIn();
-                    setState(() async {
-                      GoogleSignInAccount? _user = _googleSignIn.currentUser;
-                      await FirebaseChatCore.instance
-                          .createUserInFirestore(
+                      final GoogleSignInAccount? googleSignInAccount =
+                      await _googleSignIn.signIn();
+
+                      if (googleSignInAccount != null) {
+                        final GoogleSignInAuthentication googleSignInAuthentication =
+                        await googleSignInAccount.authentication;
+
+                        final AuthCredential credential = GoogleAuthProvider
+                            .credential(
+                          accessToken: googleSignInAuthentication.accessToken,
+                          idToken: googleSignInAuthentication.idToken,
+                        );
+
+                        final FirebaseAuth auth = FirebaseAuth.instance;
+                        final UserCredential userCredential =
+                        await auth.signInWithCredential(credential);
+
+
+                        final User? fireStoreUser = userCredential.user;
+                        final myUid = fireStoreUser?.uid;
+
+                        print('loginPAge user $fireStoreUser');
+                        print('loginPAge myUid $myUid');
+
+                        setState(() {
+                          FirebaseChatCore.instance
+                              .createUserInFirestore(
                             types.User(
-                              firstName: _user?.displayName,
-                              id: _user?.id ?? UniqueKey().toString(),
+                              firstName: fireStoreUser?.displayName,
+                              id: fireStoreUser?.uid ?? UniqueKey().toString(),
                               // UID from Firebase Authentication
                               imageUrl: 'https://i.pravatar.cc/300',
-                              lastName: '${_user?.email}'.toLowerCase(),
+                              lastName: '${fireStoreUser?.email}'.toLowerCase(),
                             ),
                           )
-                          .whenComplete(() => print(
-                              'firebaseDatabase_basedFlyer Completed \n(FirebaseChatCore.instance.createUserInFirestore)'))
-                          .onError((error, stackTrace) => print(
-                              'firebaseDatabase_basedFlyer FAILED: $error \n-|- $stackTrace \n(FirebaseChatCore.instance.createUserInFirestore)'));
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => MainPage(
-                              googleSign_user: _user,
-                            )),
-                        // MaterialPageRoute(builder: (context) => MainPage(user: _user,)),
-                      );
-                    });
+                              .whenComplete(() =>
+                              print(
+                                  'firebaseDatabase_basedFlyer Completed \n(FirebaseChatCore.instance.createUserInFirestore)'))
+                              .onError((error, stackTrace) =>
+                              print(
+                                  'firebaseDatabase_basedFlyer FAILED: $error \n-|- $stackTrace \n(FirebaseChatCore.instance.createUserInFirestore)'));
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    MainPage(
+                                      googleSign_user: _googleSignIn
+                                          .currentUser,
+                                    )),
+                            // MaterialPageRoute(builder: (context) => MainPage(user: _user,)),
+                          );
+                        });
+                      }
                   }),
 
 
@@ -118,12 +145,12 @@ class _GoogleLoginAppState extends State<GoogleLoginApp> {
                     });
                   }),*/
 
-/*              ElevatedButton(child: Text('Sign Out'),
+              ElevatedButton(child: Text('Sign Out'),
                   onPressed: () async {
                     await _googleSignIn.signOut();
                     setState(() {});
                   }
-              ),*/
+              ),
             ],
           ), // Column
         ), // Center

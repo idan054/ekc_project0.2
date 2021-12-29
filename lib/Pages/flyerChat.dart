@@ -77,7 +77,7 @@ class _FireBaseChatPageState extends State<FireBaseChatPage> {
       roomEmailUsers?.add(element.lastName.toString());
     }
     );
-    print('roomEmailUsers: ${roomEmailUsers?.length} ${roomEmailUsers.runtimeType} $roomEmailUsers');
+    // print('roomEmailUsers: ${roomEmailUsers?.length} ${roomEmailUsers.runtimeType} $roomEmailUsers');
 
     super.initState();
   }

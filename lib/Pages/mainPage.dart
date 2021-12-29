@@ -58,6 +58,8 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
+    var fUSer = FirebaseAuth.instance.currentUser;
+
     return Scaffold(
         drawer: projectDrawer(context, widget.googleSign_user, true, null),
 
@@ -84,7 +86,9 @@ class _MainPageState extends State<MainPage> {
               ),
             ]),
         body: Center(
-          child: Text('Hello ${widget.googleSign_user?.displayName}\nChoose a project to start',
+          child: Text('Hello ${widget.googleSign_user?.displayName}\n'
+              'Choose a project to start\n'
+              'X ${fUSer?.email} X',
           textAlign: TextAlign.center,),
         ));
   }

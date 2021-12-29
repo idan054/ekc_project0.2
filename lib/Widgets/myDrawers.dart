@@ -4,7 +4,6 @@ import 'package:ekc_project/Services/myFirebaseFlyer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:ekc_project/Widgets/addPtDialog.dart';
 import 'package:ekc_project/Widgets/myAppBar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +21,8 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:mime/mime.dart';
 import 'package:open_file/open_file.dart';
 import 'package:uuid/uuid.dart';
+import 'package:ekc_project/Widgets/addPtDialog.dart';
+
 
 import '../myUtil.dart';
 
@@ -152,8 +153,9 @@ Widget projectDrawer(context, currentUser, bool isProject, String? roomId) {
                                     child: Text('Create'),
                                     onPressed: () async {
                                       Navigator.pop(context);
-                                      isProject
-                                          ? await addProjectRoom(
+                                      print('myDrawers() currentUser $currentUser');
+                                      // isProject ?
+                                      await addProjectRoom(
                                           context,
                                           nameControllerPt.text,
                                           currentUser)
@@ -161,8 +163,8 @@ Widget projectDrawer(context, currentUser, bool isProject, String? roomId) {
                                           ? 'New Project Added!'
                                           : 'New Task Added'))
                                           .onError((error, stackTrace) => print(
-                                          'New Project Error: $error // $stackTrace'))
-                                          : await addTask(
+                                          'New Project Error: $error // $stackTrace'));
+                                          /*: await addTask(
                                           roomId,
                                           nameControllerPt.text,
                                           contentControllerPt.text)
@@ -170,7 +172,7 @@ Widget projectDrawer(context, currentUser, bool isProject, String? roomId) {
                                           ? 'New Project Added!'
                                           : 'New Task Added'))
                                           .onError((error, stackTrace) => print(
-                                          'New Project Error: $error // $stackTrace'));
+                                          'New Project Error: $error // $stackTrace'));*/
                                     },
                                   ),
                                 ),

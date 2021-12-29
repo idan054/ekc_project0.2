@@ -58,10 +58,10 @@ class AddUserDialog extends StatelessWidget {
                 child: const Text('Add user',
                     style: TextStyle(color: Colors.white)),
               ),
-              Text(
+           /*   Text(
                 '(${currentUsers?.length})\n${currentUsers.toString().replaceAll('[', '').replaceAll(']', '')}',
                 style: const TextStyle(color: eckLightBlue),
-              ),
+              ),*/
               const SizedBox(
                 height: 10,
               ),
