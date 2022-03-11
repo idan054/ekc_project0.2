@@ -56,6 +56,7 @@ class _MainPageState extends State<MainPage> {
     // Navigate to the Chat screen
   }
 
+
   @override
   Widget build(BuildContext context) {
     var fUSer = FirebaseAuth.instance.currentUser;
