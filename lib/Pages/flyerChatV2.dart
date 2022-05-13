@@ -21,6 +21,7 @@ import 'package:mime/mime.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../Widgets/cardPost.dart';
 import '../myUtil.dart';
 import '../theme/constants.dart';
 import 'A_loginPage.dart';
@@ -50,10 +51,131 @@ class FlyerChatV2 extends StatefulWidget {
 class _FlyerChatV2State extends State<FlyerChatV2> {
   Widget _bubbleBuilder(
       Widget child, {
-        required message,
+        required types.Message message,
         required nextMessageInGroup,
       }) {
     var user = widget.currentUser;
+
+    // print(message.toJson());
+    var image = {user?.imageUrl};
+    var name = message.author.firstName ?? user?.firstName;
+    var createdAgo = timeAgo(message.createdAt);
+    var text = message.toJson()['text'];
+    var age = '${message.author.metadata?['age']
+                  ?? user?.metadata?['age']}'.substring(0, 2);
+
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Card(
+        margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
+        shape:
+        RoundedRectangleBorder(
+          side: BorderSide( color: Colors.grey[200]!, width: 1.5 ),
+          borderRadius: BorderRadius.circular(6.0),),
+        elevation: 0,
+        shadowColor: Colors.black87,
+        color: Colors.grey[100]!,
+        child: Column(
+          children: [
+            const SizedBox(height: 2,),
+            Container(
+              padding: const EdgeInsets.only(right: 10, left: 10),
+              alignment: Alignment.centerRight,
+              child:
+              InkWell(
+                child:
+                Icon(
+                  Icons.more_horiz,
+                  color: Colors.grey[200]!,
+                ),
+                onTap:() {},
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.only(right: 10, left: 10),
+              alignment: Alignment.topRight,
+              child: Text(text,
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.normal,
+                  fontSize: 16,
+                ),
+              ),
+            ),
+            Container(
+              height: 80,
+              padding: const EdgeInsets.only(right: 10),
+              // color: Colors.primaries[Random().nextInt(Colors.primaries.length)].shade300,
+              // color: cGrey100,
+              child:
+              Row(
+                children: [
+                  Flexible(
+                    child:
+                    ListTile(
+                        dense: true,
+                        visualDensity: VisualDensity.standard,
+                        title:
+                        Text(
+                          '$name ($age)',
+                          style: TextStyle(
+                            // color: Colors.primaries[Random().nextInt(Colors.primaries.length)].shade600,
+                            // color: Colors.black
+                              color: Colors.grey[600]!,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14),
+                          // style: bodyText1Format(context)
+                        ),
+                        subtitle:
+                        Text(
+                          /*' · '*/  'לפני ' '$createdAgo',
+                          textDirection: TextDirection.rtl,
+                          style: TextStyle(
+                            // color: Colors.primaries[Random().nextInt(Colors.primaries.length)].shade600,
+                            // color: Colors.black
+                              color: Colors.grey[600],
+                              fontWeight: FontWeight.normal,
+                              fontSize: 12),
+                          // style: bodyText1Format(context)
+                        ),
+                        contentPadding: EdgeInsets.zero,
+                        leading:   CircleAvatar(
+                          backgroundImage: NetworkImage('$image'),
+                        )
+                    ),
+                  ),
+
+
+                  Builder(
+                      builder: (context) =>
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10),
+                        child: Directionality(
+                          textDirection: TextDirection.rtl,
+                          child:
+                          CircleAvatar(
+                            backgroundColor: Colors.grey[200],
+                            radius: 20,
+                            child: IconButton(
+                                onPressed: (){},
+                                icon: Icon(Icons.send_rounded, color:
+                                Colors.grey[500],
+                                  size: 20,)),
+                          ),
+
+                        ),
+                      )
+                  )
+
+                  // const SizedBox(width: 10),
+                  // const Spacer(),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
 
     return Bubble(
       child: Column(
@@ -172,8 +294,8 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                        ?.metadata?['age'] - ageFilter;
                 snapshot.data?.forEach((msg) {
                   var _age = msg.author.metadata?['age'] ?? 0;
-                  if(_age != 0) print('$minAge - $_age - $maxAge');
-                  if(_age != 0) print(_age >= minAge && _age <= maxAge);
+                  // if(_age != 0) print('$minAge - $_age - $maxAge');
+                  // if(_age != 0) print(_age >= minAge && _age <= maxAge);
                   bool inAgeRange = _age >= minAge && _age <= maxAge;
 
                   if(inAgeRange || _age == 0) filteredMsgs.add(msg);
