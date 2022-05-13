@@ -47,10 +47,10 @@ class _MainPageState extends State<MainPage> {
       context,
       MaterialPageRoute(
           builder: (context) => FireBaseChatPage(
-                room: room,
-                currentUser: widget.googleSign_user,
-                // user: _user,
-              )),
+            room: room,
+            currentUser: widget.googleSign_user,
+            // user: _user,
+          )),
     );
 
     // Navigate to the Chat screen
@@ -90,7 +90,7 @@ class _MainPageState extends State<MainPage> {
           child: Text('Hello ${widget.googleSign_user?.displayName}\n'
               'Choose a project to start\n'
               'X ${fUSer?.email} X',
-          textAlign: TextAlign.center,),
+            textAlign: TextAlign.center,),
         ));
   }
 }

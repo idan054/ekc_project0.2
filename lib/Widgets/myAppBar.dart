@@ -8,6 +8,6 @@ PreferredSizeWidget? myAppBar(String? title, {actions = const <Widget> []}) {
         borderRadius: BorderRadius.vertical(
           bottom: Radius.circular(20),
         )),
-    title: Text(title ?? ''),
+    title: Center(child: Text(title ?? '')),
     actions: actions,
   );}
