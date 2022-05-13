@@ -45,7 +45,7 @@ class _UsersPageState extends State<UsersPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => FireBaseChatPage(
+          builder: (context) => FlyerChatOriginal(
                 room: room,
                 currentUser: widget.googleSign_user,         )),
     );

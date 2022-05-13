@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:ekc_project/Pages/mainPage.dart';
 import 'package:ekc_project/Services/myFirebaseFlyer.dart';
 import 'package:ekc_project/Widgets/addUserDialog.dart';
 import 'package:ekc_project/Widgets/myAppBar.dart';
@@ -19,9 +20,11 @@ import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../myUtil.dart';
+import '../theme/constants.dart';
+import 'A_loginPage.dart';
 import 'usersPage.dart';
 
-class FlyerChatOriginal extends StatefulWidget {
+class FlyerChatV2 extends StatefulWidget {
 /*  const FireBaseChatPage({
     Key? key,
     required this.room,
@@ -29,19 +32,19 @@ class FlyerChatOriginal extends StatefulWidget {
 
   final types.Room room;
 
-  final GoogleSignInAccount? currentUser;
+  final types.User? currentUser;
 
   // final UserCredential? currentUser;
 
   // final currentUser;
 
-  const FlyerChatOriginal({this.currentUser, required this.room}) : super();
+  const FlyerChatV2({this.currentUser, required this.room}) : super();
 
   @override
-  _FlyerChatOriginalState createState() => _FlyerChatOriginalState();
+  _FlyerChatV2State createState() => _FlyerChatV2State();
 }
 
-class _FlyerChatOriginalState extends State<FlyerChatOriginal> {
+class _FlyerChatV2State extends State<FlyerChatV2> {
   bool _isAttachmentUploading = false;
   var guestUser;
   // GoogleSignInAccount? guestUser;
@@ -60,13 +63,13 @@ class _FlyerChatOriginalState extends State<FlyerChatOriginal> {
     // RoomType.group
     if (widget.room.type.toString() == 'RoomType.direct') {
       widget.room.users.forEach((user) {
-        if (widget.currentUser?.email != user.lastName) {
+/*        if (widget.currentUser?.email != user.lastName) {
           // Lastname is MAIL!
           setState(() {
             guestUser = user;
             appBarTitle = '${guestUser.lastName}';
           });
-        }
+        }*/
       });
     } else {
       setState(() {
@@ -88,69 +91,44 @@ class _FlyerChatOriginalState extends State<FlyerChatOriginal> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      drawer:
-          // true = Projects Drawer
-          projectDrawer(context, widget.currentUser, true, widget.room.id),
-      endDrawer:
-          // false = Task Drawer
-          taskDrawer(context, widget.currentUser, false, widget.room.id),
-      //
-      // appBar: myAppBar('Chat with ${widget.room.users.first.lastName}'),
-      appBar: myAppBar(appBarTitle, actions: <Widget>[
-        widget.room.type.toString() == 'RoomType.direct' ? Container() : Builder(
-          // builder needed for Scaffold.of(context).openEndDrawer()
-          builder: (context) => IconButton(
-            icon: const Icon(Icons.group_add),
-            onPressed: () async {
-              showDialog(
-                  context: context,
-                  builder: (BuildContext dialogContext) {
-                    return AddUserDialog(
-                      currentUsers: roomEmailUsers,
-                      contentFieldController: projectAddUserController,
-                      currentUser: widget.currentUser,
-                      room: widget.room,
-
-                    );
-                  });
-            },
-          ),
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        appBar: myAppBar(
+          // appBarTitle,
+          'Home',
+          actions: [
+            IconButton(
+                onPressed: () => kPushNavigator(context, const LoginPage()),
+                icon: const Icon(Icons.logout_rounded))
+          ]
         ),
-        Builder(
-          // builder needed for Scaffold.of(context).openEndDrawer()
-          builder: (context) => IconButton(
-            icon: const Icon(Icons.list),
-            onPressed: () => Scaffold.of(context).openEndDrawer(),
-            tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
-          ),
-        ),
-      ]),
-      body: StreamBuilder<types.Room>(
-        initialData: widget.room,
-        stream: FirebaseChatCore.instance.room(widget.room.id),
-        builder: (context, snapshot) {
-          return StreamBuilder<List<types.Message>>(
-            initialData: const [],
-            stream: FirebaseChatCore.instance.messages(snapshot.data!),
-            builder: (context, snapshot) {
-              return SafeArea(
-                bottom: false,
-                child: Chat(
-                  isAttachmentUploading: _isAttachmentUploading,
-                  messages: snapshot.data ?? [],
-                  onAttachmentPressed: _handleAtachmentPressed,
-                  onMessageTap: _handleMessageTap,
-                  onPreviewDataFetched: _handlePreviewDataFetched,
-                  onSendPressed: _handleSendPressed,
-                  user: types.User(
-                    id: FirebaseChatCore.instance.firebaseUser?.uid ?? '',
+        body: StreamBuilder<types.Room>(
+          initialData: widget.room,
+          stream: FirebaseChatCore.instance.room(widget.room.id),
+          builder: (context, snapshot) {
+            return StreamBuilder<List<types.Message>>(
+              initialData: const [],
+              stream: FirebaseChatCore.instance.messages(snapshot.data!),
+              builder: (context, snapshot) {
+                return SafeArea(
+                  bottom: false,
+                  child: Chat(
+                    isAttachmentUploading: _isAttachmentUploading,
+                    messages: snapshot.data ?? [],
+                    onAttachmentPressed: _handleAtachmentPressed,
+                    onMessageTap: _handleMessageTap,
+                    onPreviewDataFetched: _handlePreviewDataFetched,
+                    onSendPressed: _handleSendPressed,
+                    user: types.User(
+                      id: FirebaseChatCore.instance.firebaseUser?.uid ?? '',
+                    ),
                   ),
-                ),
-              );
-            },
-          );
-        },
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }

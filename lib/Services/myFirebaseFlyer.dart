@@ -59,7 +59,7 @@ Future addProjectRoom(
   Navigator.push(
     context,
     MaterialPageRoute(
-        builder: (context) => FireBaseChatPage(
+        builder: (context) => FlyerChatOriginal(
               room: room,
               currentUser: currentUser,
               // user: _user,

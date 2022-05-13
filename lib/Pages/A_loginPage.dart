@@ -1,7 +1,8 @@
 // ignore_for_file: prefer_const_constructors
 
-import 'package:ekc_project/Pages/profilePage.dart';
+import 'package:ekc_project/Pages/B_profilePage.dart';
 import 'package:ekc_project/Widgets/myAppBar.dart';
+import 'package:ekc_project/theme/constants.dart';
 import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
@@ -14,15 +15,15 @@ import 'mainPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 
-class GoogleLoginApp extends StatefulWidget {
-  const GoogleLoginApp({Key? key}) : super(key: key);
+class LoginPage extends StatefulWidget {
+  const LoginPage({Key? key}) : super(key: key);
 
   @override
-  _GoogleLoginAppState createState() => _GoogleLoginAppState();
+  _LoginPageState createState() => _LoginPageState();
 }
 
-class _GoogleLoginAppState extends State<GoogleLoginApp> {
-  GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email']);
+class _LoginPageState extends State<LoginPage> {
+  final _googleSignIn = GoogleSignIn(scopes: ['email']);
 
   @override
   Widget build(BuildContext context) {
@@ -114,14 +115,10 @@ class _GoogleLoginAppState extends State<GoogleLoginApp> {
                                   'firebaseDatabase_basedFlyer FAILED: $error \n-|- $stackTrace \n(FirebaseChatCore.instance.createUserInFirestore)'));
 
 
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    // MainPage(googleSign_user: _googleSignIn.currentUser,)
-                                    ProfilePage(userData: userData)
-                            ),
-                          );
+                          kPushNavigator(context,
+                              ProfilePage(userData: userData),
+                              /*replace: true*/);
+
                         });
                       }
                     },

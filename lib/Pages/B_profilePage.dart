@@ -21,7 +21,10 @@ import 'package:mime/mime.dart';
 import 'package:open_file/open_file.dart';
 import 'package:uuid/uuid.dart';
 
+import '../theme/constants.dart';
+import 'dummyPage.dart';
 import 'flyerChat.dart';
+import 'flyerChatV2.dart';
 
 class ProfilePage extends StatefulWidget {
   // bool isGoogleSign_user;
@@ -74,7 +77,10 @@ class _ProfilePageState extends State<ProfilePage> {
                 child: CupertinoDatePicker(
                   mode: CupertinoDatePickerMode.date,
                   initialDateTime: DateTime.now(),
-                  onDateTimeChanged: (DateTime dTime) => selectedTime = dTime,
+                  onDateTimeChanged: (DateTime dTime)
+                  {
+                    selectedTime = dTime;
+                  },
                 ),
               ),
             ),
@@ -90,8 +96,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     var user = widget.userData;
 
                     //the birthday's date
-                    final difference = DateTime.now().difference(selectedTime).inDays;
-                    final age = difference/365;
+                    var difference = DateTime.now().difference(selectedTime).inDays;
+                    var age = difference/365;
                     print('Age is $age');
 
                     var userData = widget.userData?.copyWith(
@@ -107,9 +113,11 @@ class _ProfilePageState extends State<ProfilePage> {
                     );
 
                     if(age < 12){
+                      print('True - AGE: $age');
                       cleanSnack(context, text: 'אתה חייב להיות מעל גיל 12.');
                     } else {
-                      setState(() {
+                      print('False - AGE: $age');
+                      setState(() async {
                         FirebaseChatCore.instance.createUserInFirestore(userData!)
                             .whenComplete(() =>
                             print(
@@ -120,14 +128,20 @@ class _ProfilePageState extends State<ProfilePage> {
                                 'firebaseDatabase_basedFlyer FAILED: $error \n-|- $stackTrace \n(FirebaseChatCore.instance.createUserInFirestore)'));
 
 
-/*                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                            MainPage(googleSign_user: _googleSignIn.currentUser,)
-                            // ProfilePage(userData: userData)
-                        ),
-                      );*/
+                        // final room = await FirebaseChatCore.instance
+                        //     .room('1OepWQhysrUuqzU6eYOR');
+
+                        // Fixing push replacement
+                        Navigator.of(context).popUntil((route) => route.isFirst);
+                        kPushNavigator(context,
+                            FlyerChatV2(
+                              room: types.Room(
+                                  users: [widget.userData!], // Adds the user to group
+                                  type: types.RoomType.group,
+                                  id: '1OepWQhysrUuqzU6eYOR'),
+                              currentUser: widget.userData,),
+                          replace: true);
+
                       });
                     }
                   },

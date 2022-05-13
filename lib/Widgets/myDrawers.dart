@@ -94,7 +94,7 @@ Widget projectDrawer(context, currentUser, bool isProject, String? roomId) {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => FireBaseChatPage(
+                                builder: (context) => FlyerChatOriginal(
                                   room: snapshot.data![i],
                                   currentUser: currentUser,
                                   // user: _user,
