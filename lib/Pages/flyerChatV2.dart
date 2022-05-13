@@ -83,12 +83,15 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
     var user = widget.currentUser;
 
     // print(message.toJson());
-    var image = {user?.imageUrl};
-    var name = message.author.firstName ?? user?.firstName;
+    // String image = user?.imageUrl ?? 'https://bit.ly/3l64LIk';
+    String image = message.toJson()['author']['imageUrl'] ?? user?.imageUrl;
+    // print('X IMAGE: $image');
+    // var name = message.author.firstName ?? user?.firstName;
+    var name = message.toJson()['author']['firstName'] ?? 'user name here';
     var createdAgo = timeAgo(message.createdAt);
     var text = message.toJson()['text'];
     var age = '${message.author.metadata?['age']
-                  ?? user?.metadata?['age']}'.substring(0, 2);
+                  ?? 'XY'}'.substring(0, 2);
 
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -167,6 +170,7 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                         contentPadding: EdgeInsets.zero,
                         leading:   CircleAvatar(
                           backgroundImage: NetworkImage('$image'),
+                          // backgroundImage: NetworkImage('https://bit.ly/3l64LIk'),
                         )
                     ),
                   ),
@@ -298,7 +302,7 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
       child: Scaffold(
         appBar: myAppBar(
           // appBarTitle,
-          'Home',
+          'Home: ${widget.currentUser?.firstName}',
           actions: [
             IconButton(
                 onPressed: () => kPushNavigator(context, const LoginPage()),
@@ -344,8 +348,9 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                     onPreviewDataFetched: _handlePreviewDataFetched,
                     onSendPressed: (partialText) async =>
                         _handleSendPressed(partialText, widget.currentUser!),
-                    // user: types.User(id: FirebaseChatCore.instance.firebaseUser?.uid ?? '',),
-                    user: widget.currentUser!,
+                    user: types.User(
+                      id: FirebaseChatCore.instance.firebaseUser?.uid ?? '',),
+                    // user: widget.currentUser!,
                     bubbleBuilder: _bubbleBuilder,
                     showUserAvatars: false,
                     showUserNames: true,
@@ -526,12 +531,14 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
   }
 
   void _handleSendPressed(types.PartialText message, types.User currentUser) async {
+    print('my little msg $message');
+    var newMsg = message.metadata?.update
+        ('8', (value) => 'New', ifAbsent: () => 'Mercury');
+
+    // FirebaseChatCore.instance.updateMessage(newMsg, roomId);
 
 
-
-    var getUser =
-      await FirebaseFirestore.instance.collection('users')
-          .doc(currentUser.id).get();
+    var getUser = await FirebaseFirestore.instance.collection('users').doc(currentUser.id).get();
     //  2022-05-1317: 25: 18.649543,
     String _lastHomeMessage = getUser.data()?['metadata']['lastHomeMessage'];
     final _dateFormat = intl.DateFormat("yyyy-MM-dd HH:mm:ss");
