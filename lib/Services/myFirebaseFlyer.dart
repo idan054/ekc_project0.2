@@ -74,6 +74,22 @@ Future addProjectRoom(
 //   config.usersCollectionName,
 // );
 
+Future<void> getFirestoreUser(uid) async {
+  var getUser =
+    await FirebaseFirestore.instance.collection('users').doc(uid).get();
+  // List currentUsers = user.get('userIds');
+  // print('currentUsersA ${currentUsers.length} $currentUsers');
+
+  var userSearch = FirebaseFirestore.instance
+      .collection('users')
+      // .where('lastName', isEqualTo: user2search)
+      .snapshots();
+
+  var user = userSearch.first;
+  print('USERX $user');
+  // return user;
+}
+
 Future<void> addUsers2Project(roomId, String? user2search) async {
   var thisRoom =
       await FirebaseFirestore.instance.collection('rooms').doc(roomId).get();

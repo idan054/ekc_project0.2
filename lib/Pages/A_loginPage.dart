@@ -218,7 +218,7 @@ Widget buildInfoListTile(BuildContext context, {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: Colors.grey[600],
+                  color: Colors.grey[900],
                 ),
               ),
               subtitle: Text(
@@ -226,7 +226,7 @@ Widget buildInfoListTile(BuildContext context, {
                 style: TextStyle(
                   fontSize: 13,
                   // fontWeight: FontWeight.bold,
-                  color: Colors.grey[500],
+                  color: Colors.grey[700],
               ),
             ),
           ),

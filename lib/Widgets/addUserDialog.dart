@@ -79,7 +79,7 @@ class AddUserDialog extends StatelessWidget {
               ElevatedButton(
                 onPressed: () async {
                   // popPress;
-                  addUsers2Project(room.id, projectAddUserController.text);
+                  // getFirestoreUser(room.id, projectAddUserController.text);
 
 /*                  await Navigator.push(
                     context,

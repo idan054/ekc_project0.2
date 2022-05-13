@@ -1,13 +1,15 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 
-PreferredSizeWidget? myAppBar(String? title, {actions = const <Widget> []}) {
+PreferredSizeWidget? myAppBar(String? title, {bool stf = false, actions = const <Widget> []}) {
   return AppBar(
     backgroundColor: neutral0,
     shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
           bottom: Radius.circular(20),
         )),
-    title: Center(child: Text(title ?? '')),
+    title: Text(title ?? ''),
     actions: actions,
   );}

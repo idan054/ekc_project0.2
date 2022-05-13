@@ -1,8 +1,31 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:ekc_project/Pages/mainPage.dart';
 import 'package:ekc_project/Services/myFirebaseFlyer.dart';
-import 'package:ekc_project/Widgets/addUserDialog.dart';
+import 'package:intl/intl.dart' as intl;
 
+import 'package:ekc_project/Widgets/addUserDialog.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ekc_project/Pages/flyerChat.dart';
+import 'package:ekc_project/Widgets/addPtDialog.dart';
+import 'package:ekc_project/Widgets/myAppBar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
+import 'dart:convert';
+import 'package:ekc_project/Widgets/myDrawers.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:flutter_chat_ui/flutter_chat_ui.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:mime/mime.dart';
+import 'package:open_file/open_file.dart';
+import 'package:uuid/uuid.dart';
 import 'package:ekc_project/Widgets/myAppBar.dart';
 import 'package:ekc_project/Widgets/myDrawers.dart';
 import 'package:file_picker/file_picker.dart';
@@ -22,6 +45,7 @@ import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../Widgets/cardPost.dart';
+import '../Widgets/snackbar.dart';
 import '../myUtil.dart';
 import '../theme/constants.dart';
 import 'A_loginPage.dart';
@@ -48,7 +72,9 @@ class FlyerChatV2 extends StatefulWidget {
   _FlyerChatV2State createState() => _FlyerChatV2State();
 }
 
+
 class _FlyerChatV2State extends State<FlyerChatV2> {
+
   Widget _bubbleBuilder(
       Widget child, {
         required types.Message message,
@@ -264,6 +290,9 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
 
   @override
   Widget build(BuildContext context) {
+    var _timePassed = 0;
+    var timeLeft = 60 * 5 - _timePassed;
+
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
@@ -310,8 +339,9 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                     messages: filteredMsgs,
                     onAttachmentPressed: _handleAtachmentPressed,
                     onMessageTap: _handleMessageTap,
+                    sendButtonVisibilityMode: SendButtonVisibilityMode.always,
                     onPreviewDataFetched: _handlePreviewDataFetched,
-                    onSendPressed: (partialText) =>
+                    onSendPressed: (partialText) async =>
                         _handleSendPressed(partialText, widget.currentUser!),
                     // user: types.User(id: FirebaseChatCore.instance.firebaseUser?.uid ?? '',),
                     user: widget.currentUser!,
@@ -325,6 +355,26 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
             );
           },
         ),
+        /*floatingActionButton: Offstage(
+          offstage: timeLeft <= 0,
+          child: FloatingActionButton(
+            onPressed: (){},
+            child: StatefulBuilder(
+                builder: (context, setState){
+*//*                  Timer.periodic(const Duration(seconds: 1), (timer) {
+                    setState((){
+                      print('1 sec passed.');
+                      print('$timeLeft');
+                      print('${timeLeft <= 0}');
+                      timeLeft = timeLeft - 1;
+                    if (timeLeft <= 0) timer.cancel();
+                    });
+                    // timer.cancel();
+                  });*//*
+                  return Text('$timeLeft');
+                }),
+          ),
+        ),*/
       ),
     );
   }
@@ -474,42 +524,62 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
     FirebaseChatCore.instance.updateMessage(updatedMessage, widget.room.id);
   }
 
-  void _handleSendPressed(types.PartialText message, types.User currentUser) {
-    var _user = FirebaseAuth.instance.currentUser;
-    print('_user: ${_user?.uid}');
-
-    var _userData = currentUser.copyWith(
-        firstName: '${currentUser.firstName}',
-        imageUrl: '${currentUser.imageUrl}',
-        metadata: {
-          'id' : currentUser.id,
-          'email' : '${currentUser.metadata?['email']}',
-          'birthDay' : currentUser.metadata?['birthDay'],
-          'age' : currentUser.metadata?['age'],
-          'lastHomeMessage': '${DateTime.now()}',
-        }
-    );
-
-
-      setState(() async {
-        // create or update
-        FirebaseChatCore.instance.createUserInFirestore(_userData)
-            .whenComplete(() =>
-            print(
-                'firebaseDatabase_basedFlyer Completed \n(FirebaseChatCore.instance.createUserInFirestore)'
-                    '\n userData: $_userData'))
-            .onError((error, stackTrace) =>
-            print(
-                'firebaseDatabase_basedFlyer FAILED: $error \n-|- $stackTrace \n(FirebaseChatCore.instance.createUserInFirestore)'));
-
-      });
+  void _handleSendPressed(types.PartialText message, types.User currentUser) async {
 
 
 
-    FirebaseChatCore.instance.sendMessage(
-      message,
-      widget.room.id,
-    );
+    var getUser =
+      await FirebaseFirestore.instance.collection('users')
+          .doc(currentUser.id).get();
+    //  2022-05-1317: 25: 18.649543,
+    String _lastHomeMessage = getUser.data()?['metadata']['lastHomeMessage'];
+    final _dateFormat = intl.DateFormat("yyyy-MM-dd HH:mm:ss");
+    final date = _dateFormat.parse(_lastHomeMessage); //Converting String to DateTime object
+
+    final nowDate = DateTime.now();
+    final difference = nowDate.difference(date);
+    print('difference.inSeconds');
+    print(difference.inSeconds);
+
+    if (difference.inSeconds < 60 * 3){
+      cleanSnack(context, text: 'יש להמתין עוד '
+                                '${60 * 3 - difference.inSeconds}'
+                                ' שניות');
+    } else {
+      var _user = FirebaseAuth.instance.currentUser;
+      var lastHomeMessage = DateTime.now();
+      print('_user: ${_user?.uid}');
+
+      var _userData = currentUser.copyWith(
+          firstName: '${currentUser.firstName}',
+          imageUrl: '${currentUser.imageUrl}',
+          metadata: {
+            'id' : currentUser.id,
+            'email' : '${currentUser.metadata?['email']}',
+            'birthDay' : currentUser.metadata?['birthDay'],
+            'age' : currentUser.metadata?['age'],
+            'lastHomeMessage': '$lastHomeMessage',
+          }
+      );
+
+
+        setState(() async {
+          // create or update
+          FirebaseChatCore.instance.createUserInFirestore(_userData)
+              .whenComplete(() =>
+              print(
+                  'firebaseDatabase_basedFlyer Completed \n(FirebaseChatCore.instance.createUserInFirestore)'
+                      '\n userData: $_userData'))
+              .onError((error, stackTrace) =>
+              print(
+                  'firebaseDatabase_basedFlyer FAILED: $error \n-|- $stackTrace \n(FirebaseChatCore.instance.createUserInFirestore)'));
+        });
+
+      FirebaseChatCore.instance.sendMessage(
+        message,
+        widget.room.id,
+      );
+      }
   }
 
   void _setAttachmentUploading(bool uploading) {
