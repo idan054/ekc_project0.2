@@ -331,6 +331,7 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                 //   print(_age.runtimeType);
                 });
 
+
                 return SafeArea(
                   bottom: false,
                   child: Chat(
