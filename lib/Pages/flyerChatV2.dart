@@ -311,7 +311,8 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                     onAttachmentPressed: _handleAtachmentPressed,
                     onMessageTap: _handleMessageTap,
                     onPreviewDataFetched: _handlePreviewDataFetched,
-                    onSendPressed: _handleSendPressed,
+                    onSendPressed: (partialText) =>
+                        _handleSendPressed(partialText, widget.currentUser!),
                     // user: types.User(id: FirebaseChatCore.instance.firebaseUser?.uid ?? '',),
                     user: widget.currentUser!,
                     bubbleBuilder: _bubbleBuilder,
@@ -473,15 +474,42 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
     FirebaseChatCore.instance.updateMessage(updatedMessage, widget.room.id);
   }
 
-  void _handleSendPressed(types.PartialText message) {
+  void _handleSendPressed(types.PartialText message, types.User currentUser) {
     var _user = FirebaseAuth.instance.currentUser;
     print('_user: ${_user?.uid}');
 
-
-    FirebaseChatCore.instance.sendMessage(
-      message,
-      widget.room.id,
+    var _userData = currentUser.copyWith(
+        firstName: '${currentUser.firstName}',
+        imageUrl: '${currentUser.imageUrl}',
+        metadata: {
+          'id' : currentUser.id,
+          'email' : '${currentUser.metadata?['email']}',
+          'birthDay' : currentUser.metadata?['birthDay'],
+          'age' : currentUser.metadata?['age'],
+          'lastHomeMessage': '${DateTime.now()}',
+        }
     );
+
+
+      setState(() async {
+        // create or update
+        FirebaseChatCore.instance.createUserInFirestore(_userData)
+            .whenComplete(() =>
+            print(
+                'firebaseDatabase_basedFlyer Completed \n(FirebaseChatCore.instance.createUserInFirestore)'
+                    '\n userData: $_userData'))
+            .onError((error, stackTrace) =>
+            print(
+                'firebaseDatabase_basedFlyer FAILED: $error \n-|- $stackTrace \n(FirebaseChatCore.instance.createUserInFirestore)'));
+
+      });
+
+
+
+    // FirebaseChatCore.instance.sendMessage(
+    //   message,
+    //   widget.room.id,
+    // );
   }
 
   void _setAttachmentUploading(bool uploading) {

@@ -118,6 +118,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     } else {
                       print('False - AGE: $age');
                       setState(() async {
+                        // create or update
                         FirebaseChatCore.instance.createUserInFirestore(userData!)
                             .whenComplete(() =>
                             print(
@@ -139,7 +140,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                   users: [widget.userData!], // Adds the user to group
                                   type: types.RoomType.group,
                                   id: '1OepWQhysrUuqzU6eYOR'),
-                              currentUser: widget.userData,),
+                              // currentUser: widget.userData,),
+                              currentUser: userData,),
                           replace: true);
 
                       });
