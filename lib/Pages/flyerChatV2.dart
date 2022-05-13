@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:ekc_project/Pages/mainPage.dart';
 import 'package:ekc_project/Services/myFirebaseFlyer.dart';
 import 'package:ekc_project/Widgets/addUserDialog.dart';
+
 import 'package:ekc_project/Widgets/myAppBar.dart';
 import 'package:ekc_project/Widgets/myDrawers.dart';
 import 'package:file_picker/file_picker.dart';
@@ -11,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
+import 'package:flutter_chat_ui/flutter_chat_ui.dart' as lol;
 import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
@@ -23,6 +25,7 @@ import '../myUtil.dart';
 import '../theme/constants.dart';
 import 'A_loginPage.dart';
 import 'usersPage.dart';
+import 'package:bubble/bubble.dart';
 
 class FlyerChatV2 extends StatefulWidget {
 /*  const FireBaseChatPage({
@@ -45,6 +48,53 @@ class FlyerChatV2 extends StatefulWidget {
 }
 
 class _FlyerChatV2State extends State<FlyerChatV2> {
+  Widget _bubbleBuilder(
+      Widget child, {
+        required message,
+        required nextMessageInGroup,
+      }) {
+    var user = widget.currentUser;
+
+    return Bubble(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if ('${user?.id}' == message.author.id)
+                Text('${user?.firstName}'),
+              CircleAvatar(
+                radius: 18,
+                backgroundImage: NetworkImage('${user?.imageUrl}'),
+              ),
+              if ('${user?.id}' != message.author.id)
+                Text('${user?.firstName}',
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14)
+                ),
+            ],
+          ),
+          child,
+        ],
+      ),
+      color: '${user?.id}' != message.author.id ||
+          message.type == types.MessageType.image
+          ? const Color(0xfff5f5f7)
+          : const Color(0xff6f61e8),
+      margin: nextMessageInGroup
+          ? const BubbleEdges.symmetric(horizontal: 6)
+          : null,
+      nip: nextMessageInGroup
+          ? BubbleNip.no
+          : '${user?.id}' != message.author.id
+          ? BubbleNip.leftBottom
+          : BubbleNip.rightBottom,
+    );
+  }
+
+
   bool _isAttachmentUploading = false;
   var guestUser;
   // GoogleSignInAccount? guestUser;
@@ -89,6 +139,7 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
     super.initState();
   }
 
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -111,18 +162,40 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
               initialData: const [],
               stream: FirebaseChatCore.instance.messages(snapshot.data!),
               builder: (context, snapshot) {
+
+                List<types.Message> filteredMsgs = [];
+                print('snapshot.data');
+                var ageFilter = 3;  //{14 [17] 20}
+                var maxAge = widget.currentUser
+                        ?.metadata?['age']+ ageFilter;
+                var minAge = widget.currentUser
+                       ?.metadata?['age'] - ageFilter;
+                snapshot.data?.forEach((msg) {
+                  var _age = msg.author.metadata?['age'] ?? 0;
+                  if(_age != 0) print('$minAge - $_age - $maxAge');
+                  if(_age != 0) print(_age >= minAge && _age <= maxAge);
+                  bool inAgeRange = _age >= minAge && _age <= maxAge;
+
+                  if(inAgeRange || _age == 0) filteredMsgs.add(msg);
+                //   print(_age.runtimeType);
+                });
+
                 return SafeArea(
                   bottom: false,
                   child: Chat(
                     isAttachmentUploading: _isAttachmentUploading,
-                    messages: snapshot.data ?? [],
+                    // messages: snapshot.data ?? [],
+                    messages: filteredMsgs,
                     onAttachmentPressed: _handleAtachmentPressed,
                     onMessageTap: _handleMessageTap,
                     onPreviewDataFetched: _handlePreviewDataFetched,
                     onSendPressed: _handleSendPressed,
-                    user: types.User(
-                      id: FirebaseChatCore.instance.firebaseUser?.uid ?? '',
-                    ),
+                    // user: types.User(id: FirebaseChatCore.instance.firebaseUser?.uid ?? '',),
+                    user: widget.currentUser!,
+                    bubbleBuilder: _bubbleBuilder,
+                    showUserAvatars: false,
+                    showUserNames: true,
+                    // customMessageBuilder: ,
                   ),
                 );
               },
@@ -279,6 +352,10 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
   }
 
   void _handleSendPressed(types.PartialText message) {
+    var _user = FirebaseAuth.instance.currentUser;
+    print('_user: ${_user?.uid}');
+
+
     FirebaseChatCore.instance.sendMessage(
       message,
       widget.room.id,
@@ -291,3 +368,4 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
     });
   }
 }
+
