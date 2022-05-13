@@ -506,10 +506,10 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
 
 
 
-    // FirebaseChatCore.instance.sendMessage(
-    //   message,
-    //   widget.room.id,
-    // );
+    FirebaseChatCore.instance.sendMessage(
+      message,
+      widget.room.id,
+    );
   }
 
   void _setAttachmentUploading(bool uploading) {
