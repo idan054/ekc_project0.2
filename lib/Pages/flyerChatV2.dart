@@ -542,9 +542,14 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
     print('difference.inSeconds');
     print(difference.inSeconds);
 
+    var waitUntil =
+    DateTime.now()
+            .add(Duration(seconds: 60 * 3 - difference.inSeconds));
+
     if (difference.inSeconds < 60 * 3){
-      cleanSnack(context, text: 'יש להמתין עוד '
-                                '${60 * 3 - difference.inSeconds}'
+      cleanSnack(context, text: 'יש להמתין עד '
+                                '$waitUntil'
+                                '(${60 * 3 - difference.inSeconds}) '
                                 ' שניות');
     } else {
       var _user = FirebaseAuth.instance.currentUser;
@@ -564,7 +569,7 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
       );
 
 
-        setState(() async {
+        // setState(() async {
           // create or update
           FirebaseChatCore.instance.createUserInFirestore(_userData)
               .whenComplete(() =>
@@ -574,12 +579,12 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
               .onError((error, stackTrace) =>
               print(
                   'firebaseDatabase_basedFlyer FAILED: $error \n-|- $stackTrace \n(FirebaseChatCore.instance.createUserInFirestore)'));
-        });
+        // });
 
       FirebaseChatCore.instance.sendMessage(
         message,
         widget.room.id,
-      );
+        );
       }
   }
 

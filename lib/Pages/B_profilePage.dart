@@ -108,7 +108,8 @@ class _ProfilePageState extends State<ProfilePage> {
                           'id' : '${user?.id ?? UniqueKey()}',
                           'email' : user?.metadata?.values.first,
                           'birthDay' : '$selectedTime',
-                          'age' : age
+                          'age' : age,
+                          'lastHomeMessage': '${DateTime(01, 01, 2000)}',
                         }
                     );
 
