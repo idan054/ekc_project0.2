@@ -13,12 +13,15 @@ NavigatorState kNavigator(context) => Navigator.of(context);
 
 
 // Smart navigation shortcuts
-Future<dynamic> kPushNavigator(context, screen,{bool replace = false}) =>
-    replace ?
-    Navigator.of(context).pushReplacement(
+Future<dynamic> kPushNavigator(context, screen,{bool replace = false}) {
+    // Fixing push replacement
+    if (replace) Navigator.of(context).popUntil((route) => route.isFirst);
+    return
+        replace ?  Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => screen))
-    : Navigator.of(context).push(
+            :  Navigator.of(context).push(
         MaterialPageRoute(builder: (context) => screen));
+}
 
 /*Future<dynamic> kPushProvider(context, {
   required ChangeNotifier? Function(BuildContext) model,

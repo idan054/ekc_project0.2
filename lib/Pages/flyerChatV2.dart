@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:ekc_project/Pages/mainPage.dart';
+import 'package:ekc_project/Pages/roomsPage.dart';
 import 'package:ekc_project/Services/myFirebaseFlyer.dart';
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart' as intl;
@@ -50,6 +51,7 @@ import '../Widgets/snackbar.dart';
 import '../myUtil.dart';
 import '../theme/constants.dart';
 import 'A_loginPage.dart';
+import 'flyerDm.dart';
 import 'usersPage.dart';
 import 'package:bubble/bubble.dart';
 
@@ -73,18 +75,15 @@ class FlyerChatV2 extends StatefulWidget {
   _FlyerChatV2State createState() => _FlyerChatV2State();
 }
 
-
 class _FlyerChatV2State extends State<FlyerChatV2> {
-
   Widget _bubbleBuilder(
-      Widget child, {
-        required types.Message message,
-        required nextMessageInGroup,
-      }) {
-
+    Widget child, {
+    required types.Message message,
+    required nextMessageInGroup,
+  }) {
     var user = widget.currentUser;
 
-    print('Message C: ${message.toJson()}');
+    // print('Message C: ${message.toJson()}');
 
     // String image = user?.imageUrl ?? 'https://bit.ly/3l64LIk';
     String image = message.toJson()['author']['imageUrl'] ?? user?.imageUrl;
@@ -93,40 +92,40 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
     var name = message.toJson()['author']['firstName'] ?? 'user name here';
     var createdAgo = timeAgo(message.createdAt);
     var text = message.toJson()['text'];
-    var age = '${message.author.metadata?['age']
-                  ?? 'XY'}'.substring(0, 2);
+    var age = '${message.author.metadata?['age'] ?? 'XY'}'.substring(0, 2);
 
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Card(
         margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
-        shape:
-        RoundedRectangleBorder(
-          side: BorderSide( color: Colors.grey[200]!, width: 1.5 ),
-          borderRadius: BorderRadius.circular(6.0),),
+        shape: RoundedRectangleBorder(
+          side: BorderSide(color: Colors.grey[200]!, width: 1.5),
+          borderRadius: BorderRadius.circular(6.0),
+        ),
         elevation: 0,
         shadowColor: Colors.black87,
         color: Colors.grey[100]!,
         child: Column(
           children: [
-            const SizedBox(height: 2,),
+            const SizedBox(
+              height: 2,
+            ),
             Container(
               padding: const EdgeInsets.only(right: 10, left: 10),
               alignment: Alignment.centerRight,
-              child:
-              InkWell(
-                child:
-                Icon(
+              child: InkWell(
+                child: Icon(
                   Icons.more_horiz,
                   color: Colors.grey[200]!,
                 ),
-                onTap:() {},
+                onTap: () {},
               ),
             ),
             Container(
               padding: const EdgeInsets.only(right: 10, left: 10),
               alignment: Alignment.topRight,
-              child: Text(text,
+              child: Text(
+                text,
                 style: const TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.normal,
@@ -139,66 +138,68 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
               padding: const EdgeInsets.only(right: 10),
               // color: Colors.primaries[Random().nextInt(Colors.primaries.length)].shade300,
               // color: cGrey100,
-              child:
-              Row(
+              child: Row(
                 children: [
                   Flexible(
-                    child:
-                    ListTile(
+                    child: ListTile(
                         dense: true,
                         visualDensity: VisualDensity.standard,
-                        title:
-                        Text(
+                        title: Text(
                           '$name ($age)',
                           style: TextStyle(
-                            // color: Colors.primaries[Random().nextInt(Colors.primaries.length)].shade600,
-                            // color: Colors.black
+                              // color: Colors.primaries[Random().nextInt(Colors.primaries.length)].shade600,
+                              // color: Colors.black
                               color: Colors.grey[600]!,
                               fontWeight: FontWeight.bold,
                               fontSize: 14),
                           // style: bodyText1Format(context)
                         ),
-                        subtitle:
-                        Text(
-                          /*' · '*/  'לפני ' '$createdAgo',
+                        subtitle: Text(
+                          /*' · '*/ 'לפני ' '$createdAgo',
                           textDirection: TextDirection.rtl,
                           style: TextStyle(
-                            // color: Colors.primaries[Random().nextInt(Colors.primaries.length)].shade600,
-                            // color: Colors.black
+                              // color: Colors.primaries[Random().nextInt(Colors.primaries.length)].shade600,
+                              // color: Colors.black
                               color: Colors.grey[600],
                               fontWeight: FontWeight.normal,
                               fontSize: 12),
                           // style: bodyText1Format(context)
                         ),
                         contentPadding: EdgeInsets.zero,
-                        leading:   CircleAvatar(
-                          backgroundImage: NetworkImage('$image'),
+                        leading: CircleAvatar(
+                          backgroundImage: NetworkImage(image),
                           // backgroundImage: NetworkImage('https://bit.ly/3l64LIk'),
-                        )
-                    ),
+                        )),
                   ),
 
-
                   Builder(
-                      builder: (context) =>
-                      Padding(
-                        padding: const EdgeInsets.only(left: 10),
-                        child: Directionality(
-                          textDirection: TextDirection.rtl,
-                          child:
-                          CircleAvatar(
-                            backgroundColor: Colors.grey[200],
-                            radius: 20,
-                            child: IconButton(
-                                onPressed: (){},
-                                icon: Icon(Icons.send_rounded, color:
-                                Colors.grey[500],
-                                  size: 20,)),
-                          ),
+                      builder: (context) => Padding(
+                            padding: const EdgeInsets.only(left: 10),
+                            child: Directionality(
+                              textDirection: TextDirection.rtl,
+                              child: CircleAvatar(
+                                backgroundColor: Colors.grey[200],
+                                radius: 20,
+                                child: IconButton(
+                                    onPressed: () async {
+                                      final room = await FirebaseChatCore
+                                          .instance
+                                          .createRoom(message.author);
 
-                        ),
-                      )
-                  )
+                                      kPushNavigator(
+                                          context,
+                                          FlyerDm(
+                                            room: room,
+                                          ));
+                                    },
+                                    icon: Icon(
+                                      Icons.send_rounded,
+                                      color: Colors.grey[500],
+                                      size: 20,
+                                    )),
+                              ),
+                            ),
+                          ))
 
                   // const SizedBox(width: 10),
                   // const Spacer(),
@@ -225,17 +226,15 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
               ),
               if ('${user?.id}' != message.author.id)
                 Text('${user?.firstName}',
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14)
-                ),
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 14)),
             ],
           ),
           child,
         ],
       ),
       color: '${user?.id}' != message.author.id ||
-          message.type == types.MessageType.image
+              message.type == types.MessageType.image
           ? const Color(0xfff5f5f7)
           : const Color(0xff6f61e8),
       margin: nextMessageInGroup
@@ -244,11 +243,10 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
       nip: nextMessageInGroup
           ? BubbleNip.no
           : '${user?.id}' != message.author.id
-          ? BubbleNip.leftBottom
-          : BubbleNip.rightBottom,
+              ? BubbleNip.leftBottom
+              : BubbleNip.rightBottom,
     );
   }
-
 
   bool _isAttachmentUploading = false;
   var guestUser;
@@ -262,7 +260,6 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
     print('widget.room.type');
     print(widget.room.type.toString());
     print(widget.room.name);
-
 
     // RoomType.direct
     // RoomType.group
@@ -287,13 +284,12 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
       print('XXX user.lastName ${user.lastName}');
       // roomEmailUsers?.add(user.lastName.toString());
       roomEmailUsers = [...?roomEmailUsers, user.lastName.toString()];
-    }
-    );
-    print('roomEmailUsers: ${roomEmailUsers?.length} ${roomEmailUsers.runtimeType} $roomEmailUsers');
+    });
+    print(
+        'roomEmailUsers: ${roomEmailUsers?.length} ${roomEmailUsers.runtimeType} $roomEmailUsers');
 
     super.initState();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -303,15 +299,6 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
-        appBar: myAppBar(
-          // appBarTitle,
-          'Home: ${widget.currentUser?.firstName}',
-          actions: [
-            IconButton(
-                onPressed: () => kPushNavigator(context, const LoginPage()),
-                icon: const Icon(Icons.logout_rounded))
-          ]
-        ),
         body: StreamBuilder<types.Room>(
           initialData: widget.room,
           stream: FirebaseChatCore.instance.room(widget.room.id),
@@ -320,26 +307,22 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
               initialData: const [],
               stream: FirebaseChatCore.instance.messages(snapshot.data!),
               builder: (context, snapshot) {
-
                 List<types.Message> filteredMsgs = [];
-                print('snapshot.data');
-                print(snapshot.data);
+                // print('snapshot.data');
+                // print(snapshot.data);
 
-                var ageFilter = 3;  //{14 [17] 20}
-                var maxAge = widget.currentUser
-                        ?.metadata?['age']+ ageFilter;
-                var minAge = widget.currentUser
-                       ?.metadata?['age'] - ageFilter;
-                snapshot.data?.forEach((msg) {
-                  var _age = msg.author.metadata?['age'] ?? 0;
-                  // if(_age != 0) print('$minAge - $_age - $maxAge');
-                  // if(_age != 0) print(_age >= minAge && _age <= maxAge);
-                  bool inAgeRange = _age >= minAge && _age <= maxAge;
+                // var ageFilter = 3; //{14 [17] 20}
+                // var maxAge = widget.currentUser?.metadata?['age'];
+                // var minAge = widget.currentUser?.metadata?['age'];
+                // snapshot.data?.forEach((msg) {
+                //   var _age = msg.author.metadata?['age'] ?? 0;
+                //   // if(_age != 0) print('$minAge - $_age - $maxAge');
+                //   // if(_age != 0) print(_age >= minAge && _age <= maxAge);
+                //   bool inAgeRange = _age >= minAge && _age <= maxAge;
 
-                  if(inAgeRange || _age == 0) filteredMsgs.add(msg);
-                //   print(_age.runtimeType);
-                });
-
+                //   if (inAgeRange || _age == 0) filteredMsgs.add(msg);
+                //   //   print(_age.runtimeType);
+                // });
 
                 return SafeArea(
                   bottom: false,
@@ -347,16 +330,15 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                     isAttachmentUploading: _isAttachmentUploading,
                     // messages: snapshot.data ?? [],
                     messages: filteredMsgs,
-                    onAttachmentPressed: _handleAtachmentPressed,
+                    // onAttachmentPressed: _handleAtachmentPressed,
                     // onMessageTap: _handleMessageTap,
                     sendButtonVisibilityMode: SendButtonVisibilityMode.always,
                     onPreviewDataFetched: _handlePreviewDataFetched,
                     onSendPressed: (partialText) async =>
                         _handleSendPressed(partialText, widget.currentUser!),
                     user: types.User(
-                      id: FirebaseChatCore.instance.firebaseUser?.uid ?? '',
-                      firstName: 'WHATEVER'
-                    ),
+                        id: FirebaseChatCore.instance.firebaseUser?.uid ?? '',
+                        firstName: 'WHATEVER'),
                     // user: widget.currentUser!,
                     bubbleBuilder: _bubbleBuilder,
 
@@ -375,7 +357,7 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
             onPressed: (){},
             child: StatefulBuilder(
                 builder: (context, setState){
-*//*                  Timer.periodic(const Duration(seconds: 1), (timer) {
+*/ /*                  Timer.periodic(const Duration(seconds: 1), (timer) {
                     setState((){
                       print('1 sec passed.');
                       print('$timeLeft');
@@ -384,7 +366,7 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                     if (timeLeft <= 0) timer.cancel();
                     });
                     // timer.cancel();
-                  });*//*
+                  });*/ /*
                   return Text('$timeLeft');
                 }),
           ),
@@ -538,19 +520,23 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
     FirebaseChatCore.instance.updateMessage(updatedMessage, widget.room.id);
   }
 
-  void _handleSendPressed(types.PartialText message, types.User currentUser) async {
+  void _handleSendPressed(
+      types.PartialText message, types.User currentUser) async {
     print('my little msg $message');
-    var newMsg = message.metadata?.update
-        ('8', (value) => 'New', ifAbsent: () => 'Mercury');
+    var newMsg = message.metadata
+        ?.update('8', (value) => 'New', ifAbsent: () => 'Mercury');
 
     // FirebaseChatCore.instance.updateMessage(newMsg, roomId);
 
-
-    var getUser = await FirebaseFirestore.instance.collection('users').doc(currentUser.id).get();
+    var getUser = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(currentUser.id)
+        .get();
     //  2022-05-1317: 25: 18.649543,
     String _lastHomeMessage = getUser.data()?['metadata']['lastHomeMessage'];
     final _dateFormat = intl.DateFormat("yyyy-MM-dd HH:mm:ss");
-    final date = _dateFormat.parse(_lastHomeMessage); //Converting String to DateTime object
+    final date = _dateFormat
+        .parse(_lastHomeMessage); //Converting String to DateTime object
 
     final nowDate = DateTime.now();
     final difference = nowDate.difference(date);
@@ -560,14 +546,14 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
     var time2Wait = kDebugMode ? 10 : 60 * 3;
 
     var waitUntil =
-    DateTime.now()
-            .add(Duration(seconds: time2Wait - difference.inSeconds));
+        DateTime.now().add(Duration(seconds: time2Wait - difference.inSeconds));
 
-    if (difference.inSeconds < time2Wait){
-      cleanSnack(context, text: 'יש להמתין עד '
-                                '$waitUntil'
-                                '(${time2Wait - difference.inSeconds}) '
-                                ' שניות');
+    if (difference.inSeconds < time2Wait) {
+      cleanSnack(context,
+          text: 'יש להמתין עד '
+              '$waitUntil'
+              '(${time2Wait - difference.inSeconds}) '
+              ' שניות');
     } else {
       var _user = FirebaseAuth.instance.currentUser;
       var lastHomeMessage = DateTime.now();
@@ -577,34 +563,31 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
           firstName: '${currentUser.firstName}',
           imageUrl: '${currentUser.imageUrl}',
           metadata: {
-            'id' : currentUser.id,
-            'email' : '${currentUser.metadata?['email']}',
-            'birthDay' : currentUser.metadata?['birthDay'],
-            'age' : currentUser.metadata?['age'],
+            'id': currentUser.id,
+            'email': '${currentUser.metadata?['email']}',
+            'birthDay': currentUser.metadata?['birthDay'],
+            'age': currentUser.metadata?['age'],
             'lastHomeMessage': '$lastHomeMessage',
-          }
-      );
+          });
 
-
-        // setState(() async {
-          // create or update
-          FirebaseChatCore.instance.createUserInFirestore(_userData)
-              .whenComplete(() =>
-              print(
-                  'firebaseDatabase_basedFlyer Completed \n(FirebaseChatCore.instance.createUserInFirestore)'
-                      '\n userData: $_userData'))
-              .onError((error, stackTrace) =>
-              print(
-                  'firebaseDatabase_basedFlyer FAILED: $error \n-|- $stackTrace \n(FirebaseChatCore.instance.createUserInFirestore)'));
-        // });
+      // setState(() async {
+      // create or update
+      FirebaseChatCore.instance
+          .createUserInFirestore(_userData)
+          .whenComplete(() => print(
+              'firebaseDatabase_basedFlyer Completed \n(FirebaseChatCore.instance.createUserInFirestore)'
+              '\n userData: $_userData'))
+          .onError((error, stackTrace) => print(
+              'firebaseDatabase_basedFlyer FAILED: $error \n-|- $stackTrace \n(FirebaseChatCore.instance.createUserInFirestore)'));
+      // });
 
       print('Message A: ${message.toJson()}');
 
       FirebaseChatCore.instance.sendMessage(
         message,
         widget.room.id,
-        );
-      }
+      );
+    }
   }
 
   void _setAttachmentUploading(bool uploading) {
@@ -613,4 +596,3 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
     });
   }
 }
-

@@ -32,10 +32,16 @@ class MyApp extends StatelessWidget {
             stream: FirebaseAuth.instance.authStateChanges(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                return const FlyerChatV2(
+                var userData = types.User(
+                    firstName: snapshot.data?.displayName ?? '',
+                    id: snapshot.data?.uid ?? UniqueKey().toString(),
+                    imageUrl: snapshot.data?.photoURL,
+                    // lastName: '${fireStoreUser?.email}'.toLowerCase(),
+                    metadata: {'email': snapshot.data?.email ?? '', 'age': 18});
+                return FlyerChatV2(
                     room: types.Room(
-                  id: '',
-                  users: [],
+                  id: '1OepWQhysrUuqzU6eYOR',
+                  users: [userData],
                   type: types.RoomType.group,
                 ));
               } else {

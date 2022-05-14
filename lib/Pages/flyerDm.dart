@@ -21,7 +21,7 @@ import 'package:path_provider/path_provider.dart';
 import '../myUtil.dart';
 import 'usersPage.dart';
 
-class FlyerChatOriginal extends StatefulWidget {
+class FlyerDm extends StatefulWidget {
 /*  const FireBaseChatPage({
     Key? key,
     required this.room,
@@ -35,13 +35,13 @@ class FlyerChatOriginal extends StatefulWidget {
 
   // final currentUser;
 
-  const FlyerChatOriginal({this.currentUser, required this.room}) : super();
+  const FlyerDm({this.currentUser, required this.room}) : super();
 
   @override
-  _FlyerChatOriginalState createState() => _FlyerChatOriginalState();
+  _FlyerDmState createState() => _FlyerDmState();
 }
 
-class _FlyerChatOriginalState extends State<FlyerChatOriginal> {
+class _FlyerDmState extends State<FlyerDm> {
   bool _isAttachmentUploading = false;
   var guestUser;
   // GoogleSignInAccount? guestUser;

@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:ekc_project/Pages/ril_gDashboard.dart';
 import 'package:ekc_project/Pages/usersPage.dart';
 import 'package:ekc_project/Widgets/addPtDialog.dart';
 import 'package:ekc_project/Widgets/myAppBar.dart';
@@ -136,13 +137,14 @@ class _ProfilePageState extends State<ProfilePage> {
                         // Fixing push replacement
                         Navigator.of(context).popUntil((route) => route.isFirst);
                         kPushNavigator(context,
-                            FlyerChatV2(
-                              room: types.Room(
-                                  users: [widget.userData!], // Adds the user to group
-                                  type: types.RoomType.group,
-                                  id: '1OepWQhysrUuqzU6eYOR'),
-                              // currentUser: widget.userData,),
-                              currentUser: userData,),
+                            GDashboard(homePage:
+                              FlyerChatV2(
+                                room: types.Room(
+                                    users: [widget.userData!], // Adds the user to group
+                                    type: types.RoomType.group,
+                                    id: '1OepWQhysrUuqzU6eYOR'),
+                                // currentUser: widget.userData,),
+                                currentUser: userData,),),
                           replace: true);
 
                       });
