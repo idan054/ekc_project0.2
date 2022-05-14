@@ -31,7 +31,6 @@ dependencies:
     sdk: flutter
   flutter_signin_button:
   cached_network_image: ^3.2.0
-  faker: ^2.0.0
   file_picker: ^4.2.7
   firebase_storage: ^10.2.3
   http: ^0.13.4
@@ -53,6 +52,7 @@ dependencies:
   firestore_ui:
   firebase_database:
 
+  faker: ^2.0.0
   firebase_auth:
   firebase_core:
   google_sign_in: ^5.2.1
@@ -72,6 +72,13 @@ dev_dependencies:
     sdk: flutter
 
   flutter_lints: ^1.0.0
+#  flutter_launcher_icons:
+  flutter_launcher_icons: "^0.9.2"
+
+#  flutter_launcher_name: "^0.0.1"
+#flutter_launcher_name:
+#  name: "RilTopia"
+
 
 dependency_overrides:
   flutter_firebase_chat_core: # ^1.5.1
@@ -95,6 +102,16 @@ assets:
  - Assets/
  - Assets/eks-thumb.jpg
   #   - images/a_dot_ham.jpeg
+
+# flutter pub run flutter_launcher_icons:main
+# "WARNING: Icons with alpha channel are not allowed in the Apple App Store.
+# Set "remove_alpha_ios: true" to remove it."
+flutter_icons:
+#  android: true
+  ios: true
+  image_path: "assets/appIconPurple.png"
+  #  image_path_android: "assets/android_icon.png"
+  #  image_path_ios: "assets/ios_icon.png"
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

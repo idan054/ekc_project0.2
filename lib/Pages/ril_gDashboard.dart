@@ -1,3 +1,4 @@
+import 'package:ekc_project/Pages/flyerChatV2.dart';
 import 'package:ekc_project/Pages/roomsPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -97,7 +98,7 @@ class _GDashboardState extends State<GDashboard> {
                   // ) :
                   InkWell(
                 onTap: () {
-                  showDialog(
+/*                  showDialog(
                     barrierDismissible: true,
                     context: context,
                     // barrierColor: StreamChatTheme.of(context).colorTheme.overlay,
@@ -127,9 +128,7 @@ class _GDashboardState extends State<GDashboard> {
                               style: TextStyle(color: Colors.grey)),
                         ),
                         TextButton(
-                          onPressed: () => kPushNavigator(
-                            context,
-                            const LoginPage(), /*replace: true*/
+                          onPressed: () => kPushNavigator(context, const LoginPage(), *//*replace: true*//*
                           ),
                           child: const Text('התנתק',
                               style: TextStyle(
@@ -139,7 +138,8 @@ class _GDashboardState extends State<GDashboard> {
                         ),
                       ],
                     )),
-                  );
+                  );*/
+                  showRilAlert(context, true);
                 },
                 child: CircleAvatar(
                     backgroundColor: Colors.grey[400]!,

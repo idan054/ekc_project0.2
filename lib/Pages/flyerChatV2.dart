@@ -282,83 +282,7 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
 
   types.User? firestoreUserData;
 
-  showAlert(context) async {
-    showDialog(
-      barrierDismissible: true,
-      context: context,
-      // barrierColor: StreamChatTheme.of(context).colorTheme.overlay,
-      builder: (context) => Center(
-          child: AlertDialog(
-            // contentPadding: EdgeInsets.zero,
-            // titlePadding: EdgeInsets.zero,
-            actionsAlignment: MainAxisAlignment.center,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            title: Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.only(top: 13.0),
-                      child: Text(
-                        'ברוכים הבאים אל',
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 25),
-                      ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text('רילטופיה',
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 25),
-                        ),
 
-                        SvgPicture.asset(
-                          'assets/svg_icons/CleanLogo.svg',
-                          height: 30,
-                          // color: StreamChatTheme.of(context).colorTheme.accentPrimary,
-                        ),
-                        // trailing: Image.asset('assets/RilTopialLogoAndTxt.png',
-                        //   height: 45,)
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    const Center(
-                        child: Text(
-                          'כולם כאן בגיל שלך (+3-)'
-                              '\n זה המקום להכיר, לשתף, לעזור ולהיות מי שאתה!',
-                          style: TextStyle(
-                            color: neutral2,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            height: 1.5,
-                          ),
-                          textAlign: TextAlign.center,
-                          textDirection: TextDirection.rtl,
-                        )),
-                  ],
-                )
-            ),
-            // content: Text("Saved successfully"),
-            actions: [
-              TextButton(
-                onPressed: () => kNavigator(context).pop(),
-                child: const Text('התחל',
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: cRilPurple
-                    )),
-              ),
-            ],
-          )),
-    );
-  }
   final isDisplayed = 'isDisplayed';
 
   @override
@@ -369,10 +293,10 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
       localIsShown = true;
     });*/
 
-    if(!localIsShown) {
-      Future.delayed(const Duration(seconds: 3), () => showAlert(context));
-      localIsShown = true;
-    }
+    // if(!localIsShown) {
+    //   Future.delayed(const Duration(seconds: 3), () => showAlert(context));
+    //   localIsShown = true;
+    // }
 
   if (widget.currentUser?.imageUrl == null) {
       var getUser = FirebaseFirestore.instance
@@ -825,4 +749,92 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
       );
     }
   }
+}
+
+
+showRilAlert(context, bool exitProfile) async {
+  showDialog(
+    barrierDismissible: true,
+    context: context,
+    // barrierColor: StreamChatTheme.of(context).colorTheme.overlay,
+    builder: (context) => Center(
+        child: AlertDialog(
+          // contentPadding: EdgeInsets.zero,
+          // titlePadding: EdgeInsets.zero,
+          actionsAlignment: MainAxisAlignment.center,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          title: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                   Padding(
+                    padding: const EdgeInsets.only(top: 13.0),
+                    child: Text(
+                      exitProfile ? 'תרצה לצאת' : 'ברוכים הבאים אל',
+                      style: const TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 25),
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(exitProfile ? ' מרילטופיה?' : ' רילטופיה',
+                        textDirection: TextDirection.rtl,
+                        style: const TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 25),
+                      ),
+
+                      SvgPicture.asset(
+                        'assets/svg_icons/CleanLogo.svg',
+                        height: 30,
+                        // color: StreamChatTheme.of(context).colorTheme.accentPrimary,
+                      ),
+                      // trailing: Image.asset('assets/RilTopialLogoAndTxt.png',
+                      //   height: 45,)
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  const Center(
+                      child: Text(
+                        'כולם כאן בגיל שלך (+3-)'
+                            '\n זה המקום להכיר, לשתף, לעזור ולהיות מי שאתה!',
+                        style: TextStyle(
+                          color: neutral2,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          height: 1.5,
+                        ),
+                        textAlign: TextAlign.center,
+                        textDirection: TextDirection.rtl,
+                      )),
+                ],
+              )
+          ),
+          // content: Text("Saved successfully"),
+          actions: [
+            TextButton(
+              onPressed: () => kNavigator(context).pop(),
+              child: Text(exitProfile ? 'חזור' : 'התחל',
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: cRilPurple
+                  )),
+            ),
+            if(exitProfile)
+              TextButton(
+                onPressed: () => kPushNavigator(context, const LoginPage()),
+                child: const Text('יציאה',
+                    style: TextStyle(
+                        color: Colors.grey
+                    )),
+              ),
+          ],
+        )),
+  );
 }

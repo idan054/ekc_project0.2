@@ -145,7 +145,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                     id: '1OepWQhysrUuqzU6eYOR'),
                                 // currentUser: widget.userData,),
                                 currentUser: userData,),),
-                          replace: true);
+                          replace: true).then((value) =>
+                            Future.delayed(
+                                const Duration(seconds: 3), () => showRilAlert(context, false)));
 
                     }
                   },
