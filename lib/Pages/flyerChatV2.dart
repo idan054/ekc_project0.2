@@ -403,9 +403,9 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                       ),
                       // user: widget.currentUser!,
                       bubbleBuilder: _bubbleBuilder,
-
                       showUserAvatars: false,
                       showUserNames: true,
+                      // customMessageBuilder: (customMessage, {required int messageWidth}){return customMessage.copyWith()},
                       // customMessageBuilder: ,
                     ),
                   );
@@ -599,12 +599,12 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
     // FirebaseChatCore.instance.updateMessage(newMsg, roomId);
 
 
-    // var getUser = await FirebaseFirestore.instance.collection('users').doc(currentUser.id).get();
-    // String _lastHomeMessage = getUser.data()?['metadata']['lastHomeMessage'];
+    var getUser = await FirebaseFirestore.instance.collection('users').doc(currentUser.id).get();
+    String _lastHomeMessage = getUser.data()?['metadata']['lastHomeMessage'];
 
     //  2022-05-1317: 25: 18.649543,
     // print('FS MD ${firestoreUserData?.metadata?['lastHomeMessage']}');
-    String _lastHomeMessage = '${firestoreUserData?.metadata?['lastHomeMessage']}';
+    // String _lastHomeMessage = '${firestoreUserData?.metadata?['lastHomeMessage']}';
     final _dateFormat = intl.DateFormat("yyyy-MM-dd HH:mm:ss");
     final date = _dateFormat.parse(_lastHomeMessage); //Converting String to DateTime object
     // DateTime date = firestoreUserData?.metadata
@@ -615,7 +615,7 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
     print('difference.inSeconds');
     print(difference.inSeconds);
 
-    var time2Wait = kDebugMode ? 10 : 60 * 3;
+    var time2Wait = kDebugMode ? 30 : 60 * 3;
 
     var waitUntil =
     DateTime.now()
@@ -646,7 +646,7 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
 
       // setState(() async {
       // create or update
-      FirebaseChatCore.instance.createUserInFirestore(_userData)
+      await FirebaseChatCore.instance.createUserInFirestore(_userData)
           .whenComplete(() =>
           print(
               'firebaseDatabase_basedFlyer Completed \n(FirebaseChatCore.instance.createUserInFirestore)'
