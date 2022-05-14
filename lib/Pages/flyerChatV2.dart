@@ -782,7 +782,7 @@ showRilAlert(context, bool exitProfile) async {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(exitProfile ? ' מרילטופיה?' : ' רילטופיה',
+                      Text(exitProfile ? ' מרילטופיה?' : 'רילטופיה',
                         textDirection: TextDirection.rtl,
                         style: const TextStyle(
                             color: Colors.black,

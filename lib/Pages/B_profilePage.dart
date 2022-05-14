@@ -135,7 +135,10 @@ class _ProfilePageState extends State<ProfilePage> {
                         //     .room('1OepWQhysrUuqzU6eYOR');
 
                         // Fixing push replacement
-                        Navigator.of(context).popUntil((route) => route.isFirst);
+                      showRilAlert(context, false);
+                      await Future.delayed(const Duration(seconds: 4), () =>
+                      Navigator.of(context).popUntil((route) => route.isFirst)
+                      );
                         kPushNavigator(context,
                             GDashboard(homePage:
                               FlyerChatV2(
@@ -145,9 +148,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     id: '1OepWQhysrUuqzU6eYOR'),
                                 // currentUser: widget.userData,),
                                 currentUser: userData,),),
-                          replace: true).then((value) =>
-                            Future.delayed(
-                                const Duration(seconds: 3), () => showRilAlert(context, false)));
+                          replace: true);
 
                     }
                   },
