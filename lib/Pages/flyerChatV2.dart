@@ -315,7 +315,43 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
           'Home: ${widget.currentUser?.firstName}',
           actions: [
             IconButton(
-                onPressed: () => kPushNavigator(context, const LoginPage()),
+                onPressed: () // =>
+                {
+                  showDialog(
+                    barrierDismissible: true,
+                    context: context,
+                    // barrierColor: StreamChatTheme.of(context).colorTheme.overlay,
+                    builder: (context) => Center(
+                        child: AlertDialog(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          title: const Center(child:
+                          Text("אתה בטוח שאתה רוצה להתנתק?",
+                            textAlign: TextAlign.center,
+                            textDirection: TextDirection.rtl,
+                          )),
+                          // content: Text("Saved successfully"),
+                          actionsAlignment: MainAxisAlignment.center,
+                          actions: [
+                            TextButton(
+                              onPressed: ()=>kNavigator(context).pop(),
+                              child: const Text('חזור לראשי',
+                                  style: TextStyle(color: Colors.grey)),
+                            ),
+                            TextButton(
+                              onPressed: () =>
+                                  kPushNavigator(context, const LoginPage(),
+                                      /*replace: true*/),
+                              child: const Text('התנתק',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold)),
+                            ),
+                          ],
+                        )
+                    ),
+                  );
+                },
                 icon: const Icon(Icons.logout_rounded)),
             IconButton(
                 onPressed: () => kPushNavigator(context, const RoomsPage()),
@@ -357,7 +393,7 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                     isAttachmentUploading: _isAttachmentUploading,
                     // messages: snapshot.data ?? [],
                     messages: filteredMsgs,
-                    onAttachmentPressed: _handleAtachmentPressed,
+                    // onAttachmentPressed: _handleAtachmentPressed,
                     // onMessageTap: _handleMessageTap,
                     sendButtonVisibilityMode: SendButtonVisibilityMode.always,
                     onPreviewDataFetched: _handlePreviewDataFetched,

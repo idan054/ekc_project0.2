@@ -139,7 +139,7 @@ class _FlyerDmState extends State<FlyerDm> {
                 child: Chat(
                   isAttachmentUploading: _isAttachmentUploading,
                   messages: snapshot.data ?? [],
-                  onAttachmentPressed: _handleAtachmentPressed,
+                  // onAttachmentPressed: _handleAtachmentPressed,
                   // onMessageTap: _handleMessageTap,
                   onPreviewDataFetched: _handlePreviewDataFetched,
                   onSendPressed: _handleSendPressed,
