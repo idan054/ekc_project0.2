@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
                     room: types.Room(
                         users: [types.User(id: '${authUser?.uid}')], // Adds the user to group
                         type: types.RoomType.group,
-                        id: '1OepWQhysrUuqzU6eYOR'),
+                        id: 'NAMAkmZKdEAv9AefwXhR'),
                     // currentUser: widget.userData,),
                     currentUser: types.User(id: '${authUser?.uid}')),);
               } else {

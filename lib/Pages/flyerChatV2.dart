@@ -285,8 +285,19 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
 
   final isDisplayed = 'isDisplayed';
 
+  /*    FirebaseChatCore.instance
+        .createGroupRoom(
+      users: [widget.currentUser!],
+      name: 'RilHome',
+    ).then((room) {
+      print('room.id');
+      print(room.id);
+      print(room.name);
+    });*/
+
   @override
   void initState() {
+
 /*    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) async {
       // if ((await SharedPreferences.getInstance()).getBool(isDisplayed) ?? false)
       showAlert(context);
@@ -470,7 +481,11 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                       ),
                     );
                   } else {
-                    return const Center(child: Text('Loading..'));
+                    return GestureDetector(
+                      onTap: () async {
+                        print('Tapped');
+                      },
+                        child: const Center(child: Text('Loading..')));
                   }
                 },
               );

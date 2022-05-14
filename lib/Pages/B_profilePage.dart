@@ -132,7 +132,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
 
                         // final room = await FirebaseChatCore.instance
-                        //     .room('1OepWQhysrUuqzU6eYOR');
+                        //     .room('NAMAkmZKdEAv9AefwXhR');
 
                         // Fixing push replacement
                       showRilAlert(context, false);
@@ -145,7 +145,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 room: types.Room(
                                     users: [widget.userData!], // Adds the user to group
                                     type: types.RoomType.group,
-                                    id: '1OepWQhysrUuqzU6eYOR'),
+                                    id: 'NAMAkmZKdEAv9AefwXhR'),
                                 // currentUser: widget.userData,),
                                 currentUser: userData,),),
                           replace: true);
