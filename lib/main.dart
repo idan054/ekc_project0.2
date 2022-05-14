@@ -33,17 +33,26 @@ class MyApp extends StatelessWidget {
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 var userData = types.User(
-                    firstName: snapshot.data?.displayName ?? '',
-                    id: snapshot.data?.uid ?? UniqueKey().toString(),
-                    imageUrl: snapshot.data?.photoURL,
-                    // lastName: '${fireStoreUser?.email}'.toLowerCase(),
-                    metadata: {'email': snapshot.data?.email ?? '', 'age': 18});
+                  firstName: snapshot.data?.displayName ?? '',
+                  id: snapshot.data?.uid ?? UniqueKey().toString(),
+                  imageUrl: snapshot.data?.photoURL,
+                  // lastName: '${fireStoreUser?.email}'.toLowerCase(),
+                  metadata: {
+                    'email': snapshot.data?.email ?? '',
+                    'age': 18,
+                  },
+                );
                 return FlyerChatV2(
+                    currentUser:
+                        types.User(id: snapshot.data?.uid ?? '', metadata: {
+                      'age': 18,
+                      'email': snapshot.data?.email ?? '',
+                    }),
                     room: types.Room(
-                  id: '1OepWQhysrUuqzU6eYOR',
-                  users: [userData],
-                  type: types.RoomType.group,
-                ));
+                      id: '1OepWQhysrUuqzU6eYOR',
+                      users: [userData],
+                      type: types.RoomType.group,
+                    ));
               } else {
                 return const LoginPage();
               }
