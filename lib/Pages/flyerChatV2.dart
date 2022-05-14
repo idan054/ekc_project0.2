@@ -49,6 +49,7 @@ import 'package:path_provider/path_provider.dart';
 import '../Widgets/cardPost.dart';
 import '../Widgets/snackbar.dart';
 import '../myUtil.dart';
+import '../theme/colors.dart';
 import '../theme/constants.dart';
 import 'A_loginPage.dart';
 import 'flyerDm.dart';
@@ -63,13 +64,13 @@ class FlyerChatV2 extends StatefulWidget {
 
   final types.Room room;
 
-  final types.User? currentUser;
+  types.User? currentUser;
 
   // final UserCredential? currentUser;
 
   // final currentUser;
 
-  const FlyerChatV2({this.currentUser, required this.room}) : super();
+  FlyerChatV2({Key? key, this.currentUser, required this.room}) : super(key: key);
 
   @override
   _FlyerChatV2State createState() => _FlyerChatV2State();
@@ -267,37 +268,47 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
 
   @override
   void initState() {
-    print('widget.room.type');
-    print(widget.room.type.toString());
-    print(widget.room.name);
+
+    /*if(widget.currentUser?.imageUrl == null){
+
+      var getUser = FirebaseFirestore.instance
+          .collection('users').doc(widget.currentUser!.id).get()
+      .then((userDoc) {
+        print('getUser value ${userDoc.data()}');
+
+        var data = userDoc.data() ?? {};
+        data['lastName'] = data['lastName'] ?? '';
+        data['role'] = data['role'] ?? '';
+        data['createdAt'] = data['createdAt']?.millisecondsSinceEpoch;
+        data['lastSeen'] = data['lastSeen']?.millisecondsSinceEpoch;
+        data['updatedAt'] = data['updatedAt']?.millisecondsSinceEpoch;
+        // data['metadata'] = data['updatedAt']?.millisecondsSinceEpoch;
+        // widget.currentUser = types.User.fromJson(data);
+
+*//*
+        var userData = widget.currentUser?.copyWith(
+            firstName: '${data['firstName']}',
+            imageUrl: '${data['imageUrl']}',
+            metadata: {
+              'email' : data['metadata']['email'],
+              'age' : data['metadata']['age'],
+              // 'id' : data['id'] ?? '',
+              'id' : 'dd7WBSncPIhLwm7wl4FJEpiGRBj2',
+              'birthDay' : data['metadata']['birthDay'],
+              // 'lastHomeMessage': data['metadata']['lastHomeMessage']?.millisecondsSinceEpoch,
+            }
+        );
+        widget.currentUser = userData;
+        print('userData?.toJson()');
+        print(userData?.toJson());
+*//*
 
 
-    // RoomType.direct
-    // RoomType.group
-    if (widget.room.type.toString() == 'RoomType.direct') {
-      widget.room.users.forEach((user) {
-/*        if (widget.currentUser?.email != user.lastName) {
-          // Lastname is MAIL!
-          setState(() {
-            guestUser = user;
-            appBarTitle = '${guestUser.lastName}';
-          });
-        }*/
+      // print('widget.currentUser ${widget.currentUser}');
       });
-    } else {
-      setState(() {
-        appBarTitle = widget.room.name;
-      });
-    }
+      // print('widget.currentUser.toJson() ${widget.currentUser?.toJson()}');
+    }*/
 
-    // Get all users:
-    widget.room.users.forEach((user) {
-      print('XXX user.lastName ${user.lastName}');
-      // roomEmailUsers?.add(user.lastName.toString());
-      roomEmailUsers = [...?roomEmailUsers, user.lastName.toString()];
-    }
-    );
-    print('roomEmailUsers: ${roomEmailUsers?.length} ${roomEmailUsers.runtimeType} $roomEmailUsers');
 
     super.initState();
   }
@@ -307,6 +318,9 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
   Widget build(BuildContext context) {
     var _timePassed = 0;
     var timeLeft = 60 * 5 - _timePassed;
+
+    print('BUILD currentUser JSON is:');
+    print(widget.currentUser?.toJson());
 
     return WillPopScope(
       onWillPop: () async => false,
@@ -320,9 +334,15 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
               stream: FirebaseChatCore.instance.messages(snapshot.data!),
               builder: (context, snapshot) {
 
+                widget.currentUser = widget.room.users.firstWhere((user) =>
+                  user.id == widget.currentUser!.id);
+
+                print('STREAM currentUser JSON is:');
+                print(widget.currentUser?.toJson());
+
                 List<types.Message> filteredMsgs = [];
-                print('snapshot.data');
-                print(snapshot.data);
+                // print('snapshot.data');
+                // print(snapshot.data);
 
                 var ageFilter = 3;  //{14 [17] 20}
                 var maxAge = widget.currentUser
@@ -343,6 +363,10 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                 return SafeArea(
                   bottom: false,
                   child: Chat(
+                    theme: const DefaultChatTheme(
+                      inputBackgroundColor: cGrey300,
+                      // inputBackgroundColor: cRilDeepPurple.withOpacity(0.85),
+                        ),
                     isAttachmentUploading: _isAttachmentUploading,
                     // messages: snapshot.data ?? [],
                     messages: filteredMsgs,

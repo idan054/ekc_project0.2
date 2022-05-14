@@ -7,6 +7,7 @@ import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
 
 import 'Pages/A_loginPage.dart';
+import 'Pages/ril_gDashboard.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,7 +30,24 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const LoginPage()
+        home: StreamBuilder<User?>(
+            stream: FirebaseAuth.instance.authStateChanges(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return
+                GDashboard(homePage:
+                  FlyerChatV2(
+                    room: types.Room(
+                        users: [types.User(id: '${authUser?.uid}')], // Adds the user to group
+                        type: types.RoomType.group,
+                        id: '1OepWQhysrUuqzU6eYOR'),
+                    // currentUser: widget.userData,),
+                    currentUser: types.User(id: '${authUser?.uid}')),);
+              } else {
+                return const LoginPage();
+              }
+            })
+      // home: const LoginPage()
       // home: MainPage(),
     );
   }

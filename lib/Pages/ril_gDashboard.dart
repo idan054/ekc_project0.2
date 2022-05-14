@@ -58,7 +58,7 @@ class _GDashboardState extends State<GDashboard> {
             : SvgPicture.asset('$asset',
                 width: 27,
                 height: 27,
-                // todo change color when active
+                // cRilDeepPurple
                 color: active ? cRilDarkPurple.withOpacity(0.65) : Colors.grey)
       ],
     );

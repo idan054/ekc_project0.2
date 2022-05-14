@@ -110,7 +110,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           'email' : user?.metadata?.values.first,
                           'birthDay' : '$selectedTime',
                           'age' : age,
-                          'lastHomeMessage': '${DateTime(01, 01, 2000)}',
+                          // 'lastHomeMessage': '${DateTime(01, 01, 2000)}',
                         }
                     );
 
@@ -119,7 +119,6 @@ class _ProfilePageState extends State<ProfilePage> {
                       cleanSnack(context, text: 'אתה חייב להיות מעל גיל 12.');
                     } else {
                       print('False - AGE: $age');
-                      setState(() async {
                         // create or update
                         FirebaseChatCore.instance.createUserInFirestore(userData!)
                             .whenComplete(() =>
@@ -147,7 +146,6 @@ class _ProfilePageState extends State<ProfilePage> {
                                 currentUser: userData,),),
                           replace: true);
 
-                      });
                     }
                   },
                   child:
