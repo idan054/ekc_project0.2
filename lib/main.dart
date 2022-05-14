@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
-import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
 
 import 'Pages/A_loginPage.dart';
 
@@ -25,12 +24,25 @@ class MyApp extends StatelessWidget {
     print('FireAuth USER ${authUser?.displayName}');
 
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const LoginPage()
-      // home: MainPage(),
-    );
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: StreamBuilder<User?>(
+            stream: FirebaseAuth.instance.authStateChanges(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return const FlyerChatV2(
+                    room: types.Room(
+                  id: '',
+                  users: [],
+                  type: types.RoomType.group,
+                ));
+              } else {
+                return const LoginPage();
+              }
+            })
+        // home: MainPage(),
+        );
   }
 }
