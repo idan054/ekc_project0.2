@@ -287,7 +287,7 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
         data['createdAt'] = data['createdAt']?.millisecondsSinceEpoch;
         data['lastSeen'] = data['lastSeen']?.millisecondsSinceEpoch;
         data['updatedAt'] = data['updatedAt']?.millisecondsSinceEpoch;
-        data['lastHomeMessage'] = data['metadata']['lastHomeMessage']?.millisecondsSinceEpoch;
+        data['lastHomeMessage'] = data['metadata']['lastHomeMessage'];
         // data['metadata'] = data['updatedAt']?.millisecondsSinceEpoch;
         // widget.currentUser = types.User.fromJson(data);
         firestoreUserData = types.User.fromJson(data);
@@ -338,8 +338,8 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
     var _timePassed = 0;
     var timeLeft = 60 * 5 - _timePassed;
 
-    print('BUILD currentUser JSON is:');
-    print(firestoreUserData?.toJson());
+    // print('BUILD currentUser JSON is:');
+    // print(firestoreUserData?.toJson());
 
     return WillPopScope(
       onWillPop: () async => false,
@@ -353,61 +353,65 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
               stream: FirebaseChatCore.instance.messages(snapshot.data!),
               builder: (context, snapshot) {
 
-                // widget.currentUser = widget.room.users.firstWhere((user) =>
-                //   user.id == widget.currentUser!.id);
-                //
-                // print('STREAM currentUser JSON is:');
-                // print(widget.currentUser?.toJson());
+                if(snapshot.hasData){
+                  // widget.currentUser = widget.room.users.firstWhere((user) =>
+                  //   user.id == widget.currentUser!.id);
+                  //
+                  // print('STREAM currentUser JSON is:');
+                  // print(widget.currentUser?.toJson());
 
-                List<types.Message> filteredMsgs = [];
-                // print('snapshot.data');
-                // print(snapshot.data);
+                  List<types.Message> filteredMsgs = [];
+                  // print('snapshot.data');
+                  // print(snapshot.data);
 
-                // print('A G E: ${firestoreUserData?.metadata?['age']}');
-                var ageFilter = 3;  //{14 [17] 20}
-                var maxAge = firestoreUserData
-                        ?.metadata?['age'] + ageFilter;
-                var minAge = firestoreUserData
-                       ?.metadata?['age'] - ageFilter;
-                snapshot.data?.forEach((msg) {
-                  var _age = msg.author.metadata?['age'] ?? 0;
-                  // if(_age != 0) print('$minAge - $_age - $maxAge');
-                  // if(_age != 0) print(_age >= minAge && _age <= maxAge);
-                  bool inAgeRange = _age >= minAge && _age <= maxAge;
+                  print('A G E: ${firestoreUserData?.metadata?['age']}');
+                  var ageFilter = 3;  //{14 [17] 20}
+                  var maxAge = firestoreUserData
+                      ?.metadata?['age'] + ageFilter; // ?? 20;
+                  var minAge = firestoreUserData
+                      ?.metadata?['age'] - ageFilter; // ?? 14;
+                  snapshot.data?.forEach((msg) {
+                    var _age = msg.author.metadata?['age'] ?? 0;
+                    // if(_age != 0) print('$minAge - $_age - $maxAge');
+                    // if(_age != 0) print(_age >= minAge && _age <= maxAge);
+                    bool inAgeRange = _age >= minAge && _age <= maxAge;
 
-                  if(inAgeRange || _age == 0) filteredMsgs.add(msg);
-                //   print(_age.runtimeType);
-                });
+                    if(inAgeRange || _age == 0) filteredMsgs.add(msg);
+                    //   print(_age.runtimeType);
+                  });
 
 
-                return SafeArea(
-                  bottom: false,
-                  child: Chat(
-                    theme: const DefaultChatTheme(
-                      inputBackgroundColor: cGrey300,
-                      // inputBackgroundColor: cRilDeepPurple.withOpacity(0.85),
-                        ),
-                    isAttachmentUploading: _isAttachmentUploading,
-                    // messages: snapshot.data ?? [],
-                    messages: filteredMsgs,
-                    // onAttachmentPressed: _handleAtachmentPressed,
-                    // onMessageTap: _handleMessageTap,
-                    sendButtonVisibilityMode: SendButtonVisibilityMode.always,
-                    onPreviewDataFetched: _handlePreviewDataFetched,
-                    onSendPressed: (partialText) async =>
-                        _handleSendPressed(partialText, firestoreUserData!),
-                    user: types.User(
-                      id: FirebaseChatCore.instance.firebaseUser?.uid ?? '',
-                      firstName: 'WHATEVER'
+                  return SafeArea(
+                    bottom: false,
+                    child: Chat(
+                      theme: const DefaultChatTheme(
+                        inputBackgroundColor: cGrey300,
+                        // inputBackgroundColor: cRilDeepPurple.withOpacity(0.85),
+                      ),
+                      isAttachmentUploading: _isAttachmentUploading,
+                      // messages: snapshot.data ?? [],
+                      messages: filteredMsgs,
+                      // onAttachmentPressed: _handleAtachmentPressed,
+                      // onMessageTap: _handleMessageTap,
+                      sendButtonVisibilityMode: SendButtonVisibilityMode.always,
+                      onPreviewDataFetched: _handlePreviewDataFetched,
+                      onSendPressed: (partialText) async =>
+                          _handleSendPressed(partialText, firestoreUserData!),
+                      user: types.User(
+                          id: FirebaseChatCore.instance.firebaseUser?.uid ?? '',
+                          firstName: 'WHATEVER'
+                      ),
+                      // user: widget.currentUser!,
+                      bubbleBuilder: _bubbleBuilder,
+
+                      showUserAvatars: false,
+                      showUserNames: true,
+                      // customMessageBuilder: ,
                     ),
-                    // user: widget.currentUser!,
-                    bubbleBuilder: _bubbleBuilder,
-
-                    showUserAvatars: false,
-                    showUserNames: true,
-                    // customMessageBuilder: ,
-                  ),
-                );
+                  );
+                } else {
+                  return const Center(child: Text('Loading..'));
+                }
               },
             );
           },
@@ -595,8 +599,9 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
     // final date = _dateFormat.parse(_lastHomeMessage); //Converting String to DateTime object
 
     //  2022-05-1317: 25: 18.649543,
-    // print('FS MD ${firestoreUserData?.metadata}');
-    DateTime date = firestoreUserData?.metadata?['lastHomeMessage'].toDate();
+    print('FS MD ${firestoreUserData?.metadata?['lastHomeMessage']}');
+    DateTime date = firestoreUserData?.metadata
+        ?['lastHomeMessage'].toDate();
 
     final nowDate = DateTime.now();
     final difference = nowDate.difference(date);
