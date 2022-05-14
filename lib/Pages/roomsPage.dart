@@ -20,7 +20,7 @@ class RoomsPage extends StatelessWidget {
         initialData: const [],
         builder: (context, snapshot) {
           print('RoomsPage data Snapshot: ${snapshot.data}');
-          if (snapshot.hasData) {
+          if (snapshot.hasData && snapshot.data!.isNotEmpty) {
             return ListView.builder(
               padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
               itemCount: snapshot.data?.length ?? 0,
@@ -34,18 +34,19 @@ class RoomsPage extends StatelessWidget {
                 snapshot.data?[i].users.forEach((user) {
                   print('users.forEach');
 
-                  print('authUser: ${authUser?.uid} | ${authUser?.displayName}');
+                  print(
+                      'authUser: ${authUser?.uid} | ${authUser?.displayName}');
                   print('user: ${user.id} | ${user.firstName}');
 
                   try {
                     otherUser = snapshot.data?[i].users
                         .firstWhere((user) => user.id != authUser?.uid);
-                  } catch(e){
+                  } catch (e) {
                     print('No otherUser, probably chat with yourself: $e');
                   }
-                print('otherUser');
-                print(otherUser);
-                // print(otherUser?.toJson());
+                  print('otherUser');
+                  print(otherUser);
+                  // print(otherUser?.toJson());
 
                   if (user.id == authUser?.uid) isUserInRoom = true;
                 });
@@ -199,7 +200,12 @@ class RoomsPage extends StatelessWidget {
               },
             );
           } else {
-            return const Center(child: Text('No rooms found..'));
+            return const Center(
+                child: Text(
+              'התחל שיחה עם אנשים חדשים \n דרך רילטופיה!',
+              textAlign: TextAlign.center,
+              textDirection: TextDirection.rtl,
+            ));
           }
         },
       ),
