@@ -119,17 +119,18 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
             children: [
               const SizedBox(height: 2,),
               Container(
+                height: 20,
                 padding: const EdgeInsets.only(right: 10, left: 10),
                 alignment: Alignment.centerRight,
-                child:
+/*                child:
                 InkWell(
                   child:
                   Icon(
                     Icons.more_horiz,
-                    color: Colors.grey[200]!,
-                  ),
+                    color: Colors.grey[400]!,
+                 ),
                   onTap: () {},
-                ),
+                ),*/
               ),
               Container(
                 padding: const EdgeInsets.only(right: 10, left: 10),

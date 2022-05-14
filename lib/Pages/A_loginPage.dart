@@ -2,6 +2,7 @@
 
 import 'package:ekc_project/Pages/B_profilePage.dart';
 import 'package:ekc_project/Widgets/myAppBar.dart';
+import 'package:ekc_project/theme/colors.dart';
 import 'package:ekc_project/theme/constants.dart';
 import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
@@ -31,17 +32,51 @@ class _LoginPageState extends State<LoginPage> {
 
     return MaterialApp(
       home: Scaffold(
-        appBar: myAppBar('Gang - ' +
+/*        appBar: myAppBar('Gang - ' +
         (user == null
         ? "צ'אט חברתי בטא"
-            : user.displayName ?? 'user.displayName is Null')),
+            : user.displayName ?? 'user.displayName is Null')),*/
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               SizedBox(height: 100),
               // Random Sign with google
-              buildInfoListTile(context,
+
+              Padding(
+                padding: const EdgeInsets.only(top: 13.0),
+                child: Text(
+                  'ברוכים הבאים אל',
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 25),
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('רילטופיה',
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 25),
+                    ),
+
+                  SvgPicture.asset(
+                    'assets/svg_icons/CleanLogo.svg',
+                    height: 30,
+                    // color: StreamChatTheme.of(context).colorTheme.accentPrimary,
+                  ),
+                  // trailing: Image.asset('assets/RilTopialLogoAndTxt.png',
+                  //   height: 45,)
+                ],
+              ),
+
+              SizedBox(height: 50),
+
+              buildInfoListTile(
+                context,
                 // title: 'המקום לפגוש חברים',
                 // title: 'המקום לדבר עם אנשים',
                 title: 'זה המקום להכיר אנשים (:',
@@ -49,8 +84,8 @@ class _LoginPageState extends State<LoginPage> {
                 svgAsset: 'assets/svg_icons/group.svg',
               ),
 
-
-              buildInfoListTile(context,
+              buildInfoListTile(
+                context,
                 // title: 'המקום לפגוש חברים',
                 // title: 'המקום לדבר עם אנשים',
                 title: 'והזמן לקבל תשובות.',
@@ -58,34 +93,41 @@ class _LoginPageState extends State<LoginPage> {
                 subTitle: 'מענה מיידי על כל דבר.',
                 svgAsset: 'assets/svg_icons/thunder.svg',
               ),
-              SizedBox(height: 50),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 2.0),
+                child: Icon(
+                  Icons.arrow_drop_down_rounded,
+                  size: 28,
+                  color: Colors.grey[500]?.withOpacity(0.75),
+                ),
+              ),
 
               Directionality(
                 textDirection: TextDirection.rtl,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 4),
-                  child:
-                  InkWell(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20.0, vertical: 4),
+                  child: InkWell(
                     borderRadius: BorderRadius.circular(10),
                     onTap: () async {
                       await _googleSignIn.signOut();
                       final GoogleSignInAccount? googleSignInAccount =
-                        await _googleSignIn.signIn();
+                          await _googleSignIn.signIn();
 
                       if (googleSignInAccount != null) {
-                        final GoogleSignInAuthentication googleSignInAuthentication =
-                        await googleSignInAccount.authentication;
+                        final GoogleSignInAuthentication
+                            googleSignInAuthentication =
+                            await googleSignInAccount.authentication;
 
-                        final AuthCredential credential = GoogleAuthProvider
-                            .credential(
+                        final AuthCredential credential =
+                            GoogleAuthProvider.credential(
                           accessToken: googleSignInAuthentication.accessToken,
                           idToken: googleSignInAuthentication.idToken,
                         );
 
                         final FirebaseAuth auth = FirebaseAuth.instance;
                         final UserCredential userCredential =
-                        await auth.signInWithCredential(credential);
-
+                            await auth.signInWithCredential(credential);
 
                         final User? fireStoreUser = userCredential.user;
                         final myUid = fireStoreUser?.uid;
@@ -99,45 +141,39 @@ class _LoginPageState extends State<LoginPage> {
                             imageUrl: fireStoreUser?.photoURL,
                             // lastName: '${fireStoreUser?.email}'.toLowerCase(),
                             metadata: {
-                              'email' : fireStoreUser?.email,
-                              'age' : 18
-                            }
-                        );
+                              'email': fireStoreUser?.email,
+                              'age': 18
+                            });
 
                         setState(() {
-                          FirebaseChatCore.instance.createUserInFirestore(userData)
-                              .whenComplete(() =>
-                              print(
+                          FirebaseChatCore.instance
+                              .createUserInFirestore(userData)
+                              .whenComplete(() => print(
                                   'firebaseDatabase_basedFlyer Completed \n(FirebaseChatCore.instance.createUserInFirestore)'
-                                      '\n userData: $userData'))
-                              .onError((error, stackTrace) =>
-                              print(
+                                  '\n userData: $userData'))
+                              .onError((error, stackTrace) => print(
                                   'firebaseDatabase_basedFlyer FAILED: $error \n-|- $stackTrace \n(FirebaseChatCore.instance.createUserInFirestore)'));
 
-
-                          kPushNavigator(context,
-                              ProfilePage(userData: userData),
-                              /*replace: true*/);
-
+                          kPushNavigator(
+                            context,
+                            ProfilePage(userData: userData), /*replace: true*/
+                          );
                         });
                       }
                     },
-                    child:
-                    Container(
+                    child: Container(
                       padding: const EdgeInsets.all(8.0),
                       decoration: BoxDecoration(
                         // color: StreamChatTheme.of(context).colorTheme.barsBg,
                         border: Border.all(
-                          // color: StreamChatTheme.of(context).colorTheme.borders,
-                            color: Colors.deepPurple,
-                            width: 2
-                        ),
+                            // color: StreamChatTheme.of(context).colorTheme.borders,
+                            color: cRilPurple,
+                            width: 2),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: ListTile(
                         visualDensity: VisualDensity.compact,
-                        leading:
-                        SvgPicture.asset(
+                        leading: SvgPicture.asset(
                           'assets/svg_icons/google_logo.svg',
                           height: 30,
                           // color: StreamChatTheme.of(context).colorTheme.accentPrimary,
@@ -145,11 +181,10 @@ class _LoginPageState extends State<LoginPage> {
                         title: const Text(
                           'התחבר באמצעות גוגל',
                           style: TextStyle(
-                            fontSize: 14,
+                            fontSize: 16,
                             fontWeight: FontWeight.bold,
                             color: Colors.black,
                           ),
-
                         ),
 
 /*                subtitle: Text(
@@ -165,15 +200,15 @@ class _LoginPageState extends State<LoginPage> {
                       ),*/
                         trailing: Transform.scale(
                             scale: -1,
-                            child: const Icon(Icons.add)
-                        ),
+                            child:
+                            const Icon(Icons.arrow_right_alt_rounded,
+                              color: cRilPurple,
+                              size: 28,)),
                       ),
                     ),
                   ),
                 ),
               ),
-
-
             ],
           ), // Column
         ), // Center
@@ -182,55 +217,54 @@ class _LoginPageState extends State<LoginPage> {
   }
 }
 
-Widget buildInfoListTile(BuildContext context, {
+Widget buildInfoListTile(
+  BuildContext context, {
   required String title,
   required String subTitle,
   required String svgAsset,
 }) {
-  return
-    Directionality(
-        textDirection: TextDirection.rtl,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child:
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
-            margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
-            decoration: BoxDecoration(
-              // color: StreamChatTheme.of(context).colorTheme.inputBg,
-              border: Border.all(
-                  color: Colors.grey[500]!,
+  return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
+          margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
+          decoration: BoxDecoration(
+            // color: StreamChatTheme.of(context).colorTheme.inputBg,
+            color: Colors.grey[100],
+            border: Border.all(
+                color: Colors.grey[500]!.withOpacity(0.75),
                 // color: StreamChatTheme.of(context).colorTheme.disabled,
                 // color: cRilPurple,
-                  width: 2 ),
-              borderRadius: BorderRadius.circular(10),),
-            child: ListTile(
-              visualDensity: VisualDensity.compact,
-              leading:
-              SvgPicture.asset(
-                '$svgAsset',
-                height: 30,
-                color: Colors.grey[500],
-                // color: StreamChatTheme.of(context).colorTheme.textLowEmphasis.withOpacity(0.6),
+                width: 2),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: ListTile(
+            visualDensity: VisualDensity.compact,
+            leading: SvgPicture.asset(
+              '$svgAsset',
+              height: 30,
+              color: Colors.grey[500]?.withOpacity(0.75),
+              // color: StreamChatTheme.of(context).colorTheme.textLowEmphasis.withOpacity(0.6),
+            ),
+            title: Text(
+              '$title',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
               ),
-              title: Text(
-                '$title',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey[900],
-                ),
-              ),
-              subtitle: Text(
-                '$subTitle',
-                style: TextStyle(
-                  fontSize: 13,
-                  // fontWeight: FontWeight.bold,
-                  color: Colors.grey[700],
+            ),
+            subtitle: Text(
+              '$subTitle',
+              style: TextStyle(
+                fontSize: 14,
+                // fontWeight: FontWeight.bold,
+                color: Colors.grey[700],
               ),
             ),
           ),
-          ),
-        )
-    );
+        ),
+      ));
 }
