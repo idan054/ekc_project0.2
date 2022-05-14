@@ -29,54 +29,20 @@ class RoomsPage extends StatelessWidget {
               bool isUserInRoom = false;
 
               snapshot.data?[i].users.forEach((user) {
-                print('authUser: ${authUser?.uid} | ${authUser?.displayName}');
-                print('user: ${user.id} | ${user.firstName}');
+                // print('authUser: ${authUser?.uid} | ${authUser?.displayName}');
+                // print('user: ${user.id} | ${user.firstName}');
                 if (user.id == authUser?.uid) isUserInRoom = true;
               });
 
               var otherUser = snapshot.data?[i].users
                   .firstWhere((user) => user.id != authUser?.uid);
 
+              print('otherUser?.toJson()');
+              print(otherUser?.toJson());
+
               if (isUserInRoom) {
                 return Column(
                   children: [
-                    Card(
-                      child: ListTile(
-                        style: ListTileStyle.list,
-                        onTap: () async {
-                          final room = await FirebaseChatCore.instance
-                              .createRoom(otherUser!);
-                          kPushNavigator(
-                              context,
-                              FlyerDm(
-                                room: room,
-                              ));
-                        },
-                        leading: CircleAvatar(
-                            backgroundImage:
-                                NetworkImage('${otherUser?.imageUrl}')),
-                        title: Text(
-                          '${otherUser?.firstName}',
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        subtitle: otherUser?.lastSeen == null ? null :
-                                Text('${otherUser?.lastSeen}'),
-                        trailing:  IconButton(
-                            onPressed: () async {
-                              final room = await FirebaseChatCore.instance
-                                  .createRoom(otherUser!);
-
-                              kPushNavigator(
-                                  context,
-                                  FlyerDm(
-                                    room: room,
-                                  ));
-                            },
-                            icon: Icon(Icons.send_rounded, color:
-                            Colors.grey[500],
-                              size: 20,)),
-                      ),
-                    ),
                     const SizedBox(height: 10),
                     Directionality(
                       textDirection: TextDirection.rtl,
@@ -92,7 +58,7 @@ class RoomsPage extends StatelessWidget {
                         child: Column(
                           children: [
                             const SizedBox(height: 2,),
-                            Container(
+                            /*Container(
                               padding: const EdgeInsets.only(right: 10, left: 10),
                               alignment: Alignment.centerRight,
                               child:
@@ -104,7 +70,7 @@ class RoomsPage extends StatelessWidget {
                                 ),
                                 onTap:() {},
                               ),
-                            ),
+                            ),*/
 /*                            Container(
                               padding: const EdgeInsets.only(right: 10, left: 10),
                               alignment: Alignment.topRight,
@@ -131,7 +97,7 @@ class RoomsPage extends StatelessWidget {
                                         visualDensity: VisualDensity.standard,
                                         title:
                                         Text(
-                                          'name (age)',
+                                          '${otherUser?.firstName}',
                                           style: TextStyle(
                                             // color: Colors.primaries[Random().nextInt(Colors.primaries.length)].shade600,
                                             // color: Colors.black
@@ -142,7 +108,7 @@ class RoomsPage extends StatelessWidget {
                                         ),
                                         subtitle:
                                         Text(
-                                          /*' · '*/  'לפני ' 'createdAgo',
+                                          /*' · '*/  '(${otherUser?.metadata?['age'].toString().substring(0,2)})',
                                           textDirection: TextDirection.rtl,
                                           style: TextStyle(
                                             // color: Colors.primaries[Random().nextInt(Colors.primaries.length)].shade600,
