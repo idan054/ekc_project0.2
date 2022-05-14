@@ -85,7 +85,8 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
         required nextMessageInGroup,
       }) {
 
-    var user = widget.currentUser;
+    // var user = widget.currentUser;
+    var user = firestoreUserData;
 
     // print('Message C: ${message.toJson()}');
 
@@ -266,26 +267,39 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
   String? appBarTitle;
   List<String>? roomEmailUsers;
 
+  types.User? firestoreUserData;
+
   @override
   void initState() {
 
-    /*if(widget.currentUser?.imageUrl == null){
-
+    if(widget.currentUser?.imageUrl == null){
       var getUser = FirebaseFirestore.instance
           .collection('users').doc(widget.currentUser!.id).get()
       .then((userDoc) {
-        print('getUser value ${userDoc.data()}');
-
+        print('init user DATA: ${userDoc.data()}');
         var data = userDoc.data() ?? {};
+
         data['lastName'] = data['lastName'] ?? '';
-        data['role'] = data['role'] ?? '';
+        data['role'] = data['role'] ?? 'user';
+        data['id'] = data['metadata']['id'] ?? '';
         data['createdAt'] = data['createdAt']?.millisecondsSinceEpoch;
         data['lastSeen'] = data['lastSeen']?.millisecondsSinceEpoch;
         data['updatedAt'] = data['updatedAt']?.millisecondsSinceEpoch;
+        data['lastHomeMessage'] = data['metadata']['lastHomeMessage']?.millisecondsSinceEpoch;
         // data['metadata'] = data['updatedAt']?.millisecondsSinceEpoch;
         // widget.currentUser = types.User.fromJson(data);
+        firestoreUserData = types.User.fromJson(data);
+        print('firestore User DATA: ${firestoreUserData?.toJson()}');
+        }
+      );
+    } else {
+      firestoreUserData = widget.currentUser;
+      print('widget.currentUser User DATA: $firestoreUserData');
+    }
 
-*//*
+
+// ----------------
+/*
         var userData = widget.currentUser?.copyWith(
             firstName: '${data['firstName']}',
             imageUrl: '${data['imageUrl']}',
@@ -320,7 +334,7 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
     var timeLeft = 60 * 5 - _timePassed;
 
     print('BUILD currentUser JSON is:');
-    print(widget.currentUser?.toJson());
+    print(firestoreUserData?.toJson());
 
     return WillPopScope(
       onWillPop: () async => false,
@@ -334,20 +348,20 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
               stream: FirebaseChatCore.instance.messages(snapshot.data!),
               builder: (context, snapshot) {
 
-                widget.currentUser = widget.room.users.firstWhere((user) =>
-                  user.id == widget.currentUser!.id);
-
-                print('STREAM currentUser JSON is:');
-                print(widget.currentUser?.toJson());
+                // widget.currentUser = widget.room.users.firstWhere((user) =>
+                //   user.id == widget.currentUser!.id);
+                //
+                // print('STREAM currentUser JSON is:');
+                // print(widget.currentUser?.toJson());
 
                 List<types.Message> filteredMsgs = [];
                 // print('snapshot.data');
                 // print(snapshot.data);
 
                 var ageFilter = 3;  //{14 [17] 20}
-                var maxAge = widget.currentUser
+                var maxAge = firestoreUserData
                         ?.metadata?['age']+ ageFilter;
-                var minAge = widget.currentUser
+                var minAge = firestoreUserData
                        ?.metadata?['age'] - ageFilter;
                 snapshot.data?.forEach((msg) {
                   var _age = msg.author.metadata?['age'] ?? 0;
@@ -375,7 +389,7 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                     sendButtonVisibilityMode: SendButtonVisibilityMode.always,
                     onPreviewDataFetched: _handlePreviewDataFetched,
                     onSendPressed: (partialText) async =>
-                        _handleSendPressed(partialText, widget.currentUser!),
+                        _handleSendPressed(partialText, firestoreUserData!),
                     user: types.User(
                       id: FirebaseChatCore.instance.firebaseUser?.uid ?? '',
                       firstName: 'WHATEVER'
@@ -569,11 +583,14 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
     // FirebaseChatCore.instance.updateMessage(newMsg, roomId);
 
 
-    var getUser = await FirebaseFirestore.instance.collection('users').doc(currentUser.id).get();
+    // var getUser = await FirebaseFirestore.instance.collection('users').doc(currentUser.id).get();
+    // String _lastHomeMessage = getUser.data()?['metadata']['lastHomeMessage'];
+    // final _dateFormat = intl.DateFormat("yyyy-MM-dd HH:mm:ss");
+    // final date = _dateFormat.parse(_lastHomeMessage); //Converting String to DateTime object
+
     //  2022-05-1317: 25: 18.649543,
-    String _lastHomeMessage = getUser.data()?['metadata']['lastHomeMessage'];
-    final _dateFormat = intl.DateFormat("yyyy-MM-dd HH:mm:ss");
-    final date = _dateFormat.parse(_lastHomeMessage); //Converting String to DateTime object
+    // print('FS MD ${firestoreUserData?.metadata}');
+    DateTime date = firestoreUserData?.metadata?['lastHomeMessage'].toDate();
 
     final nowDate = DateTime.now();
     final difference = nowDate.difference(date);

@@ -110,7 +110,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           'email' : user?.metadata?.values.first,
                           'birthDay' : '$selectedTime',
                           'age' : age,
-                          // 'lastHomeMessage': '${DateTime(01, 01, 2000)}',
+                          'lastHomeMessage': DateTime(01, 01, 2000),
                         }
                     );
 
