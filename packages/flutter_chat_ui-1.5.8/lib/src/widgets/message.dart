@@ -301,49 +301,54 @@ class Message extends StatelessWidget {
     );
 
     return Container(
-      // alignment: _currentUserIsAuthor
-      //     ? AlignmentDirectional.centerEnd
-      //     : AlignmentDirectional.centerStart,
-      alignment: Alignment.center,
+      alignment: _currentUserIsAuthor
+          ? AlignmentDirectional.centerEnd
+          : AlignmentDirectional.centerStart,
+      // alignment: Alignment.center,
       // margin: const EdgeInsets.symmetric(horizontal: 2),
-/*      margin: EdgeInsetsDirectional.only(
+      margin: EdgeInsetsDirectional.only(
         bottom: 4,
         end: kIsWeb ? 0 : _query.padding.right,
         start: 20 + (kIsWeb ? 0 : _query.padding.left),
-      ),*/
+      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         mainAxisSize: MainAxisSize.min, // min
         children: [
           if (!_currentUserIsAuthor && showUserAvatars) _avatarBuilder(),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              GestureDetector(
-                onDoubleTap: () => onMessageDoubleTap?.call(context, message),
-                onLongPress: () => onMessageLongPress?.call(context, message),
-                onTap: () => onMessageTap?.call(context, message),
-                child: onMessageVisibilityChanged != null
-                    ? VisibilityDetector(
-                        key: Key(message.id),
-                        onVisibilityChanged: (visibilityInfo) =>
-                            onMessageVisibilityChanged!(message,
-                                visibilityInfo.visibleFraction > 0.1),
-                        child: _bubbleBuilder(
+          ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: messageWidth.toDouble(),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                GestureDetector(
+                  onDoubleTap: () => onMessageDoubleTap?.call(context, message),
+                  onLongPress: () => onMessageLongPress?.call(context, message),
+                  onTap: () => onMessageTap?.call(context, message),
+                  child: onMessageVisibilityChanged != null
+                      ? VisibilityDetector(
+                          key: Key(message.id),
+                          onVisibilityChanged: (visibilityInfo) =>
+                              onMessageVisibilityChanged!(message,
+                                  visibilityInfo.visibleFraction > 0.1),
+                          child: _bubbleBuilder(
+                            context,
+                            _borderRadius.resolve(Directionality.of(context)),
+                            _currentUserIsAuthor,
+                            _enlargeEmojis,
+                          ),
+                        )
+                      : _bubbleBuilder(
                           context,
                           _borderRadius.resolve(Directionality.of(context)),
                           _currentUserIsAuthor,
                           _enlargeEmojis,
                         ),
-                      )
-                    : _bubbleBuilder(
-                        context,
-                        _borderRadius.resolve(Directionality.of(context)),
-                        _currentUserIsAuthor,
-                        _enlargeEmojis,
-                      ),
-              ),
-            ],
+                ),
+              ],
+            ),
           ),
           if (_currentUserIsAuthor)
             Padding(
