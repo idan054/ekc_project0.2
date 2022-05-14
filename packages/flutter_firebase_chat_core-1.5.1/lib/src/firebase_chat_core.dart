@@ -178,7 +178,7 @@ class FirebaseChatCore {
           [],
               (previousValue, doc) {
             final data = doc.data();
-            print('DOC DATA A - Whats Stream get $data');
+            // print('DOC DATA A - Whats Stream get $data');
 
             // data.removeWhere((key, value) => key == 'authorPhotoURL' || key == 'authorDisplayName');
             data['metadata'] = data['author'];
@@ -196,7 +196,7 @@ class FirebaseChatCore {
             data['createdAt'] = data['createdAt']?.millisecondsSinceEpoch;
             data['id'] = doc.id;
 
-            print('DOC DATA B - Whats Stream return $data');
+            // print('DOC DATA B - Whats Stream return $data');
             return [...previousValue, types.Message.fromJson(data)]; // clean phase 2
           },
           // print('DOC DATA IS A $data');
@@ -257,7 +257,8 @@ class FirebaseChatCore {
   /// Sends a message to the Firestore. Accepts any partial message and a
   /// room ID. If arbitraty data is provided in the [partialMessage]
   /// does nothing.
-  void sendMessage(dynamic partialMessage, String roomId) async {
+  void sendMessage(dynamic partialMessage, String roomId,
+      {types.User? myAuthUser}) async {
     print('Start sendMessage() with my firebase_chat_core.dart');
 
     if (firebaseUser == null) return;
@@ -284,11 +285,12 @@ class FirebaseChatCore {
       );
     } else if (partialMessage is types.PartialText) {
       message = types.TextMessage.fromPartial(
-        author: types.User(
-            id: firebaseUser!.uid,
-            imageUrl: firebaseUser?.photoURL, // my
-            firstName: firebaseUser?.displayName
-          ), // my
+        author: myAuthUser ??
+                  types.User(
+                      id: firebaseUser!.uid,
+                      imageUrl: firebaseUser?.photoURL, // my
+                      firstName: firebaseUser?.displayName,
+                    ), // my
         id: '',
         partialText: partialMessage,
       );

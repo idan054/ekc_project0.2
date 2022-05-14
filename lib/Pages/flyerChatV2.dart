@@ -87,7 +87,7 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
     // var user = widget.currentUser;
     var user = firestoreUserData;
 
-    print('Message C - Whats _bubbleBuilder gets: ${message.toJson()}');
+    // print('Message C - Whats _bubbleBuilder gets: ${message.toJson()}');
 
     // String image = user?.imageUrl ?? 'https://bit.ly/3l64LIk';
     String image = message.metadata?['imageUrl'] ?? 'https://bit.ly/3l64LIk';
@@ -96,8 +96,12 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
     String name = message.metadata?['firstName'] ?? 'UserName Here.';
     var createdAgo = timeAgo(message.createdAt);
     var text = message.toJson()['text'];
-    var age = '${message.author.metadata?['age']
-        ?? 'XY'}'.substring(0, 2);
+    String age = '${message.metadata?['metadata']
+                        ?['age'] ?? 'XY'}'.substring(0, 2);
+
+    bool currentUser = user!.id == message.author.id;
+    // if(currentUser) print('user ${user.firstName} connected now.');
+
 
     return
       Directionality(
@@ -184,6 +188,7 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                     ),
 
 
+                    if(!currentUser)
                     Builder(
                         builder: (context) =>
                             Padding(
@@ -222,7 +227,7 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
         ),
       );
 
-    return Bubble(
+    /*return Bubble(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -258,7 +263,7 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
           : '${user?.id}' != message.author.id
           ? BubbleNip.leftBottom
           : BubbleNip.rightBottom,
-    );
+    );*/
   }
 
 
@@ -381,8 +386,8 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                     // if(_age != 0) print('$minAge - $_age - $maxAge');
                     // if(_age != 0) print(_age >= minAge && _age <= maxAge);
                     bool inAgeRange = _age >= minAge && _age <= maxAge;
-                    print('msg.tpJson');
-                    print(msg.toJson());
+                    // print('msg.tpJson');
+                    // print(msg.toJson());
 
                     /*               // ----------------- Add author
                     // Todo save api call by just adding name & photo to the message metadata
@@ -634,9 +639,15 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
 
 
 
-    String _lastHomeMessage = getUser.data()?['metadata']['lastHomeMessage'];
-    final _dateFormat = intl.DateFormat("yyyy-MM-dd HH:mm:ss");
-    final date = _dateFormat.parse(_lastHomeMessage); //Converting String to DateTime object
+    DateTime date;
+    var _lastHomeMessage = getUser.data()?['metadata']['lastHomeMessage'];
+    try{
+      final _dateFormat = intl.DateFormat("yyyy-MM-dd HH:mm:ss");
+      date = _dateFormat.parse(_lastHomeMessage); //Converting String to DateTime object
+    }catch(e){
+      print('lastHomeMessage is probably timestamp. dealing with it..: err $e');
+      date = _lastHomeMessage.toDate();
+    }
 
     // Static Value - Don't use!
     // var date = firestoreUserData?.metadata?['lastHomeMessage'];
@@ -697,6 +708,7 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
       FirebaseChatCore.instance.sendMessage(
         message,
         widget.room.id,
+        myAuthUser: _userData,
       );
     }
   }
