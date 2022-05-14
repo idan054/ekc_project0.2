@@ -59,6 +59,7 @@ dependencies:
 
   flutter_svg: ^1.0.3
   smooth_page_indicator: ^1.0.0+2
+  shared_preferences: ^2.0.15
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -76,6 +77,9 @@ dependency_overrides:
   flutter_firebase_chat_core: # ^1.5.1
     #    path: C:\flutter\.pub-cache\hosted\pub.dartlang.org\flutter_firebase_chat_core-1.5.1
     path: ./packages/flutter_firebase_chat_core-1.5.1
+
+  flutter_chat_ui:
+    path: ./packages/flutter_chat_ui-1.5.8
 
 # The following section is specific to Flutter.
 flutter:

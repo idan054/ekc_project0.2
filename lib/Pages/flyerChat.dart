@@ -97,7 +97,7 @@ class _FlyerChatOriginalState extends State<FlyerChatOriginal> {
           taskDrawer(context, widget.currentUser, false, widget.room.id),
       //
       // appBar: myAppBar('Chat with ${widget.room.users.first.lastName}'),
-      appBar: myAppBar(appBarTitle, actions: <Widget>[
+      appBar: myAppBar(context, appBarTitle, actions: <Widget>[
         widget.room.type.toString() == 'RoomType.direct' ? Container() : Builder(
           // builder needed for Scaffold.of(context).openEndDrawer()
           builder: (context) => IconButton(

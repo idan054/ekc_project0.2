@@ -22,6 +22,7 @@ import 'package:mime/mime.dart';
 import 'package:open_file/open_file.dart';
 import 'package:uuid/uuid.dart';
 
+import '../theme/colors.dart';
 import '../theme/constants.dart';
 import 'dummyPage.dart';
 import 'flyerChat.dart';
@@ -55,7 +56,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
 
       // appBar: myAppBar('Find someone to chat'),
-        appBar: myAppBar('${widget.userData?.firstName}'),
+        appBar: myAppBar(context, '${widget.userData?.firstName}'),
         body: Column(
           children: [
             const SizedBox(height: 20),
@@ -160,12 +161,12 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: ListTile(
+                    child: const ListTile(
                       visualDensity: VisualDensity.compact,
-                      title: const Text(
+                      title: Text(
                         'סיום',
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),
@@ -183,10 +184,9 @@ class _ProfilePageState extends State<ProfilePage> {
                               .textLowEmphasis,
                         ),
                       ),*/
-                      trailing: Transform.scale(
-                          scale: -1,
-                          child: const Icon(Icons.add)
-                      ),
+                      trailing: Icon(Icons.done_rounded,
+                        color: cRilPurple,
+                        size: 28,),
                     ),
                   ),
                 ),

@@ -65,7 +65,7 @@ class _MainPageState extends State<MainPage> {
         drawer: projectDrawer(context, widget.googleSign_user, true, null),
 
         // appBar: myAppBar('Find someone to chat'),
-        appBar: myAppBar('Home Page',
+        appBar: myAppBar(context, 'Home Page',
             actions: <Widget>[
               Builder(
                 // builder needed for Scaffold.of(context).openEndDrawer()

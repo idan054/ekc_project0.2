@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
 
 import '../Widgets/myAppBar.dart';
@@ -202,7 +203,13 @@ class RoomsPage extends StatelessWidget {
           } else {
             return const Center(
                 child: Text(
-              'התחל שיחה עם אנשים חדשים \n דרך רילטופיה!',
+              'התחל שיחה עם חברים חדשים \n דרך רילטופיה!',
+                  style: TextStyle(
+                    color: neutral2,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    height: 1.5,
+                  ),
               textAlign: TextAlign.center,
               textDirection: TextDirection.rtl,
             ));

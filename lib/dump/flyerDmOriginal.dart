@@ -11,7 +11,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
@@ -20,9 +19,9 @@ import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../myUtil.dart';
-import 'usersPage.dart';
+import '../Pages/usersPage.dart';
 
-class FlyerDm extends StatefulWidget {
+class FlyerDmOriginal extends StatefulWidget {
 /*  const FireBaseChatPage({
     Key? key,
     required this.room,
@@ -36,16 +35,15 @@ class FlyerDm extends StatefulWidget {
 
   // final currentUser;
 
-  const FlyerDm({this.currentUser, required this.room}) : super();
+  const FlyerDmOriginal({this.currentUser, required this.room}) : super();
 
   @override
-  _FlyerDmState createState() => _FlyerDmState();
+  _FlyerDmOriginalState createState() => _FlyerDmOriginalState();
 }
 
-class _FlyerDmState extends State<FlyerDm> {
+class _FlyerDmOriginalState extends State<FlyerDmOriginal> {
   bool _isAttachmentUploading = false;
-  types.User? guestUser; // old
-  types.User? otherUser;
+  var guestUser;
   // GoogleSignInAccount? guestUser;
   // UserCredential? guestUser;
   String? appBarTitle;
@@ -53,12 +51,6 @@ class _FlyerDmState extends State<FlyerDm> {
 
   @override
   void initState() {
-    User? authUser = FirebaseAuth.instance.currentUser;
-
-    otherUser = widget.room.users
-        .firstWhere((user) => user.id != authUser?.uid);
-
-
     print('widget.room.type');
     print(widget.room.type.toString());
     print(widget.room.name);
@@ -72,7 +64,7 @@ class _FlyerDmState extends State<FlyerDm> {
           // Lastname is MAIL!
           setState(() {
             guestUser = user;
-            appBarTitle = '${guestUser?.lastName}';
+            appBarTitle = '${guestUser.lastName}';
           });
         }
       });
@@ -96,34 +88,17 @@ class _FlyerDmState extends State<FlyerDm> {
 
   @override
   Widget build(BuildContext context) {
-    // print('otherUser');
-    // print(otherUser);
-
     return Scaffold(
-      appBar: myAppBar(context,
-          // appBarTitle,
-          '${otherUser?.firstName}',
-          actions: <Widget>[
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: CircleAvatar(
-                radius: 40 / 2,
-                backgroundColor: Colors.grey[300],
-                child: IconButton(
-                    onPressed: (){},
-                    icon:
-                    SvgPicture.asset(
-                      'assets/svg_icons/CleanLogo.svg',
-                      height: 30,
-                      color: Colors.grey[900],
-                      // color: StreamChatTheme.of(context).colorTheme.accentPrimary,
-                    ),),
-              ),
-            )
-
-
-
-/*        widget.room.type.toString() == 'RoomType.direct' ? Container() : Builder(
+      drawer:
+          // true = Projects Drawer
+          projectDrawer(context, widget.currentUser, true, widget.room.id),
+      endDrawer:
+          // false = Task Drawer
+          taskDrawer(context, widget.currentUser, false, widget.room.id),
+      //
+      // appBar: myAppBar('Chat with ${widget.room.users.first.lastName}'),
+      appBar: myAppBar(context, appBarTitle, actions: <Widget>[
+        widget.room.type.toString() == 'RoomType.direct' ? Container() : Builder(
           // builder needed for Scaffold.of(context).openEndDrawer()
           builder: (context) => IconButton(
             icon: const Icon(Icons.group_add),
@@ -149,7 +124,7 @@ class _FlyerDmState extends State<FlyerDm> {
             onPressed: () => Scaffold.of(context).openEndDrawer(),
             tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
           ),
-        ),*/
+        ),
       ]),
       body: StreamBuilder<types.Room>(
         initialData: widget.room,

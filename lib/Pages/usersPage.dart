@@ -58,7 +58,7 @@ class _UsersPageState extends State<UsersPage> {
     return Scaffold(
       drawer: projectDrawer(context, widget.googleSign_user, true, null),
 
-      appBar: myAppBar('Find someone to chat'),
+      appBar: myAppBar(context, 'Find someone to chat'),
       // appBar: myAppBar(''),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
