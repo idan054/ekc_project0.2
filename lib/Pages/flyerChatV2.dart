@@ -70,7 +70,8 @@ class FlyerChatV2 extends StatefulWidget {
 
   // final currentUser;
 
-  FlyerChatV2({Key? key, this.currentUser, required this.room}) : super(key: key);
+  FlyerChatV2({Key? key, this.currentUser, required this.room})
+      : super(key: key);
 
   @override
   _FlyerChatV2State createState() => _FlyerChatV2State();
@@ -79,146 +80,147 @@ class FlyerChatV2 extends StatefulWidget {
 
 class _FlyerChatV2State extends State<FlyerChatV2> {
 
-  Widget _bubbleBuilder(
-      Widget child, {
-        required types.Message message,
-        required nextMessageInGroup,
-      }) {
-
+  Widget _bubbleBuilder(Widget child, {
+    required types.Message message,
+    required nextMessageInGroup,
+  }) {
     // var user = widget.currentUser;
     var user = firestoreUserData;
 
-    // print('Message C: ${message.toJson()}');
+    print('Message C - Whats _bubbleBuilder gets: ${message.toJson()}');
 
     // String image = user?.imageUrl ?? 'https://bit.ly/3l64LIk';
-    String image = message.toJson()['author']['imageUrl'] ?? user?.imageUrl;
+    String image = message.metadata?['imageUrl'] ?? 'https://bit.ly/3l64LIk';
     // print('X IMAGE: $image');
     // var name = message.author.firstName ?? user?.firstName;
-    var name = message.toJson()['author']['firstName'] ?? 'user name here';
+    String name = message.metadata?['firstName'] ?? 'UserName Here.';
     var createdAgo = timeAgo(message.createdAt);
     var text = message.toJson()['text'];
     var age = '${message.author.metadata?['age']
-                  ?? 'XY'}'.substring(0, 2);
+        ?? 'XY'}'.substring(0, 2);
 
     return
       Directionality(
-      textDirection: TextDirection.rtl,
-      child: Card(
-        margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
-        shape:
-        RoundedRectangleBorder(
-          side: BorderSide( color: Colors.grey[200]!, width: 1.5 ),
-          borderRadius: BorderRadius.circular(6.0),),
-        elevation: 0,
-        shadowColor: Colors.black87,
-        color: Colors.grey[100]!,
-        child: Column(
-          children: [
-            const SizedBox(height: 2,),
-            Container(
-              padding: const EdgeInsets.only(right: 10, left: 10),
-              alignment: Alignment.centerRight,
-              child:
-              InkWell(
+        textDirection: TextDirection.rtl,
+        child: Card(
+          margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
+          shape:
+          RoundedRectangleBorder(
+            side: BorderSide(color: Colors.grey[200]!, width: 1.5),
+            borderRadius: BorderRadius.circular(6.0),),
+          elevation: 0,
+          shadowColor: Colors.black87,
+          color: Colors.grey[100]!,
+          child: Column(
+            children: [
+              const SizedBox(height: 2,),
+              Container(
+                padding: const EdgeInsets.only(right: 10, left: 10),
+                alignment: Alignment.centerRight,
                 child:
-                Icon(
-                  Icons.more_horiz,
-                  color: Colors.grey[200]!,
-                ),
-                onTap:() {},
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.only(right: 10, left: 10),
-              alignment: Alignment.topRight,
-              child: Text(text,
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.normal,
-                  fontSize: 16,
-                ),
-              ),
-            ),
-            Container(
-              height: 80,
-              padding: const EdgeInsets.only(right: 10),
-              // color: Colors.primaries[Random().nextInt(Colors.primaries.length)].shade300,
-              // color: cGrey100,
-              child:
-              Row(
-                children: [
-                  Flexible(
-                    child:
-                    ListTile(
-                        dense: true,
-                        visualDensity: VisualDensity.standard,
-                        title:
-                        Text(
-                          '$name ($age)',
-                          style: TextStyle(
-                            // color: Colors.primaries[Random().nextInt(Colors.primaries.length)].shade600,
-                            // color: Colors.black
-                              color: Colors.grey[600]!,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14),
-                          // style: bodyText1Format(context)
-                        ),
-                        subtitle:
-                        Text(
-                          /*' · '*/  'לפני ' '$createdAgo',
-                          textDirection: TextDirection.rtl,
-                          style: TextStyle(
-                            // color: Colors.primaries[Random().nextInt(Colors.primaries.length)].shade600,
-                            // color: Colors.black
-                              color: Colors.grey[600],
-                              fontWeight: FontWeight.normal,
-                              fontSize: 12),
-                          // style: bodyText1Format(context)
-                        ),
-                        contentPadding: EdgeInsets.zero,
-                        leading:   CircleAvatar(
-                          backgroundImage: NetworkImage(image),
-                          // backgroundImage: NetworkImage('https://bit.ly/3l64LIk'),
-                        )
-                    ),
+                InkWell(
+                  child:
+                  Icon(
+                    Icons.more_horiz,
+                    color: Colors.grey[200]!,
                   ),
-
-
-                  Builder(
-                      builder: (context) =>
-                      Padding(
-                        padding: const EdgeInsets.only(left: 10),
-                        child: Directionality(
-                          textDirection: TextDirection.rtl,
-                          child:
-                          CircleAvatar(
-                            backgroundColor: Colors.grey[200],
-                            radius: 20,
-                            child: IconButton(
-                                onPressed: () async {
-                                  final room = await
-                                      FirebaseChatCore.instance.createRoom(message.author);
-
-                                  kPushNavigator(context, FlyerDm(room: room,));
-                                },
-                                icon: Icon(Icons.send_rounded, color:
-                                Colors.grey[500],
-                                  size: 20,)),
-                          ),
-
-                        ),
-                      )
-                  )
-
-                  // const SizedBox(width: 10),
-                  // const Spacer(),
-                ],
+                  onTap: () {},
+                ),
               ),
-            ),
-          ],
+              Container(
+                padding: const EdgeInsets.only(right: 10, left: 10),
+                alignment: Alignment.topRight,
+                child: Text(text,
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.normal,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+              Container(
+                height: 80,
+                padding: const EdgeInsets.only(right: 10),
+                // color: Colors.primaries[Random().nextInt(Colors.primaries.length)].shade300,
+                // color: cGrey100,
+                child:
+                Row(
+                  children: [
+                    Flexible(
+                      child:
+                      ListTile(
+                          dense: true,
+                          visualDensity: VisualDensity.standard,
+                          title:
+                          Text(
+                            '$name ($age)',
+                            style: TextStyle(
+                              // color: Colors.primaries[Random().nextInt(Colors.primaries.length)].shade600,
+                              // color: Colors.black
+                                color: Colors.grey[600]!,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14),
+                            // style: bodyText1Format(context)
+                          ),
+                          subtitle:
+                          Text(
+                            /*' · '*/
+                            'לפני ' '$createdAgo',
+                            textDirection: TextDirection.rtl,
+                            style: TextStyle(
+                              // color: Colors.primaries[Random().nextInt(Colors.primaries.length)].shade600,
+                              // color: Colors.black
+                                color: Colors.grey[600],
+                                fontWeight: FontWeight.normal,
+                                fontSize: 12),
+                            // style: bodyText1Format(context)
+                          ),
+                          contentPadding: EdgeInsets.zero,
+                          leading: CircleAvatar(
+                            backgroundImage: NetworkImage(image),
+                            // backgroundImage: NetworkImage('https://bit.ly/3l64LIk'),
+                          )
+                      ),
+                    ),
+
+
+                    Builder(
+                        builder: (context) =>
+                            Padding(
+                              padding: const EdgeInsets.only(left: 10),
+                              child: Directionality(
+                                textDirection: TextDirection.rtl,
+                                child:
+                                CircleAvatar(
+                                  backgroundColor: Colors.grey[200],
+                                  radius: 20,
+                                  child: IconButton(
+                                      onPressed: () async {
+                                        final room = await
+                                        FirebaseChatCore.instance.createRoom(
+                                            message.author);
+
+                                        kPushNavigator(
+                                            context, FlyerDm(room: room,));
+                                      },
+                                      icon: Icon(Icons.send_rounded, color:
+                                      Colors.grey[500],
+                                        size: 20,)),
+                                ),
+
+                              ),
+                            )
+                    )
+
+                    // const SizedBox(width: 10),
+                    // const Spacer(),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-    );
+      );
 
     return Bubble(
       child: Column(
@@ -235,9 +237,9 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
               ),
               if ('${user?.id}' != message.author.id)
                 Text('${user?.firstName}',
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14)
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14)
                 ),
             ],
           ),
@@ -262,6 +264,7 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
 
   bool _isAttachmentUploading = false;
   var guestUser;
+
   // GoogleSignInAccount? guestUser;
   // UserCredential? guestUser;
   String? appBarTitle;
@@ -271,11 +274,10 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
 
   @override
   void initState() {
-
-    if(widget.currentUser?.imageUrl == null){
+    if (widget.currentUser?.imageUrl == null) {
       var getUser = FirebaseFirestore.instance
           .collection('users').doc(widget.currentUser!.id).get()
-      .then((userDoc) {
+          .then((userDoc) {
         print('init user DATA: ${userDoc.data()}');
         var data = userDoc.data() ?? {};
         print('init AGE: ${data['metadata']['age']}');
@@ -292,12 +294,12 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
         // widget.currentUser = types.User.fromJson(data);
         firestoreUserData = types.User.fromJson(data);
         print('firestore User DATA: ${firestoreUserData?.toJson()}');
-        }
+      }
       );
     } else {
       firestoreUserData = widget.currentUser;
       print('widget.currentUser (from signup)'
-            'User DATA: ${firestoreUserData?.toJson()}');
+          'User DATA: ${firestoreUserData?.toJson()}');
       // firestoreUserData?.metadata?['age'] = 19;
       // print('Debug: ${firestoreUserData?.metadata?['age']}');
     }
@@ -320,7 +322,7 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
         widget.currentUser = userData;
         print('userData?.toJson()');
         print(userData?.toJson());
-*//*
+*/ /*
 
 
       // print('widget.currentUser ${widget.currentUser}');
@@ -352,8 +354,11 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
               initialData: const [],
               stream: FirebaseChatCore.instance.messages(snapshot.data!),
               builder: (context, snapshot) {
+                types.Message msgWithAuthor;
 
-                if(snapshot.hasData){
+                if (snapshot.hasData) {
+                  print('What Stream snapshot Data get: ${snapshot.data}');
+
                   // widget.currentUser = widget.room.users.firstWhere((user) =>
                   //   user.id == widget.currentUser!.id);
                   //
@@ -365,19 +370,31 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                   // print(snapshot.data);
 
                   // print('A G E: ${firestoreUserData?.metadata?['age']}');
-                  var ageFilter = 3;  //{14 [17] 20}
+                    // ----------------- Age filter
+                  var ageFilter = 3; //{14 [17] 20}
                   var maxAge = firestoreUserData
                       ?.metadata?['age'] + ageFilter; // ?? 20;
                   var minAge = firestoreUserData
                       ?.metadata?['age'] - ageFilter; // ?? 14;
-                  snapshot.data?.forEach((msg) {
+                  snapshot.data?.forEach((msg) async {
                     var _age = msg.author.metadata?['age'] ?? 0;
                     // if(_age != 0) print('$minAge - $_age - $maxAge');
                     // if(_age != 0) print(_age >= minAge && _age <= maxAge);
                     bool inAgeRange = _age >= minAge && _age <= maxAge;
+                    print('msg.tpJson');
+                    print(msg.toJson());
 
-                    if(inAgeRange || _age == 0) filteredMsgs.add(msg);
+                    /*               // ----------------- Add author
+                    // Todo save api call by just adding name & photo to the message metadata
+                    var getUser = await FirebaseFirestore.instance.collection(
+                        'users').doc(msg.author.id).get();
+                    msg = msg.copyWith(
+                        metadata: getUser.data());
+                    msgWithAuthor = msg;*/
+
+                    if (inAgeRange || _age == 0) filteredMsgs.add(msg);
                     //   print(_age.runtimeType);
+                    // msg.metadata = guestUser.data();
                   });
 
 
@@ -403,6 +420,20 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                       ),
                       // user: widget.currentUser!,
                       bubbleBuilder: _bubbleBuilder,
+
+                      /*
+                      bubbleBuilder: (Widget child, {
+                        required types.Message message,
+                        required nextMessageInGroup,
+                      }) {
+                        return _bubbleBuilder(
+                            child,
+                            // message: message,
+                            message: msgWithAuthor,
+                            nextMessageInGroup: nextMessageInGroup);
+                      },
+                      */
+
                       showUserAvatars: false,
                       showUserNames: true,
                       // customMessageBuilder: (customMessage, {required int messageWidth}){return customMessage.copyWith()},
@@ -422,7 +453,7 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
             onPressed: (){},
             child: StatefulBuilder(
                 builder: (context, setState){
-*//*                  Timer.periodic(const Duration(seconds: 1), (timer) {
+*/ /*                  Timer.periodic(const Duration(seconds: 1), (timer) {
                     setState((){
                       print('1 sec passed.');
                       print('$timeLeft');
@@ -431,7 +462,7 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                     if (timeLeft <= 0) timer.cancel();
                     });
                     // timer.cancel();
-                  });*//*
+                  });*/ /*
                   return Text('$timeLeft');
                 }),
           ),
@@ -576,10 +607,8 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
     }
   }
 
-  void _handlePreviewDataFetched(
-    types.TextMessage message,
-    types.PreviewData previewData,
-  ) {
+  void _handlePreviewDataFetched(types.TextMessage message,
+      types.PreviewData previewData,) {
     final updatedMessage = message.copyWith(previewData: previewData);
 
     FirebaseChatCore.instance.updateMessage(updatedMessage, widget.room.id);
@@ -591,25 +620,29 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
     });
   }
 
-  void _handleSendPressed(types.PartialText message, types.User currentUser) async {
+  void _handleSendPressed(types.PartialText message,
+      types.User currentUser) async {
     print('my little msg $message');
-    var newMsg = message.metadata?.update
-      ('8', (value) => 'New', ifAbsent: () => 'Mercury');
+    // var newMsg = message.metadata?.update
+    //   ('8', (value) => 'New', ifAbsent: () => 'Mercury');
 
     // FirebaseChatCore.instance.updateMessage(newMsg, roomId);
 
+    var getUser = await FirebaseFirestore.instance.collection('users').doc(
+        currentUser.id).get();
+    print('AA');
 
-    var getUser = await FirebaseFirestore.instance.collection('users').doc(currentUser.id).get();
+
+
     String _lastHomeMessage = getUser.data()?['metadata']['lastHomeMessage'];
+    final _dateFormat = intl.DateFormat("yyyy-MM-dd HH:mm:ss");
+    final date = _dateFormat.parse(_lastHomeMessage); //Converting String to DateTime object
 
-
+    // Static Value - Don't use!
+    // var date = firestoreUserData?.metadata?['lastHomeMessage'];
     //  2022-05-1317: 25: 18.649543,
     // print('FS MD ${firestoreUserData?.metadata?['lastHomeMessage']}');
     // String _lastHomeMessage = '${firestoreUserData?.metadata?['lastHomeMessage']}';
-    final _dateFormat = intl.DateFormat("yyyy-MM-dd HH:mm:ss");
-    final date = _dateFormat.parse(_lastHomeMessage); //Converting String to DateTime object
-    // DateTime date = firestoreUserData?.metadata
-    //     ?['lastHomeMessage'].toDate();
 
     final nowDate = DateTime.now();
     final difference = nowDate.difference(date);
@@ -621,12 +654,14 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
     var waitUntil =
     DateTime.now()
         .add(Duration(seconds: time2Wait - difference.inSeconds));
+    print('waitUntil');
+    print(waitUntil);
 
-    if (difference.inSeconds < time2Wait){
-      cleanSnack(context, text: 'יש להמתין עד '
-          '$waitUntil'
-          '(${time2Wait - difference.inSeconds}) '
-          ' שניות');
+    if (difference.inSeconds < time2Wait) {
+      cleanSnack(context, text: 'בבקשה המתן עד ' +
+          '$waitUntil'.substring(11, 16) +
+          ' (${time2Wait - difference.inSeconds}'
+          ' שניות' ')');
     } else {
       var _user = FirebaseAuth.instance.currentUser;
       var lastHomeMessage = DateTime.now();
@@ -636,10 +671,10 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
           firstName: '${currentUser.firstName}',
           imageUrl: '${currentUser.imageUrl}',
           metadata: {
-            'id' : currentUser.id,
-            'email' : '${currentUser.metadata?['email']}',
-            'birthDay' : currentUser.metadata?['birthDay'],
-            'age' : currentUser.metadata?['age'],
+            'id': currentUser.id,
+            'email': '${currentUser.metadata?['email']}',
+            'birthDay': currentUser.metadata?['birthDay'],
+            'age': currentUser.metadata?['age'],
             'lastHomeMessage': '$lastHomeMessage',
           }
       );

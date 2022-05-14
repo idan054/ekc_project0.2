@@ -178,19 +178,26 @@ class FirebaseChatCore {
           [],
               (previousValue, doc) {
             final data = doc.data();
-            // print('DOC DATA IS A $data');
+            print('DOC DATA A - Whats Stream get $data');
+
+            // data.removeWhere((key, value) => key == 'authorPhotoURL' || key == 'authorDisplayName');
+            data['metadata'] = data['author'];
 
             final author = room.users.firstWhere(
                   (u) => u.id == data['authorId'],
               orElse: () => types.User(id: data['authorId'] as String),
             );
 
+            // THOSE WILL BREAK YOUR author DATA (?)
             data['author'] = author.toJson();
-            data['createdAt'] = data['createdAt']?.millisecondsSinceEpoch;
-            data['id'] = doc.id;
             data['updatedAt'] = data['updatedAt']?.millisecondsSinceEpoch;
 
-            return [...previousValue, types.Message.fromJson(data)];
+
+            data['createdAt'] = data['createdAt']?.millisecondsSinceEpoch;
+            data['id'] = doc.id;
+
+            print('DOC DATA B - Whats Stream return $data');
+            return [...previousValue, types.Message.fromJson(data)]; // clean phase 2
           },
           // print('DOC DATA IS A $data');
         );
@@ -279,8 +286,8 @@ class FirebaseChatCore {
       message = types.TextMessage.fromPartial(
         author: types.User(
             id: firebaseUser!.uid,
-            // imageUrl: firebaseUser?.photoURL, // my
-            // firstName: firebaseUser?.displayName
+            imageUrl: firebaseUser?.photoURL, // my
+            firstName: firebaseUser?.displayName
           ), // my
         id: '',
         partialText: partialMessage,
@@ -290,14 +297,25 @@ class FirebaseChatCore {
 
     if (message != null) {
       final messageMap = message.toJson();
-      messageMap.removeWhere((key, value) => key == 'author' || key == 'id');
+      // messageMap.removeWhere((key, value) => key == 'author' || key == 'id');
 
-      // messageMap['authorDisplayName'] = firebaseUser!.displayName;
-      // messageMap['authorPhotoURL'] = firebaseUser!.photoURL;
+      messageMap['authorDisplayName'] = firebaseUser!.displayName;
+      messageMap['authorPhotoURL'] = firebaseUser!.photoURL;
 
       messageMap['authorId'] = firebaseUser!.uid;
       messageMap['createdAt'] = FieldValue.serverTimestamp();
       messageMap['updatedAt'] = FieldValue.serverTimestamp();
+
+      // ----------------- Add author
+      // Todo save api call by just adding name & photo to the message metadata
+      /*var getUser = *//*await*//* FirebaseFirestore.instance.collection(
+          'users').doc(msg.author.id).get()
+          .then((value) =>
+      msg = msg.copyWith(metadata: value.data()
+      )
+      );
+      print('msg.tpJson');
+      print(msg.toJson());*/
 
       print('sendMessage() B');
       await FirebaseFirestore.instance

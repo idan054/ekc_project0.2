@@ -24,6 +24,7 @@ cleanSnack(BuildContext context,{
         content: Text(
           '$text',
           textAlign: TextAlign.center,
+          textDirection: TextDirection.rtl,
           style: TextStyle(
               color: textColor == null ? Colors.black : textColor,
               fontSize: 16,
