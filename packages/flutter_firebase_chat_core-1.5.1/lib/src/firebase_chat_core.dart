@@ -288,8 +288,9 @@ class FirebaseChatCore {
       final messageMap = message.toJson();
       // messageMap.removeWhere((key, value) => key == 'author' || key == 'id');
 
-      // messageMap['authorDisplayName'] = firebaseUser!.displayName;
-      // messageMap['authorPhotoURL'] = firebaseUser!.photoURL;
+      messageMap['authorDisplayName'] = firebaseUser!.displayName;
+      messageMap['authorPhotoURL'] = firebaseUser!.photoURL;
+
       messageMap['authorId'] = firebaseUser!.uid;
       messageMap['createdAt'] = FieldValue.serverTimestamp();
       messageMap['updatedAt'] = FieldValue.serverTimestamp();
