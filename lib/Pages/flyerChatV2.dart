@@ -595,13 +595,14 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
 
     // var getUser = await FirebaseFirestore.instance.collection('users').doc(currentUser.id).get();
     // String _lastHomeMessage = getUser.data()?['metadata']['lastHomeMessage'];
-    // final _dateFormat = intl.DateFormat("yyyy-MM-dd HH:mm:ss");
-    // final date = _dateFormat.parse(_lastHomeMessage); //Converting String to DateTime object
 
     //  2022-05-1317: 25: 18.649543,
-    print('FS MD ${firestoreUserData?.metadata?['lastHomeMessage']}');
-    DateTime date = firestoreUserData?.metadata
-        ?['lastHomeMessage'].toDate();
+    // print('FS MD ${firestoreUserData?.metadata?['lastHomeMessage']}');
+    String _lastHomeMessage = '${firestoreUserData?.metadata?['lastHomeMessage']}';
+    final _dateFormat = intl.DateFormat("yyyy-MM-dd HH:mm:ss");
+    final date = _dateFormat.parse(_lastHomeMessage); //Converting String to DateTime object
+    // DateTime date = firestoreUserData?.metadata
+    //     ?['lastHomeMessage'].toDate();
 
     final nowDate = DateTime.now();
     final difference = nowDate.difference(date);
