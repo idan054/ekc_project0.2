@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:ekc_project/Pages/mainPage.dart';
+import 'package:ekc_project/Pages/roomsPage.dart';
 import 'package:ekc_project/Services/myFirebaseFlyer.dart';
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart' as intl;
@@ -50,6 +51,7 @@ import '../Widgets/snackbar.dart';
 import '../myUtil.dart';
 import '../theme/constants.dart';
 import 'A_loginPage.dart';
+import 'flyerDm.dart';
 import 'usersPage.dart';
 import 'package:bubble/bubble.dart';
 
@@ -84,7 +86,7 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
 
     var user = widget.currentUser;
 
-    print('Message C: ${message.toJson()}');
+    // print('Message C: ${message.toJson()}');
 
     // String image = user?.imageUrl ?? 'https://bit.ly/3l64LIk';
     String image = message.toJson()['author']['imageUrl'] ?? user?.imageUrl;
@@ -172,7 +174,7 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                         ),
                         contentPadding: EdgeInsets.zero,
                         leading:   CircleAvatar(
-                          backgroundImage: NetworkImage('$image'),
+                          backgroundImage: NetworkImage(image),
                           // backgroundImage: NetworkImage('https://bit.ly/3l64LIk'),
                         )
                     ),
@@ -190,7 +192,12 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                             backgroundColor: Colors.grey[200],
                             radius: 20,
                             child: IconButton(
-                                onPressed: (){},
+                                onPressed: () async {
+                                  final room = await
+                                      FirebaseChatCore.instance.createRoom(message.author);
+
+                                  kPushNavigator(context, FlyerDm(room: room,));
+                                },
                                 icon: Icon(Icons.send_rounded, color:
                                 Colors.grey[500],
                                   size: 20,)),
@@ -309,7 +316,10 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
           actions: [
             IconButton(
                 onPressed: () => kPushNavigator(context, const LoginPage()),
-                icon: const Icon(Icons.logout_rounded))
+                icon: const Icon(Icons.logout_rounded)),
+            IconButton(
+                onPressed: () => kPushNavigator(context, const RoomsPage()),
+                icon: const Icon(Icons.chat_rounded))
           ]
         ),
         body: StreamBuilder<types.Room>(
