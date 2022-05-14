@@ -98,7 +98,8 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
     var age = '${message.author.metadata?['age']
                   ?? 'XY'}'.substring(0, 2);
 
-    return Directionality(
+    return
+      Directionality(
       textDirection: TextDirection.rtl,
       child: Card(
         margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
@@ -310,54 +311,6 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
-        appBar: myAppBar(
-          // appBarTitle,
-          'Home: ${widget.currentUser?.firstName}',
-          actions: [
-            IconButton(
-                onPressed: () // =>
-                {
-                  showDialog(
-                    barrierDismissible: true,
-                    context: context,
-                    // barrierColor: StreamChatTheme.of(context).colorTheme.overlay,
-                    builder: (context) => Center(
-                        child: AlertDialog(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          title: const Center(child:
-                          Text("אתה בטוח שאתה רוצה להתנתק?",
-                            textAlign: TextAlign.center,
-                            textDirection: TextDirection.rtl,
-                          )),
-                          // content: Text("Saved successfully"),
-                          actionsAlignment: MainAxisAlignment.center,
-                          actions: [
-                            TextButton(
-                              onPressed: ()=>kNavigator(context).pop(),
-                              child: const Text('חזור לראשי',
-                                  style: TextStyle(color: Colors.grey)),
-                            ),
-                            TextButton(
-                              onPressed: () =>
-                                  kPushNavigator(context, const LoginPage(),
-                                      /*replace: true*/),
-                              child: const Text('התנתק',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold)),
-                            ),
-                          ],
-                        )
-                    ),
-                  );
-                },
-                icon: const Icon(Icons.logout_rounded)),
-            IconButton(
-                onPressed: () => kPushNavigator(context, const RoomsPage()),
-                icon: const Icon(Icons.chat_rounded))
-          ]
-        ),
         body: StreamBuilder<types.Room>(
           initialData: widget.room,
           stream: FirebaseChatCore.instance.room(widget.room.id),
