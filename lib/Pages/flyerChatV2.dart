@@ -278,10 +278,12 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
       .then((userDoc) {
         print('init user DATA: ${userDoc.data()}');
         var data = userDoc.data() ?? {};
+        print('init AGE: ${data['metadata']['age']}');
 
         data['lastName'] = data['lastName'] ?? '';
         data['role'] = data['role'] ?? 'user';
         data['id'] = data['metadata']['id'] ?? '';
+        // data['metadata']['age'] = data['metadata']['age'] ?? 0;
         data['createdAt'] = data['createdAt']?.millisecondsSinceEpoch;
         data['lastSeen'] = data['lastSeen']?.millisecondsSinceEpoch;
         data['updatedAt'] = data['updatedAt']?.millisecondsSinceEpoch;
@@ -294,7 +296,10 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
       );
     } else {
       firestoreUserData = widget.currentUser;
-      print('widget.currentUser User DATA: $firestoreUserData');
+      print('widget.currentUser (from signup)'
+            'User DATA: ${firestoreUserData?.toJson()}');
+      // firestoreUserData?.metadata?['age'] = 19;
+      // print('Debug: ${firestoreUserData?.metadata?['age']}');
     }
 
 
@@ -358,9 +363,10 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                 // print('snapshot.data');
                 // print(snapshot.data);
 
+                // print('A G E: ${firestoreUserData?.metadata?['age']}');
                 var ageFilter = 3;  //{14 [17] 20}
                 var maxAge = firestoreUserData
-                        ?.metadata?['age']+ ageFilter;
+                        ?.metadata?['age'] + ageFilter;
                 var minAge = firestoreUserData
                        ?.metadata?['age'] - ageFilter;
                 snapshot.data?.forEach((msg) {
