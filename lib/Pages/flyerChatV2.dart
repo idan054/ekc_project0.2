@@ -602,6 +602,7 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
     var getUser = await FirebaseFirestore.instance.collection('users').doc(currentUser.id).get();
     String _lastHomeMessage = getUser.data()?['metadata']['lastHomeMessage'];
 
+
     //  2022-05-1317: 25: 18.649543,
     // print('FS MD ${firestoreUserData?.metadata?['lastHomeMessage']}');
     // String _lastHomeMessage = '${firestoreUserData?.metadata?['lastHomeMessage']}';
