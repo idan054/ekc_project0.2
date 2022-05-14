@@ -364,7 +364,7 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                   // print('snapshot.data');
                   // print(snapshot.data);
 
-                  print('A G E: ${firestoreUserData?.metadata?['age']}');
+                  // print('A G E: ${firestoreUserData?.metadata?['age']}');
                   var ageFilter = 3;  //{14 [17] 20}
                   var maxAge = firestoreUserData
                       ?.metadata?['age'] + ageFilter; // ?? 20;
@@ -585,10 +585,16 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
     FirebaseChatCore.instance.updateMessage(updatedMessage, widget.room.id);
   }
 
+  void _setAttachmentUploading(bool uploading) {
+    setState(() {
+      _isAttachmentUploading = uploading;
+    });
+  }
+
   void _handleSendPressed(types.PartialText message, types.User currentUser) async {
     print('my little msg $message');
     var newMsg = message.metadata?.update
-        ('8', (value) => 'New', ifAbsent: () => 'Mercury');
+      ('8', (value) => 'New', ifAbsent: () => 'Mercury');
 
     // FirebaseChatCore.instance.updateMessage(newMsg, roomId);
 
@@ -613,13 +619,13 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
 
     var waitUntil =
     DateTime.now()
-            .add(Duration(seconds: time2Wait - difference.inSeconds));
+        .add(Duration(seconds: time2Wait - difference.inSeconds));
 
     if (difference.inSeconds < time2Wait){
       cleanSnack(context, text: 'יש להמתין עד '
-                                '$waitUntil'
-                                '(${time2Wait - difference.inSeconds}) '
-                                ' שניות');
+          '$waitUntil'
+          '(${time2Wait - difference.inSeconds}) '
+          ' שניות');
     } else {
       var _user = FirebaseAuth.instance.currentUser;
       var lastHomeMessage = DateTime.now();
@@ -638,31 +644,25 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
       );
 
 
-        // setState(() async {
-          // create or update
-          FirebaseChatCore.instance.createUserInFirestore(_userData)
-              .whenComplete(() =>
-              print(
-                  'firebaseDatabase_basedFlyer Completed \n(FirebaseChatCore.instance.createUserInFirestore)'
-                      '\n userData: $_userData'))
-              .onError((error, stackTrace) =>
-              print(
-                  'firebaseDatabase_basedFlyer FAILED: $error \n-|- $stackTrace \n(FirebaseChatCore.instance.createUserInFirestore)'));
-        // });
+      // setState(() async {
+      // create or update
+      FirebaseChatCore.instance.createUserInFirestore(_userData)
+          .whenComplete(() =>
+          print(
+              'firebaseDatabase_basedFlyer Completed \n(FirebaseChatCore.instance.createUserInFirestore)'
+                  '\n userData: $_userData'))
+          .onError((error, stackTrace) =>
+          print(
+              'firebaseDatabase_basedFlyer FAILED: $error \n-|- $stackTrace \n(FirebaseChatCore.instance.createUserInFirestore)'));
+      // });
 
       print('Message A: ${message.toJson()}');
 
       FirebaseChatCore.instance.sendMessage(
         message,
         widget.room.id,
-        );
-      }
-  }
-
-  void _setAttachmentUploading(bool uploading) {
-    setState(() {
-      _isAttachmentUploading = uploading;
-    });
+      );
+    }
   }
 }
 

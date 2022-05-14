@@ -250,6 +250,8 @@ class FirebaseChatCore {
   /// room ID. If arbitraty data is provided in the [partialMessage]
   /// does nothing.
   void sendMessage(dynamic partialMessage, String roomId) async {
+    print('Start sendMessage() with my firebase_chat_core.dart');
+
     if (firebaseUser == null) return;
 
     types.Message? message;
@@ -284,20 +286,23 @@ class FirebaseChatCore {
       // print('Message B: ${message.toJson()}');
     }
 
+
     if (message != null) {
       final messageMap = message.toJson();
-      // messageMap.removeWhere((key, value) => key == 'author' || key == 'id');
+      messageMap.removeWhere((key, value) => key == 'author' || key == 'id');
 
-      messageMap['authorDisplayName'] = firebaseUser!.displayName;
-      messageMap['authorPhotoURL'] = firebaseUser!.photoURL;
+      // messageMap['authorDisplayName'] = firebaseUser!.displayName;
+      // messageMap['authorPhotoURL'] = firebaseUser!.photoURL;
 
       messageMap['authorId'] = firebaseUser!.uid;
       messageMap['createdAt'] = FieldValue.serverTimestamp();
       messageMap['updatedAt'] = FieldValue.serverTimestamp();
 
+      print('sendMessage() B');
       await FirebaseFirestore.instance
           .collection('${config.roomsCollectionName}/$roomId/messages')
           .add(messageMap);
+      print('sendMessage() C');
     }
   }
 
