@@ -140,12 +140,13 @@ class _FlyerChatOriginalState extends State<FlyerChatOriginal> {
                   isAttachmentUploading: _isAttachmentUploading,
                   messages: snapshot.data ?? [],
                   onAttachmentPressed: _handleAtachmentPressed,
-                  onMessageTap: _handleMessageTap,
+                  // onMessageTap: _handleMessageTap,
                   onPreviewDataFetched: _handlePreviewDataFetched,
                   onSendPressed: _handleSendPressed,
                   user: types.User(
                     id: FirebaseChatCore.instance.firebaseUser?.uid ?? '',
                   ),
+
                 ),
               );
             },

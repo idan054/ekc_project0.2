@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:ekc_project/Pages/mainPage.dart';
 import 'package:ekc_project/Services/myFirebaseFlyer.dart';
+import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart' as intl;
 
 import 'package:ekc_project/Widgets/addUserDialog.dart';
@@ -80,9 +81,11 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
         required types.Message message,
         required nextMessageInGroup,
       }) {
+
     var user = widget.currentUser;
 
-    // print(message.toJson());
+    print('Message C: ${message.toJson()}');
+
     // String image = user?.imageUrl ?? 'https://bit.ly/3l64LIk';
     String image = message.toJson()['author']['imageUrl'] ?? user?.imageUrl;
     // print('X IMAGE: $image');
@@ -320,6 +323,8 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
 
                 List<types.Message> filteredMsgs = [];
                 print('snapshot.data');
+                print(snapshot.data);
+
                 var ageFilter = 3;  //{14 [17] 20}
                 var maxAge = widget.currentUser
                         ?.metadata?['age']+ ageFilter;
@@ -343,15 +348,18 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                     // messages: snapshot.data ?? [],
                     messages: filteredMsgs,
                     onAttachmentPressed: _handleAtachmentPressed,
-                    onMessageTap: _handleMessageTap,
+                    // onMessageTap: _handleMessageTap,
                     sendButtonVisibilityMode: SendButtonVisibilityMode.always,
                     onPreviewDataFetched: _handlePreviewDataFetched,
                     onSendPressed: (partialText) async =>
                         _handleSendPressed(partialText, widget.currentUser!),
                     user: types.User(
-                      id: FirebaseChatCore.instance.firebaseUser?.uid ?? '',),
+                      id: FirebaseChatCore.instance.firebaseUser?.uid ?? '',
+                      firstName: 'WHATEVER'
+                    ),
                     // user: widget.currentUser!,
                     bubbleBuilder: _bubbleBuilder,
+
                     showUserAvatars: false,
                     showUserNames: true,
                     // customMessageBuilder: ,
@@ -549,14 +557,16 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
     print('difference.inSeconds');
     print(difference.inSeconds);
 
+    var time2Wait = kDebugMode ? 10 : 60 * 3;
+
     var waitUntil =
     DateTime.now()
-            .add(Duration(seconds: 60 * 3 - difference.inSeconds));
+            .add(Duration(seconds: time2Wait - difference.inSeconds));
 
-    if (difference.inSeconds < 60 * 3){
+    if (difference.inSeconds < time2Wait){
       cleanSnack(context, text: 'יש להמתין עד '
                                 '$waitUntil'
-                                '(${60 * 3 - difference.inSeconds}) '
+                                '(${time2Wait - difference.inSeconds}) '
                                 ' שניות');
     } else {
       var _user = FirebaseAuth.instance.currentUser;
@@ -587,6 +597,8 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
               print(
                   'firebaseDatabase_basedFlyer FAILED: $error \n-|- $stackTrace \n(FirebaseChatCore.instance.createUserInFirestore)'));
         // });
+
+      print('Message A: ${message.toJson()}');
 
       FirebaseChatCore.instance.sendMessage(
         message,
