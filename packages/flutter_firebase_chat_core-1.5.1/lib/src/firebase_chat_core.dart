@@ -143,7 +143,7 @@ class FirebaseChatCore {
   /// Creates [types.User] in Firebase to store name and avatar used on
   /// rooms list
   Future<void> createUserInFirestore(types.User user) async {
-    await FirebaseFirestore.instance
+    var createUser = await FirebaseFirestore.instance
         .collection(config.usersCollectionName)
         .doc(user.id)
         .set({
@@ -155,7 +155,7 @@ class FirebaseChatCore {
       'metadata': user.metadata,
       'role': user.role?.toShortString(),
       'updatedAt': FieldValue.serverTimestamp(),
-    });
+    }, SetOptions(merge:true),);
   }
 
   /// Removes [types.User] from `users` collection in Firebase

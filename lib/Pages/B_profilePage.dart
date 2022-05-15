@@ -106,6 +106,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         firstName: '${user?.firstName}',
                         imageUrl: '${user?.imageUrl}',
                         // lastName: '${fireStoreUser?.email}'.toLowerCase(),
+                        role: types.Role.user,
                         metadata: {
                           'id' : '${user?.id ?? UniqueKey()}',
                           'email' : user?.metadata?.values.first,

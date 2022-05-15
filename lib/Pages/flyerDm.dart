@@ -1,9 +1,11 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ekc_project/Pages/ril_gDashboard.dart';
 import 'package:ekc_project/Services/myFirebaseFlyer.dart';
 import 'package:ekc_project/Widgets/addUserDialog.dart';
 import 'package:ekc_project/Widgets/myAppBar.dart';
 import 'package:ekc_project/Widgets/myDrawers.dart';
+import 'package:ekc_project/theme/constants.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -21,6 +23,7 @@ import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../myUtil.dart';
+import 'flyerChatV2.dart';
 import 'usersPage.dart';
 
 class FlyerDm extends StatefulWidget {
@@ -51,10 +54,10 @@ class _FlyerDmState extends State<FlyerDm> {
   // UserCredential? guestUser;
   String? appBarTitle;
   List<String>? roomEmailUsers;
+  User? authUser = FirebaseAuth.instance.currentUser;
 
   @override
   void initState() {
-    User? authUser = FirebaseAuth.instance.currentUser;
 
     otherUser = widget.room.users
         .firstWhere((user) => user.id != authUser?.uid);
@@ -119,7 +122,16 @@ class _FlyerDmState extends State<FlyerDm> {
                 radius: 40 / 2,
                 backgroundColor: Colors.grey[300],
                 child: IconButton(
-                    onPressed: (){},
+                    onPressed: () => kPushNavigator(context,
+                        GDashboard(homePage:
+                        FlyerChatV2(
+                            room: types.Room(
+                                users: [types.User(id: '${authUser?.uid}')], // Adds the user to group
+                                type: types.RoomType.group,
+                                id: 'NAMAkmZKdEAv9AefwXhR'),
+                            // currentUser: widget.userData,),
+                            currentUser: types.User(id: '${authUser?.uid}')),)
+                        , replace: true),
                     icon:
                     SvgPicture.asset(
                       'assets/svg_icons/CleanLogo.svg',

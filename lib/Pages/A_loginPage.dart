@@ -145,8 +145,7 @@ class _LoginPageState extends State<LoginPage> {
                               'age': 18
                             });
 
-                        setState(() {
-                          FirebaseChatCore.instance
+                          await FirebaseChatCore.instance
                               .createUserInFirestore(userData)
                               .whenComplete(() => print(
                                   'firebaseDatabase_basedFlyer Completed \n(FirebaseChatCore.instance.createUserInFirestore)'
@@ -158,7 +157,6 @@ class _LoginPageState extends State<LoginPage> {
                             context,
                             ProfilePage(userData: userData), /*replace: true*/
                           );
-                        });
                       }
                     },
                     child: Container(

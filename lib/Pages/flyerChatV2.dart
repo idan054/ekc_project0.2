@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:ekc_project/Pages/mainPage.dart';
 import 'package:ekc_project/Pages/roomsPage.dart';
 import 'package:ekc_project/Services/myFirebaseFlyer.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart' as intl;
@@ -102,7 +103,7 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
     String age =
         '${message.metadata?['metadata']?['age'] ?? 'XY'}'.substring(0, 2);
 
-    bool currentUser = user!.id == message.author.id;
+    bool isCurrentUser = user!.id == message.author.id;
     // if(currentUser) print('user ${user.firstName} connected now.');
 
     return Container(
@@ -111,123 +112,159 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
       // width: 300,
       child: Directionality(
         textDirection: TextDirection.rtl,
-        child: Card(
-          margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
-          shape: RoundedRectangleBorder(
-            side: BorderSide(color: Colors.grey[200]!, width: 1.5),
-            borderRadius: BorderRadius.circular(6.0),
-          ),
-          elevation: 0,
-          shadowColor: Colors.black87,
-          color: Colors.grey[100]!,
-          child: Column(
-            children: [
-              const SizedBox(
-                height: 2,
-              ),
-              Container(
-                height: 20,
-                padding: const EdgeInsets.only(right: 10, left: 10),
-                alignment: Alignment.centerRight,
+        child: InkWell(
+          onLongPress:
+            firestoreUserData?.toJson()
+                ['metadata']['MyModerator'] == true
+              ? () async {
+            print('Long press taped.');
+            print(message.toJson());
+            showCustomRilAlert(context,
+              title: 'למחוק הודעה זו?',
+              desc:'${message.toJson()['text']}',
+              actions: [
+                TextButton(
+                    onPressed: () async {
+                      await FirebaseFirestore.instance
+                          .collection('rooms/NAMAkmZKdEAv9AefwXhR/messages')
+                          .doc(message.id).delete();
+                      kNavigator(context).pop();
+                    },
+                  child: const Text('מחק הודעה',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.red
+                      )),
+                ),
+                  TextButton(
+                  onPressed: () => kNavigator(context).pop(),
+                    child: const Text('ביטול',
+                        style: TextStyle(
+                            color: Colors.grey
+                        )),
+                  ),
+              ],);
+          } : (){
+            print(firestoreUserData?.toJson()); }
+      ,
+          onTap:
+            isCurrentUser ? () {}
+            :  () async {
+            final room = await FirebaseChatCore.instance.createRoom(message.author);
+            kPushNavigator(context, FlyerDm(room: room,));
+          },
+          child: Card(
+            margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
+            shape: RoundedRectangleBorder(
+              side: BorderSide(color: Colors.grey[200]!, width: 1.5),
+              borderRadius: BorderRadius.circular(6.0),
+            ),
+            elevation: 0,
+            shadowColor: Colors.black87,
+            color: Colors.grey[100]!,
+            // color: Colors.green[100]!,
+            child: Column(
+              children: [
+                const SizedBox(
+                  height: 2,
+                ),
+                Container(
+                  height: 20,
+                  padding: const EdgeInsets.only(right: 10, left: 10),
+                  alignment: Alignment.centerRight,
 /*                child:
-                  InkWell(
-                    child:
-                    Icon(
-                      Icons.more_horiz,
-                      color: Colors.grey[400]!,
-                   ),
-                    onTap: () {},
-                  ),*/
-              ),
-              Container(
-                padding: const EdgeInsets.only(right: 10, left: 10),
-                alignment: Alignment.topRight,
-                child: Text(
-                  text,
-                  style: const TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.normal,
-                    fontSize: 16,
+                    InkWell(
+                      child:
+                      Icon(
+                        Icons.more_horiz,
+                        color: Colors.grey[400]!,
+                     ),
+                      onTap: () {},
+                    ),*/
+                ),
+                Container(
+                  padding: const EdgeInsets.only(right: 10, left: 10),
+                  alignment: Alignment.topRight,
+                  child: Text(
+                    text,
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.normal,
+                      fontSize: 16,
+                    ),
                   ),
                 ),
-              ),
-              Container(
-                height: 80,
-                padding: const EdgeInsets.only(right: 10),
-                // color: Colors.primaries[Random().nextInt(Colors.primaries.length)].shade300,
-                // color: cGrey100,
-                child: Row(
-                  children: [
-                    Flexible(
-                      child: ListTile(
-                          dense: true,
-                          visualDensity: VisualDensity.standard,
-                          title: Text(
-                            '$name ($age)',
-                            style: TextStyle(
-                                // color: Colors.primaries[Random().nextInt(Colors.primaries.length)].shade600,
-                                // color: Colors.black
-                                color: Colors.grey[600]!,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14),
-                            // style: bodyText1Format(context)
-                          ),
-                          subtitle: Text(
-                            /*' · '*/
-                            'לפני '
-                            '$createdAgo',
-                            textDirection: TextDirection.rtl,
-                            style: TextStyle(
-                                // color: Colors.primaries[Random().nextInt(Colors.primaries.length)].shade600,
-                                // color: Colors.black
-                                color: Colors.grey[600],
-                                fontWeight: FontWeight.normal,
-                                fontSize: 12),
-                            // style: bodyText1Format(context)
-                          ),
-                          contentPadding: EdgeInsets.zero,
-                          leading: CircleAvatar(
-                            backgroundImage: NetworkImage(image),
-                            // backgroundImage: NetworkImage('https://bit.ly/3l64LIk'),
-                          )),
-                    ),
+                Container(
+                  height: 80,
+                  padding: const EdgeInsets.only(right: 10),
+                  // color: Colors.primaries[Random().nextInt(Colors.primaries.length)].shade300,
+                  // color: cGrey100,
+                  child: Row(
+                    children: [
+                      Flexible(
+                        child: ListTile(
+                            dense: true,
+                            visualDensity: VisualDensity.standard,
+                            title: Text(
+                              '$name ($age)',
+                              style: TextStyle(
+                                  // color: Colors.primaries[Random().nextInt(Colors.primaries.length)].shade600,
+                                  // color: Colors.black
+                                  color: Colors.grey[600]!,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14),
+                              // style: bodyText1Format(context)
+                            ),
+                            subtitle: Text(
+                              /*' · '*/
+                              'לפני '
+                              '$createdAgo',
+                              textDirection: TextDirection.rtl,
+                              style: TextStyle(
+                                  // color: Colors.primaries[Random().nextInt(Colors.primaries.length)].shade600,
+                                  // color: Colors.black
+                                  color: Colors.grey[600],
+                                  fontWeight: FontWeight.normal,
+                                  fontSize: 12),
+                              // style: bodyText1Format(context)
+                            ),
+                            contentPadding: EdgeInsets.zero,
+                            leading: CircleAvatar(
+                              backgroundImage: NetworkImage(image),
+                              // backgroundImage: NetworkImage('https://bit.ly/3l64LIk'),
+                            )),
+                      ),
 
-                    if (!currentUser)
-                      Builder(
-                          builder: (context) => Padding(
-                                padding: const EdgeInsets.only(left: 10),
-                                child: Directionality(
-                                  textDirection: TextDirection.rtl,
-                                  child: CircleAvatar(
-                                    backgroundColor: Colors.grey[200],
-                                    radius: 20,
-                                    child: IconButton(
-                                        onPressed: () async {
-                                          final room = await FirebaseChatCore
-                                              .instance
-                                              .createRoom(message.author);
-
-                                          kPushNavigator(
-                                              context,
-                                              FlyerDm(
-                                                room: room,
-                                              ));
-                                        },
-                                        icon: Icon(
-                                          Icons.send_rounded,
-                                          color: Colors.grey[500],
-                                          size: 20,
-                                        )),
+                      if (!isCurrentUser)
+                        Builder(
+                            builder: (context) => Padding(
+                                  padding: const EdgeInsets.only(left: 10),
+                                  child: Directionality(
+                                    textDirection: TextDirection.rtl,
+                                    child: CircleAvatar(
+                                      backgroundColor: Colors.grey[200],
+                                      radius: 20,
+                                      child: IconButton(
+                                          onPressed: () async {
+                                            final room = await FirebaseChatCore.instance.createRoom(message.author);
+                                            kPushNavigator(context, FlyerDm(room: room,));
+                                          },
+                                          icon: Icon(
+                                            Icons.send_rounded,
+                                            color: Colors.grey[500],
+                                            size: 20,
+                                          )),
+                                    ),
                                   ),
-                                ),
-                              ))
+                                ))
 
-                    // const SizedBox(width: 10),
-                    // const Spacer(),
-                  ],
+                      // const SizedBox(width: 10),
+                      // const Spacer(),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -309,7 +346,10 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
     //   localIsShown = true;
     // }
 
-  if (widget.currentUser?.imageUrl == null) {
+  // if (widget.currentUser?.imageUrl == null) {
+
+    //~ Fetch user
+    // fetchUser(widget.currentUser!.id, 'users').then((user) => print('fetchUser Json: $user'));
       var getUser = FirebaseFirestore.instance
           .collection('users')
           .doc(widget.currentUser!.id)
@@ -332,13 +372,13 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
         firestoreUserData = types.User.fromJson(data);
         print('firestore User DATA: ${firestoreUserData?.toJson()}');
       });
-    } else {
-      firestoreUserData = widget.currentUser;
-      print('widget.currentUser (from signup)'
-          'User DATA: ${firestoreUserData?.toJson()}');
-      // firestoreUserData?.metadata?['age'] = 19;
-      // print('Debug: ${firestoreUserData?.metadata?['age']}');
-    }
+    // } else {
+    //   firestoreUserData = widget.currentUser;
+    //   print('widget.currentUser (from signup)'
+    //       'User DATA: ${firestoreUserData?.toJson()}');
+    //   // firestoreUserData?.metadata?['age'] = 19;
+    //   // print('Debug: ${firestoreUserData?.metadata?['age']}');
+    // }
 
 // ----------------
 /*
@@ -853,3 +893,54 @@ showRilAlert(context, bool exitProfile) async {
         )),
   );
 }
+
+showCustomRilAlert(context, {String? title, String? desc, actions}) async {
+  showDialog(
+    barrierDismissible: true,
+    context: context,
+    // barrierColor: StreamChatTheme.of(context).colorTheme.overlay,
+    builder: (context) => Center(
+        child: AlertDialog(
+          // contentPadding: EdgeInsets.zero,
+          // titlePadding: EdgeInsets.zero,
+          actionsAlignment: MainAxisAlignment.center,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          title: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 13.0),
+                    child: Text(
+                      '$title',
+                      textDirection: TextDirection.rtl,
+                      style: const TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 25),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Center(
+                      child: Text(
+                        '$desc',
+                        style: const TextStyle(
+                          color: neutral2,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          height: 1.5,
+                        ),
+                        textAlign: TextAlign.center,
+                        textDirection: TextDirection.rtl,
+                      )),
+                ],
+              )
+          ),
+          // content: Text("Saved successfully"),
+          actions: actions,
+        )),
+  );
+}
+

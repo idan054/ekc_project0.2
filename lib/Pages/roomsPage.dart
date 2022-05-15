@@ -35,11 +35,11 @@ class RoomsPage extends StatelessWidget {
                 bool isUserInRoom = false;
                 var otherUser;
                 print('snapshot.data?[i].toJson');
-                print(room?.toJson());
 
                   room?.users.forEach((user) {
-                  print('users.forEach');
+                    print('USER ROLE ${user.firstName} ${user.role}');
 
+                  // print('users.forEach');
                   // print('authUser: ${authUser?.uid} | ${authUser?.displayName}');
                   // print('user: ${user.id} | ${user.firstName}');
 
@@ -61,7 +61,8 @@ class RoomsPage extends StatelessWidget {
                     '${otherUser?.id.substring(0, 5)}';
 
                 int unreadCount = room?.metadata?[unreadKey] ?? 0;
-                print(unreadKey + ' $unreadCount');
+                print('room metadata');
+                print(room?.metadata?.toString());
 
                 if (isUserInRoom && otherUser != null) {
                   return Column(
@@ -126,43 +127,67 @@ class RoomsPage extends StatelessWidget {
                                         child: ListTile(
                                           dense: true,
                                           visualDensity: VisualDensity.standard,
-                                          title: Text(
-                                            '${otherUser?.firstName}',
-                                            style: TextStyle(
-                                                // color: Colors.primaries[Random().nextInt(Colors.primaries.length)].shade600,
-                                                // color: Colors.black
-                                                color: Colors.grey[600]!,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16),
-                                            // style: bodyText1Format(context)
-                                          ),
-                                          subtitle: Row(
+                                          title: Row(
                                             children: [
                                               Text(
                                                 /*' · '*/
                                                 '(${otherUser?.metadata?['age'].toString().substring(0, 2)})',
                                                 textDirection: TextDirection.rtl,
                                                 style: TextStyle(
-                                                    // color: Colors.primaries[Random().nextInt(Colors.primaries.length)].shade600,
-                                                    // color: Colors.black
+                                                  // color: Colors.primaries[Random().nextInt(Colors.primaries.length)].shade600,
+                                                  // color: Colors.black
                                                     color: Colors.grey[600],
                                                     fontWeight: FontWeight.normal,
                                                     fontSize: 14),
                                                 // style: bodyText1Format(context)
                                               ),
                                               const SizedBox(width: 5,),
-                                            if(unreadCount != 0)
+                                              Expanded(
+                                                child: Text(
+                                                  '${otherUser?.firstName}',
+                                                  overflow: TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                      // color: Colors.primaries[Random().nextInt(Colors.primaries.length)].shade600,
+                                                      // color: Colors.black
+                                                      color: Colors.grey[600]!,
+                                                      fontWeight: FontWeight.bold,
+                                                      fontSize: 16),
+                                                  // style: bodyText1Format(context)
+                                                ),
+                                              ),
+                                              // const Spacer(),
+                                              if(unreadCount != 0)
                                               CircleAvatar(
                                                 radius: 10,
                                                 backgroundColor: Colors.red,
                                                 child: Text('$unreadCount',
-                                                  style: const TextStyle(
-                                                    color: Colors.white,
-                                                      // color: Colors.grey[600],
-                                                      fontWeight: FontWeight.bold,
-                                                      fontSize: 12)
+                                                    style: const TextStyle(
+                                                        color: Colors.white,
+                                                        // color: Colors.grey[600],
+                                                        fontWeight: FontWeight.bold,
+                                                        fontSize: 12)
                                                 ),
-                                              )
+                                              ),
+                                              const SizedBox(width: 15,),
+                                            ],
+                                          ),
+                                          subtitle: Row(
+                                            children: [
+                                              Expanded(
+                                                child: Text(
+                                                  /*' · '*/
+                                                  '${room?.metadata?['last_messageTxt']}',
+                                                  textDirection: TextDirection.rtl,
+                                                  overflow: TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                    // color: Colors.primaries[Random().nextInt(Colors.primaries.length)].shade600,
+                                                    // color: Colors.black
+                                                      color: Colors.grey[600],
+                                                      fontWeight: FontWeight.normal,
+                                                      fontSize: 14),
+                                                  // style: bodyText1Format(context)
+                                                ),
+                                              ),
                                             ],
                                           ),
                                           contentPadding: EdgeInsets.zero,
