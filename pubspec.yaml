@@ -108,7 +108,7 @@ assets:
 # "WARNING: Icons with alpha channel are not allowed in the Apple App Store.
 # Set "remove_alpha_ios: true" to remove it."
 flutter_icons:
-#  android: true
+  android: true
   ios: true
   image_path: "assets/appIconPurple.png"
   #  image_path_android: "assets/android_icon.png"
