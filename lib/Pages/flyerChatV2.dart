@@ -315,9 +315,9 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
           .doc(widget.currentUser!.id)
           .get()
           .then((userDoc) {
-        print('init user DATA: ${userDoc.data()}');
+        // print('init user DATA: ${userDoc.data()}');
         var data = userDoc.data() ?? {};
-        print('init AGE: ${data['metadata']['age']}');
+        // print('init AGE: ${data['metadata']['age']}');
 
         data['lastName'] = data['lastName'] ?? '';
         data['role'] = data['role'] ?? 'user';
@@ -690,7 +690,7 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
         .collection('users')
         .doc(currentUser.id)
         .get();
-    print('AA');
+    // print('AA');
 
     DateTime date;
     var _lastHomeMessage = getUser.data()?['metadata']['lastHomeMessage'];

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ekc_project/Services/myFirebaseFlyer.dart';
 import 'package:ekc_project/Widgets/addUserDialog.dart';
 import 'package:ekc_project/Widgets/myAppBar.dart';
@@ -57,6 +58,14 @@ class _FlyerDmState extends State<FlyerDm> {
 
     otherUser = widget.room.users
         .firstWhere((user) => user.id != authUser?.uid);
+
+    String unreadKey = 'unreadCountFrom_'
+        '${otherUser?.id.substring(0, 5)}';
+    int unreadCount = widget.room.metadata?[unreadKey] ?? 0;
+    FirebaseFirestore.instance
+        .doc('rooms/${widget.room.id}').set({
+      'metadata': {unreadKey: FieldValue.increment(0)}
+    }, SetOptions(merge:true),);
 
 
     print('widget.room.type');

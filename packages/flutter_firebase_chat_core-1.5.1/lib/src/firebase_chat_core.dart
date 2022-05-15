@@ -298,7 +298,7 @@ class FirebaseChatCore {
     }
 
     if (message != null) {
-      final messageMap = message.toJson();
+      var messageMap = message.toJson();
       // messageMap.removeWhere((key, value) => key == 'author' || key == 'id');
 
       messageMap['authorDisplayName'] = firebaseUser!.displayName;
@@ -319,11 +319,22 @@ class FirebaseChatCore {
       print('msg.tpJson');
       print(msg.toJson());*/
 
+      // messageMap = {'messageMap' : messageMap};
+
       print('sendMessage() B');
-      await FirebaseFirestore.instance
-          .collection('${config.roomsCollectionName}/$roomId/messages')
-          .add(messageMap)
-          .whenComplete(() => print('Suuccess?'));
+      // Todo combine to 1 request
+      await FirebaseFirestore.instance.collection('rooms/$roomId/messages').add(messageMap);
+      if(roomId != 'NAMAkmZKdEAv9AefwXhR') { // AKA RilHome
+        await FirebaseFirestore.instance
+            .doc('rooms/$roomId')
+            .set({
+          'metadata': {
+            'unreadCountFrom_${firebaseUser?.uid.substring(0, 5)}': FieldValue.increment(1),
+            'last_messageTxt' : '${message.toJson()['text']}'
+          }
+          // 'metadata': {'X': 1}
+        }, SetOptions(merge:true),)/*.catchError(print)*/;
+      }
       print('sendMessage() C');
     }
   }

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
@@ -18,40 +19,49 @@ class RoomsPage extends StatelessWidget {
     return Scaffold(
       // appBar: myAppBar('Your chats',),
       body: StreamBuilder<List<types.Room>>(
-        stream: FirebaseChatCore.instance.rooms(),
+        stream: FirebaseChatCore.instance.rooms(orderByUpdatedAt: true),
         initialData: const [],
         builder: (context, snapshot) {
-          print('RoomsPage data Snapshot: ${snapshot.data}');
+          // print('RoomsPage data Snapshot: ${snapshot.data}');
           if (snapshot.hasData && snapshot.data!.isNotEmpty) {
             return ListView.builder(
               padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
               itemCount: snapshot.data?.length ?? 0,
               itemBuilder: (context, i) {
+                var room = snapshot.data?[i];
                 User? authUser = FirebaseAuth.instance.currentUser;
+                /// [isUserInRoom] Probabby not needed because already
+                /// in FirebaseChatCore.instance.rooms()
                 bool isUserInRoom = false;
                 var otherUser;
-                print('snapshot.data?[i].users');
-                print(snapshot.data?[i].users);
+                print('snapshot.data?[i].toJson');
+                print(room?.toJson());
 
-                snapshot.data?[i].users.forEach((user) {
+                  room?.users.forEach((user) {
                   print('users.forEach');
 
-                  print(
-                      'authUser: ${authUser?.uid} | ${authUser?.displayName}');
-                  print('user: ${user.id} | ${user.firstName}');
+                  // print('authUser: ${authUser?.uid} | ${authUser?.displayName}');
+                  // print('user: ${user.id} | ${user.firstName}');
 
                   try {
-                    otherUser = snapshot.data?[i].users
+                    otherUser = room.users
                         .firstWhere((user) => user.id != authUser?.uid);
                   } catch (e) {
                     print('No otherUser, probably chat with yourself: $e');
                   }
-                  print('otherUser');
-                  print(otherUser);
+                  // print('otherUser');
+                  // print(otherUser);
                   // print(otherUser?.toJson());
 
                   if (user.id == authUser?.uid) isUserInRoom = true;
                 });
+
+                //~ Set unread count:
+                String unreadKey = 'unreadCountFrom_'
+                    '${otherUser?.id.substring(0, 5)}';
+
+                int unreadCount = room?.metadata?[unreadKey] ?? 0;
+                print(unreadKey + ' $unreadCount');
 
                 if (isUserInRoom && otherUser != null) {
                   return Column(
@@ -94,7 +104,7 @@ class RoomsPage extends StatelessWidget {
                                   onTap:() {},
                                 ),
                               ),*/
-/*                            Container(
+                                /*                            Container(
                                 padding: const EdgeInsets.only(right: 10, left: 10),
                                 alignment: Alignment.topRight,
                                 child: Text(text,
@@ -141,11 +151,12 @@ class RoomsPage extends StatelessWidget {
                                                 // style: bodyText1Format(context)
                                               ),
                                               const SizedBox(width: 5,),
-                                              const CircleAvatar(
+                                            if(unreadCount != 0)
+                                              CircleAvatar(
                                                 radius: 10,
                                                 backgroundColor: Colors.red,
-                                                child: Text('2',
-                                                  style: TextStyle(
+                                                child: Text('$unreadCount',
+                                                  style: const TextStyle(
                                                     color: Colors.white,
                                                       // color: Colors.grey[600],
                                                       fontWeight: FontWeight.bold,
@@ -187,6 +198,7 @@ class RoomsPage extends StatelessWidget {
                                                     child: IconButton(
                                                         onPressed: () async {
                                                           final room = await FirebaseChatCore.instance.createRoom(otherUser!);
+
                                                           kPushNavigator(context, FlyerDm(room: room,));
                                                         },
                                                         icon: Icon(
