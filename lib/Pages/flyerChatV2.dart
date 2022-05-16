@@ -59,7 +59,6 @@ import 'usersPage.dart';
 import 'package:bubble/bubble.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 class FlyerChatV2 extends StatefulWidget {
 /*  const FireBaseChatPage({
     Key? key,
@@ -82,6 +81,7 @@ class FlyerChatV2 extends StatefulWidget {
 }
 
 bool localIsShown = false;
+
 class _FlyerChatV2State extends State<FlyerChatV2> {
   Widget _bubbleBuilder(
     Widget child, {
@@ -91,10 +91,11 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
     // var user = widget.currentUser;
     var user = firestoreUserData;
 
-    // print('Message C - Whats _bubbleBuilder gets: ${message.toJson()}');
+    print('Message C - Whats _bubbleBuilder gets: ${message.toJson()}');
 
     // String image = user?.imageUrl ?? 'https://bit.ly/3l64LIk';
-    String image = message.metadata?['imageUrl'] ?? 'https://bit.ly/3l64LIk';
+    String? image = message.metadata?['imageUrl'] ?? 'https://bit.ly/3l64LIk';
+    print('IMAGE $image');
     // print('X IMAGE: $image');
     // var name = message.author.firstName ?? user?.firstName;
     String name = message.metadata?['firstName'] ?? 'UserName Here.';
@@ -113,46 +114,51 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
       child: Directionality(
         textDirection: TextDirection.rtl,
         child: InkWell(
-          onLongPress:
-            firestoreUserData?.toJson()
-                ['metadata']['MyModerator'] == true
+          onLongPress: firestoreUserData?.toJson()['metadata']['MyModerator'] ==
+                  true
               ? () async {
-            print('Long press taped.');
-            print(message.toJson());
-            showCustomRilAlert(context,
-              title: 'למחוק הודעה זו?',
-              desc:'${message.toJson()['text']}',
-              actions: [
-                TextButton(
-                    onPressed: () async {
-                      await FirebaseFirestore.instance
-                          .collection('rooms/NAMAkmZKdEAv9AefwXhR/messages')
-                          .doc(message.id).delete();
-                      kNavigator(context).pop();
-                    },
-                  child: const Text('מחק הודעה',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.red
-                      )),
-                ),
-                  TextButton(
-                  onPressed: () => kNavigator(context).pop(),
-                    child: const Text('ביטול',
-                        style: TextStyle(
-                            color: Colors.grey
-                        )),
-                  ),
-              ],);
-          } : (){
-            print(firestoreUserData?.toJson()); }
-      ,
-          onTap:
-            isCurrentUser ? () {}
-            :  () async {
-            final room = await FirebaseChatCore.instance.createRoom(message.author);
-            kPushNavigator(context, FlyerDm(room: room,));
-          },
+                  print('Long press taped.');
+                  print(message.toJson());
+                  showCustomRilAlert(
+                    context,
+                    title: 'למחוק הודעה זו?',
+                    desc: '${message.toJson()['text']}',
+                    actions: [
+                      TextButton(
+                        onPressed: () async {
+                          await FirebaseFirestore.instance
+                              .collection('rooms/NAMAkmZKdEAv9AefwXhR/messages')
+                              .doc(message.id)
+                              .delete();
+                          kNavigator(context).pop();
+                        },
+                        child: const Text('מחק הודעה',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.red)),
+                      ),
+                      TextButton(
+                        onPressed: () => kNavigator(context).pop(),
+                        child: const Text('ביטול',
+                            style: TextStyle(color: Colors.grey)),
+                      ),
+                    ],
+                  );
+                }
+              : () {
+                  print(firestoreUserData?.toJson());
+                },
+          onTap: isCurrentUser
+              ? () {}
+              : () async {
+                  final room = await FirebaseChatCore.instance
+                      .createRoom(message.author);
+                  kPushNavigator(
+                      context,
+                      FlyerDm(
+                        room: room,
+                      ));
+                },
           child: Card(
             margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
             shape: RoundedRectangleBorder(
@@ -162,7 +168,7 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
             elevation: 0,
             shadowColor: Colors.black87,
             color: Colors.grey[100]!,
-            // color: Colors.green[100]!,
+            // color: Colors.white,
             child: Column(
               children: [
                 const SizedBox(
@@ -230,7 +236,8 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                             ),
                             contentPadding: EdgeInsets.zero,
                             leading: CircleAvatar(
-                              backgroundImage: NetworkImage(image),
+                              backgroundColor: Colors.grey,
+                              backgroundImage: NetworkImage(image!),
                               // backgroundImage: NetworkImage('https://bit.ly/3l64LIk'),
                             )),
                       ),
@@ -246,8 +253,14 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                                       radius: 20,
                                       child: IconButton(
                                           onPressed: () async {
-                                            final room = await FirebaseChatCore.instance.createRoom(message.author);
-                                            kPushNavigator(context, FlyerDm(room: room,));
+                                            final room = await FirebaseChatCore
+                                                .instance
+                                                .createRoom(message.author);
+                                            kPushNavigator(
+                                                context,
+                                                FlyerDm(
+                                                  room: room,
+                                                ));
                                           },
                                           icon: Icon(
                                             Icons.send_rounded,
@@ -319,7 +332,6 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
 
   types.User? firestoreUserData;
 
-
   final isDisplayed = 'isDisplayed';
 
   /*    FirebaseChatCore.instance
@@ -334,6 +346,7 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
 
   @override
   void initState() {
+    // FirebaseAuth.instance.authStateChanges();
 
 /*    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) async {
       // if ((await SharedPreferences.getInstance()).getBool(isDisplayed) ?? false)
@@ -346,32 +359,32 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
     //   localIsShown = true;
     // }
 
-  // if (widget.currentUser?.imageUrl == null) {
+    // if (widget.currentUser?.imageUrl == null) {
 
     //~ Fetch user
     // fetchUser(widget.currentUser!.id, 'users').then((user) => print('fetchUser Json: $user'));
-      var getUser = FirebaseFirestore.instance
-          .collection('users')
-          .doc(widget.currentUser!.id)
-          .get()
-          .then((userDoc) {
-        // print('init user DATA: ${userDoc.data()}');
-        var data = userDoc.data() ?? {};
-        // print('init AGE: ${data['metadata']['age']}');
+    var getUser = FirebaseFirestore.instance
+        .collection('users')
+        .doc(widget.currentUser!.id)
+        .get()
+        .then((userDoc) {
+      // print('init user DATA: ${userDoc.data()}');
+      var data = userDoc.data() ?? {};
+      // print('init AGE: ${data['metadata']['age']}');
 
-        data['lastName'] = data['lastName'] ?? '';
-        data['role'] = data['role'] ?? 'user';
-        data['id'] = data['metadata']['id'] ?? '';
-        // data['metadata']['age'] = data['metadata']['age'] ?? 0;
-        data['createdAt'] = data['createdAt']?.millisecondsSinceEpoch;
-        data['lastSeen'] = data['lastSeen']?.millisecondsSinceEpoch;
-        data['updatedAt'] = data['updatedAt']?.millisecondsSinceEpoch;
-        data['lastHomeMessage'] = data['metadata']['lastHomeMessage'];
-        // data['metadata'] = data['updatedAt']?.millisecondsSinceEpoch;
-        // widget.currentUser = types.User.fromJson(data);
-        firestoreUserData = types.User.fromJson(data);
-        print('firestore User DATA: ${firestoreUserData?.toJson()}');
-      });
+      data['lastName'] = data['lastName'] ?? '';
+      data['role'] = data['role'] ?? 'user';
+      data['id'] = data['metadata']['id'] ?? '';
+      // data['metadata']['age'] = data['metadata']['age'] ?? 0;
+      data['createdAt'] = data['createdAt']?.millisecondsSinceEpoch;
+      data['lastSeen'] = data['lastSeen']?.millisecondsSinceEpoch;
+      data['updatedAt'] = data['updatedAt']?.millisecondsSinceEpoch;
+      data['lastHomeMessage'] = data['metadata']['lastHomeMessage'];
+      // data['metadata'] = data['updatedAt']?.millisecondsSinceEpoch;
+      // widget.currentUser = types.User.fromJson(data);
+      firestoreUserData = types.User.fromJson(data);
+      print('firestore User DATA: ${firestoreUserData?.toJson()}');
+    });
     // } else {
     //   firestoreUserData = widget.currentUser;
     //   print('widget.currentUser (from signup)'
@@ -415,7 +428,6 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
       localIsShown = true;
     }*/
 
-
     var _timePassed = 0;
     var timeLeft = 60 * 5 - _timePassed;
 
@@ -434,9 +446,8 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                 initialData: const [],
                 stream: FirebaseChatCore.instance.messages(snapshot.data!),
                 builder: (context, snapshot) {
-                  types.Message msgWithAuthor;
-
                   if (snapshot.hasData) {
+                    types.Message msgWithAuthor;
                     // print('What Stream snapshot Data get: ${snapshot.data}');
 
                     // widget.currentUser = widget.room.users.firstWhere((user) =>
@@ -449,39 +460,32 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                     // print('snapshot.data');
                     // print(snapshot.data);
 
-                    // print('A G E: ${firestoreUserData?.metadata?['age']}');
+                    // print('A G E: $');
                     // ----------------- Age filter
-                    var ageFilter = 3; //{14 [17] 20}
-                    var maxAge = firestoreUserData?.metadata?['age'] /*?? 0*/ +
-                        ageFilter; // ?? 20;
-                    var minAge = firestoreUserData?.metadata?['age'] /*?? 0*/ -
-                        ageFilter; // ?? 14;
-                    snapshot.data?.forEach((msg) async {
-                      var _age = msg.author.metadata?['age'] ?? 0;
-                      // if(_age != 0) print('$minAge - $_age - $maxAge');
-                      // if(_age != 0) print(_age >= minAge && _age <= maxAge);
-                      bool inAgeRange = _age >= minAge && _age <= maxAge;
-                      // print('msg.tpJson');
+
+                    snapshot.data?.forEach((msg) {
                       // print(msg.toJson());
+                      double authorAge =
+                          msg.metadata?['metadata']['age'] ?? 0.0;
+                      double currentUserAge =
+                          firestoreUserData?.metadata?['age'] ?? 0.0;
 
-                      /*               // ----------------- Add author
-                    // Todo save api call by just adding name & photo to the message metadata
-                    var getUser = await FirebaseFirestore.instance.collection(
-                        'users').doc(msg.author.id).get();
-                    msg = msg.copyWith(
-                        metadata: getUser.data());
-                    msgWithAuthor = msg;*/
+                      var ageFilter = 3; //{14 [17] 20}
+                      var minAge = currentUserAge - ageFilter; // ?? 14;
+                      var maxAge = currentUserAge + ageFilter; // ?? 20;
+                      // print(currentUserAge.runtimeType);
 
-                      if (inAgeRange || _age == 0) filteredMsgs.add(msg);
-                      //   print(_age.runtimeType);
-                      // msg.metadata = guestUser.data();
+                      bool inAgeRange =
+                          authorAge >= minAge && authorAge <= maxAge;
+                      if (inAgeRange || authorAge == 0.0) filteredMsgs.add(msg);
                     });
 
                     return SafeArea(
                       bottom: false,
                       child: Chat(
-                        theme: const DefaultChatTheme(
+                        theme: DefaultChatTheme(
                           inputBackgroundColor: cGrey300,
+                          // backgroundColor: Colors.grey[100]!,
                           // inputBackgroundColor: cRilDeepPurple.withOpacity(0.85),
                         ),
                         isAttachmentUploading: _isAttachmentUploading,
@@ -522,9 +526,9 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                     );
                   } else {
                     return GestureDetector(
-                      onTap: () async {
-                        print('Tapped');
-                      },
+                        onTap: () async {
+                          print('Tapped');
+                        },
                         child: const Center(child: Text('Loading..')));
                   }
                 },
@@ -806,7 +810,6 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
   }
 }
 
-
 showRilAlert(context, bool exitProfile) async {
   showDialog(
     barrierDismissible: true,
@@ -814,133 +817,133 @@ showRilAlert(context, bool exitProfile) async {
     // barrierColor: StreamChatTheme.of(context).colorTheme.overlay,
     builder: (context) => Center(
         child: AlertDialog(
-          // contentPadding: EdgeInsets.zero,
-          // titlePadding: EdgeInsets.zero,
-          actionsAlignment: MainAxisAlignment.center,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          title: Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                   Padding(
-                    padding: const EdgeInsets.only(top: 13.0),
-                    child: Text(
-                      exitProfile ? 'תרצה לצאת' : 'ברוכים הבאים אל',
-                      style: const TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 25),
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(exitProfile ? ' מרילטופיה?' : 'רילטופיה',
-                        textDirection: TextDirection.rtl,
-                        style: const TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 25),
-                      ),
-
-                      SvgPicture.asset(
-                        'assets/svg_icons/CleanLogo.svg',
-                        height: 30,
-                        // color: StreamChatTheme.of(context).colorTheme.accentPrimary,
-                      ),
-                      // trailing: Image.asset('assets/RilTopialLogoAndTxt.png',
-                      //   height: 45,)
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  const Center(
-                      child: Text(
-                        'כולם כאן בגיל שלך (+3-)'
-                            '\n זה המקום להכיר, לשתף, לעזור ולהיות מי שאתה!',
-                        style: TextStyle(
-                          color: neutral2,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          height: 1.5,
-                        ),
-                        textAlign: TextAlign.center,
-                        textDirection: TextDirection.rtl,
-                      )),
-                ],
-              )
-          ),
-          // content: Text("Saved successfully"),
-          actions: [
-            TextButton(
-              onPressed: () => kNavigator(context).pop(),
-              child: Text(exitProfile ? 'חזור' : 'התחל',
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: cRilPurple
-                  )),
+      // contentPadding: EdgeInsets.zero,
+      // titlePadding: EdgeInsets.zero,
+      actionsAlignment: MainAxisAlignment.center,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      title:
+      Center(
+          child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 13.0),
+            child: Text(
+              exitProfile ? 'תרצה לצאת' : 'ברוכים הבאים אל',
+              style: const TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 25),
             ),
-            if(exitProfile)
-              TextButton(
-                onPressed: () => kPushNavigator(context, const LoginPage()),
-                child: const Text('יציאה',
-                    style: TextStyle(
-                        color: Colors.grey
-                    )),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                exitProfile ? ' מרילטופיה?' : 'רילטופיה',
+                textDirection: TextDirection.rtl,
+                style: const TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 25),
               ),
-          ],
-        )),
+
+              SvgPicture.asset(
+                'assets/svg_icons/CleanLogo.svg',
+                height: 30,
+                // color: StreamChatTheme.of(context).colorTheme.accentPrimary,
+              ),
+              // trailing: Image.asset('assets/RilTopialLogoAndTxt.png',
+              //   height: 45,)
+            ],
+          ),
+          const SizedBox(height: 20),
+          const Center(
+              child: Text(
+            'כולם כאן בגיל שלך (+3-)'
+            '\n זה המקום להכיר, לשתף, לעזור ולהיות מי שאתה!',
+            style: TextStyle(
+              color: neutral2,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              height: 1.5,
+            ),
+            textAlign: TextAlign.center,
+            textDirection: TextDirection.rtl,
+          )),
+        ],
+      )),
+      // content: Text("Saved successfully"),
+      actions: [
+        TextButton(
+          onPressed: () => kNavigator(context).pop(),
+          child: Text(exitProfile ? 'חזור' : 'התחל',
+              style: const TextStyle(
+                  fontWeight: FontWeight.bold, color: cRilPurple)),
+        ),
+        if (exitProfile)
+          TextButton(
+            onPressed: () => kPushNavigator(context, const LoginPage()),
+            child: const Text('יציאה', style: TextStyle(color: Colors.grey)),
+          ),
+      ],
+    )),
   );
 }
 
-showCustomRilAlert(context, {String? title, String? desc, actions}) async {
+showCustomRilAlert(context,{
+      String? title,
+      String? desc,
+      List<Widget>? actions,
+      Widget? titleWidget
+}) async {
   showDialog(
     barrierDismissible: true,
     context: context,
     // barrierColor: StreamChatTheme.of(context).colorTheme.overlay,
     builder: (context) => Center(
         child: AlertDialog(
-          // contentPadding: EdgeInsets.zero,
-          // titlePadding: EdgeInsets.zero,
-          actionsAlignment: MainAxisAlignment.center,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+      // contentPadding: EdgeInsets.zero,
+      // titlePadding: EdgeInsets.zero,
+      actionsAlignment: MainAxisAlignment.center,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      title:
+          titleWidget ?? Center(
+          child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 13.0),
+            child: Text(
+              '$title',
+              textDirection: TextDirection.rtl,
+              style: const TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 25),
+            ),
           ),
-          title: Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 13.0),
-                    child: Text(
-                      '$title',
-                      textDirection: TextDirection.rtl,
-                      style: const TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 25),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Center(
-                      child: Text(
-                        '$desc',
-                        style: const TextStyle(
-                          color: neutral2,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          height: 1.5,
-                        ),
-                        textAlign: TextAlign.center,
-                        textDirection: TextDirection.rtl,
-                      )),
-                ],
-              )
-          ),
-          // content: Text("Saved successfully"),
-          actions: actions,
-        )),
+          const SizedBox(height: 20),
+          Center(
+              child: Text(
+            '$desc',
+            style: const TextStyle(
+              color: neutral2,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              height: 1.5,
+            ),
+            textAlign: TextAlign.center,
+            textDirection: TextDirection.rtl,
+          )),
+        ],
+      )),
+      // content: Text("Saved successfully"),
+      actions: actions,
+    )),
   );
 }
-

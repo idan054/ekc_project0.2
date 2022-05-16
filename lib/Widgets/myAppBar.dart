@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 
@@ -19,12 +20,15 @@ PreferredSizeWidget? myAppBar(context, String? title, {bool stf = false, actions
         borderRadius: BorderRadius.vertical(
           bottom: Radius.circular(20),
         )),
-    title: Text(title ?? '',
-    style: const TextStyle(
-      color: neutral0,
-      fontSize: 18,
-      fontWeight: FontWeight.bold,
-      height: 1.2,
-    ),),
+    title: Align(
+      alignment: Alignment.centerRight,
+      child: Text(title ?? '',
+      style: const TextStyle(
+        color: neutral0,
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
+        height: 1.2,
+      ),),
+    ),
     actions: actions,
   );}

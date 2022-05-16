@@ -25,6 +25,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _googleSignIn = GoogleSignIn(scopes: ['email']);
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -93,14 +94,29 @@ class _LoginPageState extends State<LoginPage> {
                 subTitle: 'מענה מיידי על כל דבר.',
                 svgAsset: 'assets/svg_icons/thunder.svg',
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 2.0),
-                child: Icon(
-                  Icons.arrow_drop_down_rounded,
-                  size: 28,
-                  color: Colors.grey[500]?.withOpacity(0.75),
+
+              AnimatedCrossFade(
+                duration: const Duration(milliseconds: 250),
+                crossFadeState: isLoading
+                    ? CrossFadeState.showFirst
+                    : CrossFadeState.showSecond,
+                firstChild:
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 14),
+                  child: LinearProgressIndicator(
+                      backgroundColor: kEmptyColor,
+                      color: cRilPurple),),
+                secondChild:
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 2.0),
+                  child: Icon(
+                    Icons.arrow_drop_down_rounded,
+                    size: 28,
+                    color: Colors.grey[500]?.withOpacity(0.75),
+                  ),
                 ),
               ),
+
 
               Directionality(
                 textDirection: TextDirection.rtl,
@@ -110,11 +126,14 @@ class _LoginPageState extends State<LoginPage> {
                   child: InkWell(
                     borderRadius: BorderRadius.circular(10),
                     onTap: () async {
+
                       await _googleSignIn.signOut();
                       final GoogleSignInAccount? googleSignInAccount =
                           await _googleSignIn.signIn();
 
                       if (googleSignInAccount != null) {
+                        setState(() => isLoading = true);
+
                         final GoogleSignInAuthentication
                             googleSignInAuthentication =
                             await googleSignInAccount.authentication;
@@ -153,6 +172,7 @@ class _LoginPageState extends State<LoginPage> {
                               .onError((error, stackTrace) => print(
                                   'firebaseDatabase_basedFlyer FAILED: $error \n-|- $stackTrace \n(FirebaseChatCore.instance.createUserInFirestore)'));
 
+                        setState(() => isLoading = false);
                           kPushNavigator(
                             context,
                             ProfilePage(userData: userData), /*replace: true*/
@@ -176,8 +196,9 @@ class _LoginPageState extends State<LoginPage> {
                           height: 30,
                           // color: StreamChatTheme.of(context).colorTheme.accentPrimary,
                         ),
-                        title: const Text(
-                          'התחבר באמצעות גוגל',
+                        title: Text(
+                          isLoading ? 'מיד נכנסים...'
+                          : 'התחבר באמצעות גוגל',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,

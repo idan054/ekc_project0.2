@@ -61,13 +61,18 @@ class _FlyerDmState extends State<FlyerDm> {
 
     otherUser = widget.room.users
         .firstWhere((user) => user.id != authUser?.uid);
-
     String unreadKey = 'unreadCountFrom_'
         '${otherUser?.id.substring(0, 5)}';
+
+    print('${otherUser?.firstName} ${otherUser?.id}');
+    print(unreadKey);
+
+
     int unreadCount = widget.room.metadata?[unreadKey] ?? 0;
     FirebaseFirestore.instance
         .doc('rooms/${widget.room.id}').set({
-      'metadata': {unreadKey: FieldValue.increment(0)}
+      // 'metadata': {unreadKey: FieldValue.increment(0)}
+      'metadata': {unreadKey: 0}
     }, SetOptions(merge:true),);
 
 
