@@ -1,6 +1,8 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ekc_project/Pages/B_profilePage.dart';
+import 'package:ekc_project/Pages/ril_gDashboard.dart';
 import 'package:ekc_project/Widgets/myAppBar.dart';
 import 'package:ekc_project/theme/colors.dart';
 import 'package:ekc_project/theme/constants.dart';
@@ -10,6 +12,8 @@ import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
+import '../theme/config.dart';
+import 'flyerChatV2.dart';
 import 'usersPage.dart';
 import 'mainPage.dart';
 
@@ -57,12 +61,13 @@ class _LoginPageState extends State<LoginPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('רילטופיה',
+                  Text(
+                    'רילטופיה',
                     style: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
                         fontSize: 25),
-                    ),
+                  ),
 
                   SvgPicture.asset(
                     'assets/svg_icons/CleanLogo.svg',
@@ -100,14 +105,12 @@ class _LoginPageState extends State<LoginPage> {
                 crossFadeState: isLoading
                     ? CrossFadeState.showFirst
                     : CrossFadeState.showSecond,
-                firstChild:
-                Padding(
+                firstChild: Padding(
                   padding: EdgeInsets.symmetric(vertical: 14),
                   child: LinearProgressIndicator(
-                      backgroundColor: kEmptyColor,
-                      color: cRilPurple),),
-                secondChild:
-                Padding(
+                      backgroundColor: kEmptyColor, color: cRilPurple),
+                ),
+                secondChild: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 2.0),
                   child: Icon(
                     Icons.arrow_drop_down_rounded,
@@ -117,7 +120,6 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
 
-
               Directionality(
                 textDirection: TextDirection.rtl,
                 child: Padding(
@@ -126,7 +128,6 @@ class _LoginPageState extends State<LoginPage> {
                   child: InkWell(
                     borderRadius: BorderRadius.circular(10),
                     onTap: () async {
-
                       await _googleSignIn.signOut();
                       final GoogleSignInAccount? googleSignInAccount =
                           await _googleSignIn.signIn();
@@ -154,15 +155,45 @@ class _LoginPageState extends State<LoginPage> {
                         print('loginPAge user $fireStoreUser');
                         print('loginPAge myUid $myUid');
 
-                        var userData = types.User(
-                            firstName: fireStoreUser?.displayName,
-                            id: fireStoreUser?.uid ?? UniqueKey().toString(),
-                            imageUrl: fireStoreUser?.photoURL,
-                            // lastName: '${fireStoreUser?.email}'.toLowerCase(),
-                            metadata: {
-                              'email': fireStoreUser?.email,
-                              'age': 18
-                            });
+                        // var userDoc = await FirebaseFirestore.instance.collection('users').doc(myUid).get();
+                        // print('userDoc.exists ${userDoc.exists}');
+                        // print('userDoc.data ${userDoc.data()}');
+
+                        Map<String, dynamic>? currentUser;
+                        try {
+                          currentUser =
+                              await fetchUser(fireStoreUser!.uid, 'users');
+                        } catch (e) {
+                          print('err 164: $e');
+                        }
+
+                        // if(userDoc.exists){
+                        if (!alwaysNewUserDebug
+                        && currentUser != null) { // AKA user exists
+                          types.User flyerUser =
+                              types.User.fromJson(currentUser);
+                          setState(() => isLoading = false);
+                          kPushNavigator(
+                              context,
+                              GDashboard(
+                                homePage: FlyerChatV2(
+                                  room: types.Room(
+                                      users: [flyerUser],
+                                      // Adds the user to group
+                                      type: types.RoomType.group,
+                                      id: 'NAMAkmZKdEAv9AefwXhR'),
+                                  // currentUser: widget.userData,),
+                                  currentUser: flyerUser,
+                                ),
+                              ),
+                              replace: true);
+                        } else { // AKA new user
+                          var userData = types.User(
+                              firstName: fireStoreUser?.displayName,
+                              id: fireStoreUser?.uid ?? UniqueKey().toString(),
+                              imageUrl: fireStoreUser?.photoURL,
+                              // lastName: '${fireStoreUser?.email}'.toLowerCase(),
+                              metadata: {'email': fireStoreUser?.email});
 
                           await FirebaseChatCore.instance
                               .createUserInFirestore(userData)
@@ -172,11 +203,12 @@ class _LoginPageState extends State<LoginPage> {
                               .onError((error, stackTrace) => print(
                                   'firebaseDatabase_basedFlyer FAILED: $error \n-|- $stackTrace \n(FirebaseChatCore.instance.createUserInFirestore)'));
 
-                        setState(() => isLoading = false);
+                          setState(() => isLoading = false);
                           kPushNavigator(
                             context,
                             ProfilePage(userData: userData), /*replace: true*/
                           );
+                        }
                       }
                     },
                     child: Container(
@@ -197,8 +229,7 @@ class _LoginPageState extends State<LoginPage> {
                           // color: StreamChatTheme.of(context).colorTheme.accentPrimary,
                         ),
                         title: Text(
-                          isLoading ? 'מיד נכנסים...'
-                          : 'התחבר באמצעות גוגל',
+                          isLoading ? 'מיד נכנסים...' : 'התחבר באמצעות גוגל',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -219,10 +250,11 @@ class _LoginPageState extends State<LoginPage> {
                       ),*/
                         trailing: Transform.scale(
                             scale: -1,
-                            child:
-                            const Icon(Icons.arrow_right_alt_rounded,
+                            child: const Icon(
+                              Icons.arrow_right_alt_rounded,
                               color: cRilPurple,
-                              size: 28,)),
+                              size: 28,
+                            )),
                       ),
                     ),
                   ),

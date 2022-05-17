@@ -31,6 +31,7 @@ class GDashboard extends StatefulWidget {
 
 class _GDashboardState extends State<GDashboard> {
   int _selectedIndex = 1;
+  bool switchStatus = moderatorMode.value;
   final PageController _pageController = PageController(initialPage: 1);
 
   Widget tabWidget(
@@ -153,9 +154,10 @@ class _GDashboardState extends State<GDashboard> {
             ),
             const SizedBox(width: 20),
           ],
-          title: Container(
-              height: 32,
+          title: SizedBox(
+              height: 35,
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Image.asset(
                     'assets/RilTopiaTxt.png',
@@ -163,15 +165,42 @@ class _GDashboardState extends State<GDashboard> {
                   Container(
                     padding:  EdgeInsets.only(left: 4),
                     alignment: Alignment.topLeft,
-                    child: const Text(
-                      'BETA',
-                      style: TextStyle(
-                          // color: cRilDarkPurple.withOpacity(0.75),
-                          color: Colors.black,
-                          fontWeight: FontWeight.w500,
-                          letterSpacing: 0.5,
-                          // Theme.of(context).backgroundColor,
-                          fontSize: 10),
+                    // color: Colors.green,
+                    child:
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          isModerator ? 'Moderator' : 'BETA',
+                           style: const TextStyle(
+                              // color: cRilDarkPurple.withOpacity(0.75),
+                              color: Colors.black,
+                              fontWeight: FontWeight.w500,
+                              letterSpacing: 0.5,
+                              // Theme.of(context).backgroundColor,
+                              fontSize: 10),
+                        ),
+                        if(isModerator)
+                        SizedBox(
+                          height: 20,
+                          width: 40,
+                          child: Switch(
+                            value: switchStatus,
+                            activeTrackColor: Colors.grey[300],
+                            inactiveTrackColor: Colors.grey[300],
+                            activeColor: cRilDarkPurple.withOpacity(0.75),
+                            inactiveThumbColor: Colors.grey[300],
+                            onChanged: (bool value) {
+                                  setState(() {
+                                    switchStatus = value;
+                                    moderatorMode.value = value;
+                                  });
+                            }
+                            ,
+                          ),
+                        )
+                      ],
                     ),
                   ),
                 ],

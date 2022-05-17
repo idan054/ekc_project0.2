@@ -52,6 +52,7 @@ import '../Widgets/cardPost.dart';
 import '../Widgets/snackbar.dart';
 import '../myUtil.dart';
 import '../theme/colors.dart';
+import '../theme/config.dart';
 import '../theme/constants.dart';
 import 'A_loginPage.dart';
 import 'flyerDm.dart';
@@ -91,11 +92,11 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
     // var user = widget.currentUser;
     var user = firestoreUserData;
 
-    print('Message C - Whats _bubbleBuilder gets: ${message.toJson()}');
+    // print('Message C - Whats _bubbleBuilder gets: ${message.toJson()}');
 
     // String image = user?.imageUrl ?? 'https://bit.ly/3l64LIk';
     String? image = message.metadata?['imageUrl'] ?? 'https://bit.ly/3l64LIk';
-    print('IMAGE $image');
+    // print('IMAGE $image');
     // print('X IMAGE: $image');
     // var name = message.author.firstName ?? user?.firstName;
     String name = message.metadata?['firstName'] ?? 'UserName Here.';
@@ -114,8 +115,7 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
       child: Directionality(
         textDirection: TextDirection.rtl,
         child: InkWell(
-          onLongPress: firestoreUserData?.toJson()['metadata']['MyModerator'] ==
-                  true
+          onLongPress: (isModerator && moderatorMode.value)
               ? () async {
                   print('Long press taped.');
                   print(message.toJson());
@@ -384,6 +384,10 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
       // widget.currentUser = types.User.fromJson(data);
       firestoreUserData = types.User.fromJson(data);
       print('firestore User DATA: ${firestoreUserData?.toJson()}');
+
+      print('MyModerator');
+      isModerator = firestoreUserData?.metadata?['MyModerator'] ?? false;
+      print(isModerator);
     });
     // } else {
     //   firestoreUserData = widget.currentUser;
@@ -423,6 +427,8 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
 
   @override
   Widget build(BuildContext context) {
+    print('[Build] flyerChatV2');
+
     /*if(!localIsShown) {
       Future.delayed(const Duration(seconds: 3), () => showAlert(context));
       localIsShown = true;
@@ -437,114 +443,121 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
-        body: StreamBuilder<types.Room>(
-          initialData: widget.room,
-          stream: FirebaseChatCore.instance.room(widget.room.id),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return StreamBuilder<List<types.Message>>(
-                initialData: const [],
-                stream: FirebaseChatCore.instance.messages(snapshot.data!),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    types.Message msgWithAuthor;
-                    // print('What Stream snapshot Data get: ${snapshot.data}');
+        body: ValueListenableBuilder<bool>(
+            valueListenable: moderatorMode,
+            builder: (BuildContext context, bool _moderatorMode, Widget? child) {
+            return StreamBuilder<types.Room>(
+              initialData: widget.room,
+              stream: FirebaseChatCore.instance.room(widget.room.id),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return StreamBuilder<List<types.Message>>(
+                    initialData: const [],
+                    stream: FirebaseChatCore.instance.messages(snapshot.data!),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        types.Message msgWithAuthor;
+                        // print('What Stream snapshot Data get: ${snapshot.data}');
 
-                    // widget.currentUser = widget.room.users.firstWhere((user) =>
-                    //   user.id == widget.currentUser!.id);
-                    //
-                    // print('STREAM currentUser JSON is:');
-                    // print(widget.currentUser?.toJson());
+                        // widget.currentUser = widget.room.users.firstWhere((user) =>
+                        //   user.id == widget.currentUser!.id);
 
-                    List<types.Message> filteredMsgs = [];
-                    // print('snapshot.data');
-                    // print(snapshot.data);
+                        // widget.currentUser = firestoreUserData(?)
+                        // print('STREAM currentUser JSON is:');
+                        // print(widget.currentUser?.toJson());
+                        // print('firestoreUserData JSON is:');
+                        // print(firestoreUserData?.toJson());
+                        List<types.Message> filteredMsgs = [];
+                        // print('snapshot.data');
+                        // print(snapshot.data);
 
-                    // print('A G E: $');
-                    // ----------------- Age filter
+                        // print('A G E: $');
+                        // ----------------- Age filter
 
-                    snapshot.data?.forEach((msg) {
-                      // print(msg.toJson());
-                      double authorAge =
-                          msg.metadata?['metadata']['age'] ?? 0.0;
-                      double currentUserAge =
-                          firestoreUserData?.metadata?['age'] ?? 0.0;
+                        snapshot.data?.forEach((msg) {
+                          print(msg.toJson());
+                          double authorAge =
+                              msg.metadata?['metadata']['age'].toDouble() ?? 0.0;
+                          double currentUserAge =
+                              firestoreUserData?.metadata?['age'].toDouble() ?? 0.0;
 
-                      var ageFilter = 3; //{14 [17] 20}
-                      var minAge = currentUserAge - ageFilter; // ?? 14;
-                      var maxAge = currentUserAge + ageFilter; // ?? 20;
-                      // print(currentUserAge.runtimeType);
+                          var ageFilter = 3; //{14 [17] 20}
+                          var minAge = currentUserAge - ageFilter; // ?? 14;
+                          var maxAge = currentUserAge + ageFilter; // ?? 20;
+                          // print(currentUserAge.runtimeType);
 
-                      bool inAgeRange =
-                          authorAge >= minAge && authorAge <= maxAge;
-                      if (inAgeRange || authorAge == 0.0) filteredMsgs.add(msg);
-                    });
+                          bool inAgeRange =
+                              authorAge >= minAge && authorAge <= maxAge;
+                          if (inAgeRange || authorAge == 0.0) filteredMsgs.add(msg);
+                        });
 
-                    return SafeArea(
-                      bottom: false,
-                      child: Chat(
-                        theme: DefaultChatTheme(
-                          inputBackgroundColor: cGrey300,
-                          // backgroundColor: Colors.grey[100]!,
-                          // inputBackgroundColor: cRilDeepPurple.withOpacity(0.85),
-                        ),
-                        isAttachmentUploading: _isAttachmentUploading,
-                        // messages: snapshot.data ?? [],
-                        messages: filteredMsgs,
-                        // onAttachmentPressed: _handleAtachmentPressed,
-                        // onMessageTap: _handleMessageTap,
-                        sendButtonVisibilityMode:
-                            SendButtonVisibilityMode.always,
-                        onPreviewDataFetched: _handlePreviewDataFetched,
-                        onSendPressed: (partialText) async =>
-                            _handleSendPressed(partialText, firestoreUserData!),
-                        user: types.User(
-                            id: FirebaseChatCore.instance.firebaseUser?.uid ??
-                                '',
-                            firstName: 'WHATEVER'),
-                        // user: widget.currentUser!,
-                        bubbleBuilder: _bubbleBuilder,
+                        return SafeArea(
+                          bottom: false,
+                          child: Chat(
+                            theme: DefaultChatTheme(
+                              inputBackgroundColor: cGrey300,
+                              // backgroundColor: Colors.grey[100]!,
+                              // inputBackgroundColor: cRilDeepPurple.withOpacity(0.85),
+                            ),
+                            isAttachmentUploading: _isAttachmentUploading,
+                            // messages: snapshot.data ?? [],
+                            messages: isModerator && _moderatorMode ? snapshot.data! : filteredMsgs,
+                            // onAttachmentPressed: _handleAtachmentPressed,
+                            // onMessageTap: _handleMessageTap,
+                            sendButtonVisibilityMode:
+                                SendButtonVisibilityMode.always,
+                            onPreviewDataFetched: _handlePreviewDataFetched,
+                            onSendPressed: (partialText) async =>
+                                _handleSendPressed(partialText, firestoreUserData!),
+                            user: types.User(
+                                id: FirebaseChatCore.instance.firebaseUser?.uid ??
+                                    '',
+                                firstName: 'WHATEVER'),
+                            // user: widget.currentUser!,
+                            bubbleBuilder: _bubbleBuilder,
 
-                        /*
-                      bubbleBuilder: (Widget child, {
-                        required types.Message message,
-                        required nextMessageInGroup,
-                      }) {
-                        return _bubbleBuilder(
-                            child,
-                            // message: message,
-                            message: msgWithAuthor,
-                            nextMessageInGroup: nextMessageInGroup);
-                      },
-                      */
+                            /*
+                          bubbleBuilder: (Widget child, {
+                            required types.Message message,
+                            required nextMessageInGroup,
+                          }) {
+                            return _bubbleBuilder(
+                                child,
+                                // message: message,
+                                message: msgWithAuthor,
+                                nextMessageInGroup: nextMessageInGroup);
+                          },
+                          */
 
-                        showUserAvatars: false,
-                        showUserNames: true,
-                        // customMessageBuilder: (customMessage, {required int messageWidth}){return customMessage.copyWith()},
-                        // customMessageBuilder: ,
-                      ),
-                    );
-                  } else {
-                    return GestureDetector(
-                        onTap: () async {
-                          print('Tapped');
-                        },
-                        child: const Center(child: Text('Loading..')));
-                  }
-                },
-              );
-            } else {
-              return const Text(
-                'Loading...',
-                style: TextStyle(
-                  color: neutral2,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  height: 1.5,
-                ),
-              );
-            }
-          },
+                            showUserAvatars: false,
+                            showUserNames: true,
+                            // customMessageBuilder: (customMessage, {required int messageWidth}){return customMessage.copyWith()},
+                            // customMessageBuilder: ,
+                          ),
+                        );
+                      } else {
+                        return GestureDetector(
+                            onTap: () async {
+                              print('Tapped');
+                            },
+                            child: const Center(child: Text('Loading..')));
+                      }
+                    },
+                  );
+                } else {
+                  return const Text(
+                    'Loading...',
+                    style: TextStyle(
+                      color: neutral2,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      height: 1.5,
+                    ),
+                  );
+                }
+              },
+            );
+          }
         ),
 
         /*floatingActionButton: Offstage(

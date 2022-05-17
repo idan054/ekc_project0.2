@@ -15,6 +15,11 @@ const kStreamApiKey = 'ah48ckptkjvm';
 int cpAgeFilter = 3; // +-3, so 17 will meet 14 - 20.
 bool cpIsLoading = false; // setState to hide
 
+bool isModerator = false;
+// 1 make a void that change the val by val.value // 2 change type to ValueNotifier // 3 add ValueListenableBuilder
+ValueNotifier<bool> moderatorMode = ValueNotifier<bool>(false);
+// bool moderatorMode = false; // Moderator can disable it by switch
+
 /// Design (c)onfig
 bool cShowTabBarTitles = false; // in Use - AppBar
 bool cMinimizeIndicator = true; // in Use - AppBar
@@ -27,7 +32,7 @@ bool devLogin = true; // auto set gender & bDay when סיום button clicked
 bool showDebugPrints = true;
 bool genderDebug = true; // false: fake New user mode.
 bool cleanOnExitDebug = true; // true: exit button will erase user extraData
-bool alwaysNewUserDebug = false && kDebugMode;
+bool alwaysNewUserDebug = true && kDebugMode;
 
 // ? CTRL + F: Outside Lib folder:
 // ? var homeCooldown = 2 * 60;

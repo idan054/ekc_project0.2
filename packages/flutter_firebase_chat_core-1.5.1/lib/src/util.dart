@@ -29,6 +29,8 @@ Future<Map<String, dynamic>> fetchUser(
       .doc(userId)
       .get();
 
+  // if(doc.data() == null) return {}; // my null safety
+
   final data = doc.data()!;
 
   data['createdAt'] = data['createdAt']?.millisecondsSinceEpoch;
