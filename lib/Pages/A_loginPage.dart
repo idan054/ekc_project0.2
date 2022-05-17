@@ -12,6 +12,7 @@ import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../theme/config.dart';
 import 'flyerChatV2.dart';
 import 'usersPage.dart';
@@ -259,6 +260,28 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                 ),
+              ),
+
+              Center(
+                child: InkWell(
+                    child: Wrap(
+                      // mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text(
+                          // 'התחברותך מהווה הסכמה ',
+                          'By logging I agree that I have read and accepted the',
+                          style: TextStyle(color: Colors.grey, fontSize: 12),
+                        ),
+                        Text(
+                          'Terms of use',
+                          // 'לתנאי המדיניות',
+                          style:
+                          TextStyle(color: Colors.blue[600]!, fontSize: 12),
+                        ),
+                      ],
+                    ),
+                    onTap: () => launchUrl(Uri.parse(
+                        'https://www.privacypolicies.com/live/4ae28974-cd40-4c8e-b265-6d6da2c7690b'))),
               ),
             ],
           ), // Column

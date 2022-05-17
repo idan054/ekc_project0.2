@@ -433,25 +433,6 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
             const Spacer(),
-            Center(
-              child: InkWell(
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'לתנאי המדיניות',
-                        style:
-                            TextStyle(color: Colors.blue[600]!, fontSize: 12),
-                      ),
-                      const Text(
-                        'התחברותך מהווה הסכמה ',
-                        style: TextStyle(color: Colors.grey, fontSize: 12),
-                      ),
-                    ],
-                  ),
-                  onTap: () => launchUrl(Uri.parse(
-                      'https://www.privacypolicies.com/live/4ae28974-cd40-4c8e-b265-6d6da2c7690b'))),
-            ),
             const SizedBox(
               height: 15,
             )
