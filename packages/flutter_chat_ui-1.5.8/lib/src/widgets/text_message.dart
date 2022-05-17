@@ -136,6 +136,7 @@ class TextMessage extends StatelessWidget {
             Text(message.text, style: emojiTextStyle)
         else
           ParsedText(
+            textDirection: TextDirection.rtl,
             parse: [
               MatchText(
                 onTap: (mail) async {

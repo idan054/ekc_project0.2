@@ -68,6 +68,7 @@ class Chat extends StatefulWidget {
     this.previewTapOptions = const PreviewTapOptions(),
     this.scrollController,
     this.scrollPhysics,
+    this.myIsPostStyle = false,
     this.sendButtonVisibilityMode = SendButtonVisibilityMode.editing,
     this.showUserAvatars = false,
     this.showUserNames = false,
@@ -228,6 +229,7 @@ class Chat extends StatefulWidget {
 
   /// See [ChatList.scrollPhysics]
   final ScrollPhysics? scrollPhysics;
+  final bool myIsPostStyle;
 
   /// See [Input.sendButtonVisibilityMode]
   final SendButtonVisibilityMode sendButtonVisibilityMode;
@@ -370,7 +372,7 @@ class _ChatState extends State<Chat> {
   }
 
   Widget _messageBuilder(Object object, BoxConstraints constraints) {
-    if (object is DateHeader) {
+    if (object is DateHeader && !widget.myIsPostStyle) {
       if (widget.dateHeaderBuilder != null) {
         return widget.dateHeaderBuilder!(object);
       } else {
@@ -396,6 +398,7 @@ class _ChatState extends State<Chat> {
               : min(constraints.maxWidth * 0.78, 440).floor();
 
       return Message(
+        myIsPostStyle: widget.myIsPostStyle,
         key: ValueKey(message.id),
         avatarBuilder: widget.avatarBuilder,
         bubbleBuilder: widget.bubbleBuilder,
@@ -478,7 +481,8 @@ class _ChatState extends State<Chat> {
                 child: Column(
                   children: [
                     Flexible(
-                      child: widget.messages.isEmpty
+                      child:
+                      widget.messages.isEmpty
                           ? SizedBox.expand(
                               child: _emptyStateBuilder(),
                             )
@@ -500,6 +504,7 @@ class _ChatState extends State<Chat> {
                                       widget.onEndReachedThreshold,
                                   scrollController: widget.scrollController,
                                   scrollPhysics: widget.scrollPhysics,
+                                  myIsPostScroll: widget.myIsPostStyle,
                                 ),
                               ),
                             ),

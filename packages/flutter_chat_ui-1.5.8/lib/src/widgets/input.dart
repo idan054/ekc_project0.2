@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:intl/intl.dart' as intl;
 
 import '../models/send_button_visibility_mode.dart';
 import 'attachment_button.dart';
@@ -175,6 +176,8 @@ class _InputState extends State<Input> {
                   child: Padding(
                     padding: _textPadding,
                     child: TextField(
+                      textAlign: TextAlign.right,
+                      textDirection: TextDirection.rtl,
                       controller: _textController,
                       cursorColor: InheritedChatTheme.of(context)
                           .theme

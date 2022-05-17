@@ -46,6 +46,7 @@ class Message extends StatelessWidget {
     required this.showStatus,
     required this.showUserAvatars,
     this.textMessageBuilder,
+    this.myIsPostStyle = false,
     required this.usePreviewData,
   }) : super(key: key);
 
@@ -139,6 +140,8 @@ class Message extends StatelessWidget {
 
   /// Show user avatars for received messages. Useful for a group chat.
   final bool showUserAvatars;
+
+  final bool myIsPostStyle;
 
   /// Build a text message inside predefined bubble.
   final Widget Function(
@@ -301,15 +304,16 @@ class Message extends StatelessWidget {
     );
 
     return Container(
-      alignment: _currentUserIsAuthor
+      alignment:
+      myIsPostStyle ? Alignment.center
+      : _currentUserIsAuthor
           ? AlignmentDirectional.centerEnd
           : AlignmentDirectional.centerStart,
-      // alignment: Alignment.center,
-      // margin: const EdgeInsets.symmetric(horizontal: 2),
-      margin: EdgeInsetsDirectional.only(
+      margin: myIsPostStyle ? null :
+      EdgeInsetsDirectional.only(
         bottom: 4,
         end: kIsWeb ? 0 : _query.padding.right,
-        start: 20 + (kIsWeb ? 0 : _query.padding.left),
+        start: 20 + (kIsWeb ? 0 : _query.padding.left)
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
@@ -318,7 +322,9 @@ class Message extends StatelessWidget {
           if (!_currentUserIsAuthor && showUserAvatars) _avatarBuilder(),
           ConstrainedBox(
             constraints: BoxConstraints(
-              maxWidth: messageWidth.toDouble(),
+              maxWidth: myIsPostStyle ?
+                    MediaQuery.of(context).size.width*0.975
+                  : messageWidth.toDouble(),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,

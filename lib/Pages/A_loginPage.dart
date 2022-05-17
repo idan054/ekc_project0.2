@@ -168,7 +168,7 @@ class _LoginPageState extends State<LoginPage> {
                         }
 
                         // if(userDoc.exists){
-                        if (!alwaysNewUserDebug
+                        if (!config.debug.alwaysSignup
                         && currentUser != null) { // AKA user exists
                           types.User flyerUser =
                               types.User.fromJson(currentUser);

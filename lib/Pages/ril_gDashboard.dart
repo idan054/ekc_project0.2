@@ -31,7 +31,7 @@ class GDashboard extends StatefulWidget {
 
 class _GDashboardState extends State<GDashboard> {
   int _selectedIndex = 1;
-  bool switchStatus = moderatorMode.value;
+  bool switchStatus = config.app.moderatorMode.value;
   final PageController _pageController = PageController(initialPage: 1);
 
   Widget tabWidget(
@@ -43,17 +43,17 @@ class _GDashboardState extends State<GDashboard> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        if (cShowTabBarTitles) ...[
+        if (config.design.showTabBarTitles) ...[
           Text(
-            '$label',
+            label,
             style: TextStyle(
                 fontWeight: FontWeight.bold,
                 color: active ? cRilDarkPurple.withOpacity(0.65) : Colors.grey),
           ),
-          SizedBox(width: 6)
+          const SizedBox(width: 6)
         ],
         iconAsset
-            ? Icon(
+            ? const Icon(
                 Icons.home_rounded,
                 size: 27,
               )
@@ -172,7 +172,7 @@ class _GDashboardState extends State<GDashboard> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          isModerator ? 'Moderator' : 'BETA',
+                          config.app.isModerator ? 'Moderator' : 'BETA',
                            style: const TextStyle(
                               // color: cRilDarkPurple.withOpacity(0.75),
                               color: Colors.black,
@@ -181,7 +181,7 @@ class _GDashboardState extends State<GDashboard> {
                               // Theme.of(context).backgroundColor,
                               fontSize: 10),
                         ),
-                        if(isModerator)
+                        if(config.app.isModerator)
                         SizedBox(
                           height: 20,
                           width: 40,
@@ -194,7 +194,7 @@ class _GDashboardState extends State<GDashboard> {
                             onChanged: (bool value) {
                                   setState(() {
                                     switchStatus = value;
-                                    moderatorMode.value = value;
+                                    config.app.moderatorMode.value = value;
                                   });
                             }
                             ,
@@ -349,9 +349,10 @@ class _GDashboardState extends State<GDashboard> {
                     controller: _pageController,
                     count: 3,
                     effect: SlideEffect(
-                        spacing: cMinimizeIndicator ? screenWidth / 3 * 0.2 : 0,
+                        spacing: config.design.cMinimizeIndicator
+                            ? screenWidth / 3 * 0.2 : 0,
                         radius: 6.0,
-                        dotWidth: cMinimizeIndicator
+                        dotWidth: config.design.cMinimizeIndicator
                             ? screenWidth / 3 * 0.8
                             : screenWidth / 3,
                         dotHeight: 3.0,

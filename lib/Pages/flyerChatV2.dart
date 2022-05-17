@@ -108,176 +108,173 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
     bool isCurrentUser = user!.id == message.author.id;
     // if(currentUser) print('user ${user.firstName} connected now.');
 
-    return Container(
-      // color: Colors.blue,
-      width: kMediaQuery(context).size.width * 0.90,
-      // width: 300,
-      child: Directionality(
-        textDirection: TextDirection.rtl,
-        child: InkWell(
-          onLongPress: (isModerator && moderatorMode.value)
-              ? () async {
-                  print('Long press taped.');
-                  print(message.toJson());
-                  showCustomRilAlert(
-                    context,
-                    title: 'למחוק הודעה זו?',
-                    desc: '${message.toJson()['text']}',
-                    actions: [
-                      TextButton(
-                        onPressed: () async {
-                          await FirebaseFirestore.instance
-                              .collection('rooms/NAMAkmZKdEAv9AefwXhR/messages')
-                              .doc(message.id)
-                              .delete();
-                          kNavigator(context).pop();
-                        },
-                        child: const Text('מחק הודעה',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.red)),
-                      ),
-                      TextButton(
-                        onPressed: () => kNavigator(context).pop(),
-                        child: const Text('ביטול',
-                            style: TextStyle(color: Colors.grey)),
-                      ),
-                    ],
-                  );
-                }
-              : () {
-                  print(firestoreUserData?.toJson());
-                },
-          onTap: isCurrentUser
-              ? () {}
-              : () async {
-                  final room = await FirebaseChatCore.instance
-                      .createRoom(message.author);
-                  kPushNavigator(
-                      context,
-                      FlyerDm(
-                        room: room,
-                      ));
-                },
-          child: Card(
-            margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
-            shape: RoundedRectangleBorder(
-              side: BorderSide(color: Colors.grey[200]!, width: 1.5),
-              borderRadius: BorderRadius.circular(6.0),
-            ),
-            elevation: 0,
-            shadowColor: Colors.black87,
-            color: Colors.grey[100]!,
-            // color: Colors.white,
-            child: Column(
-              children: [
-                const SizedBox(
-                  height: 2,
-                ),
-                Container(
-                  height: 20,
-                  padding: const EdgeInsets.only(right: 10, left: 10),
-                  alignment: Alignment.centerRight,
-/*                child:
-                    InkWell(
-                      child:
-                      Icon(
-                        Icons.more_horiz,
-                        color: Colors.grey[400]!,
-                     ),
-                      onTap: () {},
-                    ),*/
-                ),
-                Container(
-                  padding: const EdgeInsets.only(right: 10, left: 10),
-                  alignment: Alignment.topRight,
-                  child: Text(
-                    text,
-                    style: const TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.normal,
-                      fontSize: 16,
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: InkWell(
+        onLongPress: (config.app.isModerator
+                      && config.app.moderatorMode.value)
+            ? () async {
+                print('Long press taped.');
+                print(message.toJson());
+                showCustomRilAlert(
+                  context,
+                  title: 'למחוק הודעה זו?',
+                  desc: '${message.toJson()['text']}',
+                  actions: [
+                    TextButton(
+                      onPressed: () async {
+                        await FirebaseFirestore.instance
+                            .collection('rooms/NAMAkmZKdEAv9AefwXhR/messages')
+                            .doc(message.id)
+                            .delete();
+                        kNavigator(context).pop();
+                      },
+                      child: const Text('מחק הודעה',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.red)),
                     ),
+                    TextButton(
+                      onPressed: () => kNavigator(context).pop(),
+                      child: const Text('ביטול',
+                          style: TextStyle(color: Colors.grey)),
+                    ),
+                  ],
+                );
+              }
+            : () {
+                print(firestoreUserData?.toJson());
+              },
+        onTap: isCurrentUser
+            ? () {}
+            : () async {
+                final room = await FirebaseChatCore.instance
+                    .createRoom(message.author);
+                kPushNavigator(
+                    context,
+                    FlyerDm(
+                      room: room,
+                    ));
+              },
+        child: Card(
+          margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
+          shape: RoundedRectangleBorder(
+            side: BorderSide(color: Colors.grey[200]!, width: 1.5),
+            borderRadius: BorderRadius.circular(6.0),
+          ),
+          elevation: 0,
+          shadowColor: Colors.black87,
+          color: config.design.isPostStyle ?
+            Colors.white : Colors.grey[100]!,
+          // color: Colors.white,
+          child: Column(
+            children: [
+              const SizedBox(
+                height: 2,
+              ),
+              Container(
+                height: 20,
+                padding: const EdgeInsets.only(right: 10, left: 10),
+                alignment: Alignment.centerRight,
+/*                child:
+                  InkWell(
+                    child:
+                    Icon(
+                      Icons.more_horiz,
+                      color: Colors.grey[400]!,
+                   ),
+                    onTap: () {},
+                  ),*/
+              ),
+              Container(
+                padding: const EdgeInsets.only(right: 10, left: 10),
+                alignment: Alignment.topRight,
+                child: Text(
+                  text,
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.normal,
+                    fontSize: 16,
                   ),
                 ),
-                Container(
-                  height: 80,
-                  padding: const EdgeInsets.only(right: 10),
-                  // color: Colors.primaries[Random().nextInt(Colors.primaries.length)].shade300,
-                  // color: cGrey100,
-                  child: Row(
-                    children: [
-                      Flexible(
-                        child: ListTile(
-                            dense: true,
-                            visualDensity: VisualDensity.standard,
-                            title: Text(
-                              '$name ($age)',
-                              style: TextStyle(
-                                  // color: Colors.primaries[Random().nextInt(Colors.primaries.length)].shade600,
-                                  // color: Colors.black
-                                  color: Colors.grey[600]!,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14),
-                              // style: bodyText1Format(context)
-                            ),
-                            subtitle: Text(
-                              /*' · '*/
-                              'לפני '
-                              '$createdAgo',
-                              textDirection: TextDirection.rtl,
-                              style: TextStyle(
-                                  // color: Colors.primaries[Random().nextInt(Colors.primaries.length)].shade600,
-                                  // color: Colors.black
-                                  color: Colors.grey[600],
-                                  fontWeight: FontWeight.normal,
-                                  fontSize: 12),
-                              // style: bodyText1Format(context)
-                            ),
-                            contentPadding: EdgeInsets.zero,
-                            leading: CircleAvatar(
-                              backgroundColor: Colors.grey,
-                              backgroundImage: NetworkImage(image!),
-                              // backgroundImage: NetworkImage('https://bit.ly/3l64LIk'),
-                            )),
-                      ),
+              ),
+              Container(
+                height: 80,
+                padding: const EdgeInsets.only(right: 10),
+                // color: Colors.primaries[Random().nextInt(Colors.primaries.length)].shade300,
+                // color: cGrey100,
+                child: Row(
+                  children: [
+                    Flexible(
+                      child: ListTile(
+                          dense: true,
+                          visualDensity: VisualDensity.standard,
+                          title: Text(
+                            '$name ($age)',
+                            style: TextStyle(
+                                // color: Colors.primaries[Random().nextInt(Colors.primaries.length)].shade600,
+                                // color: Colors.black
+                                color: Colors.grey[600]!,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14),
+                            // style: bodyText1Format(context)
+                          ),
+                          subtitle: Text(
+                            /*' · '*/
+                            'לפני '
+                            '$createdAgo',
+                            textDirection: TextDirection.rtl,
+                            style: TextStyle(
+                                // color: Colors.primaries[Random().nextInt(Colors.primaries.length)].shade600,
+                                // color: Colors.black
+                                color: Colors.grey[600],
+                                fontWeight: FontWeight.normal,
+                                fontSize: 12),
+                            // style: bodyText1Format(context)
+                          ),
+                          contentPadding: EdgeInsets.zero,
+                          leading: CircleAvatar(
+                            backgroundColor: Colors.grey,
+                            backgroundImage: NetworkImage(image!),
+                            // backgroundImage: NetworkImage('https://bit.ly/3l64LIk'),
+                          )),
+                    ),
 
-                      if (!isCurrentUser)
-                        Builder(
-                            builder: (context) => Padding(
-                                  padding: const EdgeInsets.only(left: 10),
-                                  child: Directionality(
-                                    textDirection: TextDirection.rtl,
-                                    child: CircleAvatar(
-                                      backgroundColor: Colors.grey[200],
-                                      radius: 20,
-                                      child: IconButton(
-                                          onPressed: () async {
-                                            final room = await FirebaseChatCore
-                                                .instance
-                                                .createRoom(message.author);
-                                            kPushNavigator(
-                                                context,
-                                                FlyerDm(
-                                                  room: room,
-                                                ));
-                                          },
-                                          icon: Icon(
-                                            Icons.send_rounded,
-                                            color: Colors.grey[500],
-                                            size: 20,
-                                          )),
-                                    ),
+                    if (!isCurrentUser)
+                      Builder(
+                          builder: (context) => Padding(
+                                padding: const EdgeInsets.only(left: 10),
+                                child: Directionality(
+                                  textDirection: TextDirection.rtl,
+                                  child: CircleAvatar(
+                                    backgroundColor: Colors.grey[200],
+                                    radius: 20,
+                                    child: IconButton(
+                                        onPressed: () async {
+                                          final room = await FirebaseChatCore
+                                              .instance
+                                              .createRoom(message.author);
+                                          kPushNavigator(
+                                              context,
+                                              FlyerDm(
+                                                room: room,
+                                              ));
+                                        },
+                                        icon: Icon(
+                                          Icons.send_rounded,
+                                          color: Colors.grey[500],
+                                          size: 20,
+                                        )),
                                   ),
-                                ))
+                                ),
+                              ))
 
-                      // const SizedBox(width: 10),
-                      // const Spacer(),
-                    ],
-                  ),
+                    // const SizedBox(width: 10),
+                    // const Spacer(),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
@@ -386,8 +383,8 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
       print('firestore User DATA: ${firestoreUserData?.toJson()}');
 
       print('MyModerator');
-      isModerator = firestoreUserData?.metadata?['MyModerator'] ?? false;
-      print(isModerator);
+      config.app.isModerator = firestoreUserData?.metadata?['MyModerator'] ?? false;
+      print(config.app.isModerator);
     });
     // } else {
     //   firestoreUserData = widget.currentUser;
@@ -444,7 +441,7 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
       onWillPop: () async => false,
       child: Scaffold(
         body: ValueListenableBuilder<bool>(
-            valueListenable: moderatorMode,
+            valueListenable: config.app.moderatorMode,
             builder: (BuildContext context, bool _moderatorMode, Widget? child) {
             return StreamBuilder<types.Room>(
               initialData: widget.room,
@@ -481,9 +478,9 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                           double currentUserAge =
                               firestoreUserData?.metadata?['age'].toDouble() ?? 0.0;
 
-                          var ageFilter = 3; //{14 [17] 20}
-                          var minAge = currentUserAge - ageFilter; // ?? 14;
-                          var maxAge = currentUserAge + ageFilter; // ?? 20;
+                          // var ageFilter = 3; //{14 [17] 20}
+                          var minAge = currentUserAge - config.app.ageFilter; // ?? 14;
+                          var maxAge = currentUserAge + config.app.ageFilter; // ?? 20;
                           // print(currentUserAge.runtimeType);
 
                           bool inAgeRange =
@@ -494,14 +491,17 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                         return SafeArea(
                           bottom: false,
                           child: Chat(
+                            myIsPostStyle: config.design.isPostStyle,
                             theme: DefaultChatTheme(
                               inputBackgroundColor: cGrey300,
-                              // backgroundColor: Colors.grey[100]!,
+                              backgroundColor: config.design.isPostStyle
+                                  ? cGrey50 : Colors.white,
+                              // Colors.grey[100]!
                               // inputBackgroundColor: cRilDeepPurple.withOpacity(0.85),
                             ),
                             isAttachmentUploading: _isAttachmentUploading,
                             // messages: snapshot.data ?? [],
-                            messages: isModerator && _moderatorMode ? snapshot.data! : filteredMsgs,
+                            messages: config.app.isModerator && _moderatorMode ? snapshot.data! : filteredMsgs,
                             // onAttachmentPressed: _handleAtachmentPressed,
                             // onMessageTap: _handleMessageTap,
                             sendButtonVisibilityMode:

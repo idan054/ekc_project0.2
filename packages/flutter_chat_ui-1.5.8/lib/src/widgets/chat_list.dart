@@ -2,7 +2,7 @@ import 'package:diffutil_dart/diffutil.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
-
+import 'package:ekc_project/theme/config.dart';
 import 'inherited_chat_theme.dart';
 import 'inherited_user.dart';
 
@@ -18,6 +18,7 @@ class ChatList extends StatefulWidget {
     this.onEndReachedThreshold,
     this.scrollController,
     this.scrollPhysics,
+    this.myIsPostScroll = false,
   }) : super(key: key);
 
   /// Used for pagination (infinite scroll) together with [onEndReached].
@@ -47,6 +48,8 @@ class ChatList extends StatefulWidget {
 
   /// Determines the physics of the scroll view
   final ScrollPhysics? scrollPhysics;
+
+  final bool myIsPostScroll;
 
   @override
   _ChatListState createState() => _ChatListState();
@@ -225,7 +228,7 @@ class _ChatListState extends State<ChatList>
       child: CustomScrollView(
         controller: _scrollController,
         physics: widget.scrollPhysics,
-        reverse: true,
+        reverse: !widget.myIsPostScroll,
         slivers: [
           SliverPadding(
             padding: const EdgeInsets.only(bottom: 4),
