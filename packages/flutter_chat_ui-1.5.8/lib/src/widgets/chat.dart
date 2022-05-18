@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_chat_ui/src/widgets/inherited_l10n.dart';
-import 'package:intl/intl.dart';
+import 'package:intl/intl.dart' as intl;
 import 'package:photo_view/photo_view_gallery.dart';
 
 import '../chat_l10n.dart';
@@ -111,7 +111,7 @@ class Chat extends StatefulWidget {
   /// [dateLocale] will be ignored if you use this, so if you want a localized date
   /// make sure you initialize your [DateFormat] with a locale. See [customDateHeaderText]
   /// for more customization.
-  final DateFormat? dateFormat;
+  final intl.DateFormat? dateFormat;
 
   /// Custom date header builder gives ability to customize date header widget
   final Widget Function(DateHeader)? dateHeaderBuilder;
@@ -258,7 +258,7 @@ class Chat extends StatefulWidget {
   /// [dateLocale] will be ignored if you use this, so if you want a localized time
   /// make sure you initialize your [DateFormat] with a locale. See [customDateHeaderText]
   /// for more customization.
-  final DateFormat? timeFormat;
+  final intl.DateFormat? timeFormat;
 
   /// See [Message.usePreviewData]
   final bool usePreviewData;
@@ -313,11 +313,23 @@ class _ChatState extends State<Chat> {
           margin: const EdgeInsets.symmetric(
             horizontal: 24,
           ),
-          child: Text(
-            widget.l10n.emptyChatPlaceholder,
-            style: widget.theme.emptyChatPlaceholderTextStyle,
-            textAlign: TextAlign.center,
-          ),
+          child: widget.myIsPostStyle
+              ? const Text(
+                  'לא נמצאו פוסטים\nנסה לכתוב אחד משלך!',
+                  style: TextStyle(
+                    color: neutral2,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    height: 1.5,
+                  ),
+                  textAlign: TextAlign.center,
+                  textDirection: TextDirection.rtl,
+                )
+              : Text(
+                  widget.l10n.emptyChatPlaceholder,
+                  style: widget.theme.emptyChatPlaceholderTextStyle,
+                  textAlign: TextAlign.center,
+                ),
         );
   }
 
@@ -481,8 +493,7 @@ class _ChatState extends State<Chat> {
                 child: Column(
                   children: [
                     Flexible(
-                      child:
-                      widget.messages.isEmpty
+                      child: widget.messages.isEmpty
                           ? SizedBox.expand(
                               child: _emptyStateBuilder(),
                             )
@@ -518,6 +529,7 @@ class _ChatState extends State<Chat> {
                           onTextFieldTap: widget.onTextFieldTap,
                           sendButtonVisibilityMode:
                               widget.sendButtonVisibilityMode,
+                          myIsPostStyle: widget.myIsPostStyle,
                         ),
                   ],
                 ),

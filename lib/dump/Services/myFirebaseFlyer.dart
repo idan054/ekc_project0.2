@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ekc_project/Pages/flyerChat.dart';
+import 'package:ekc_project/dump/flyerChat.dart';
 import 'package:ekc_project/Widgets/addPtDialog.dart';
 import 'package:ekc_project/Widgets/myAppBar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -46,7 +46,8 @@ class Task {
   Task({
     this.name,
     this.content,
-    /*this.orderIndex*/
+this.orderIndex
+
   });
 }
 
@@ -56,15 +57,15 @@ Future addProjectRoom(
   final room = await FirebaseChatCore.instance.createGroupRoom(
       name: name, users: [], metadata: {'defaultKey': 'defaultValue'});
   print(room.id);
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-        builder: (context) => FlyerChatOriginal(
-              room: room,
-              currentUser: currentUser,
-              // user: _user,
-            )),
-  );
+  // Navigator.push(
+  //   context,
+  //   MaterialPageRoute(
+  //       builder: (context) => FlyerChatOriginal(
+  //             room: room,
+  //             currentUser: currentUser,
+  //             // user: _user,
+  //           )),
+  // );
   // Navigate to the Chat screen
 }
 
@@ -136,13 +137,16 @@ Future<void> addTask(
   roomId,
   name,
   content,
-  /*int? orderIndex*/
+int? orderIndex
+
 ) {
   return FirebaseFirestore.instance
       .collection('rooms/$roomId/tasks')
       .add(Task(
         name: name,
-        content: content, /*orderIndex: orderIndex*/
+        content: content,
+orderIndex: orderIndex
+
       ).toJson())
       .then((value) => print("Task Added."))
       .catchError((error) => print("Failed to add user: $error"));

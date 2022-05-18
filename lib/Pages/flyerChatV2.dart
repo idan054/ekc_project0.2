@@ -1,8 +1,7 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:ekc_project/Pages/mainPage.dart';
+import 'package:ekc_project/dump/mainPage.dart';
 import 'package:ekc_project/Pages/roomsPage.dart';
-import 'package:ekc_project/Services/myFirebaseFlyer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_svg/svg.dart';
@@ -11,7 +10,7 @@ import 'package:intl/intl.dart' as intl;
 import 'package:ekc_project/Widgets/addUserDialog.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ekc_project/Pages/flyerChat.dart';
+import 'package:ekc_project/dump/flyerChat.dart';
 import 'package:ekc_project/Widgets/addPtDialog.dart';
 import 'package:ekc_project/Widgets/myAppBar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -49,6 +48,7 @@ import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../Widgets/cardPost.dart';
+import '../Widgets/loadingWidget.dart';
 import '../Widgets/snackbar.dart';
 import '../myUtil.dart';
 import '../theme/colors.dart';
@@ -56,7 +56,7 @@ import '../theme/config.dart';
 import '../theme/constants.dart';
 import 'A_loginPage.dart';
 import 'flyerDm.dart';
-import 'usersPage.dart';
+import '../dump/usersPage.dart';
 import 'package:bubble/bubble.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -82,6 +82,7 @@ class FlyerChatV2 extends StatefulWidget {
 }
 
 bool localIsShown = false;
+types.User? firestoreUserData;
 
 class _FlyerChatV2State extends State<FlyerChatV2> {
   Widget _bubbleBuilder(
@@ -258,6 +259,7 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                                               context,
                                               FlyerDm(
                                                 room: room,
+                                                otherUserName: name,
                                               ));
                                         },
                                         icon: Icon(
@@ -327,8 +329,6 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
   String? appBarTitle;
   List<String>? roomEmailUsers;
 
-  types.User? firestoreUserData;
-
   final isDisplayed = 'isDisplayed';
 
   /*    FirebaseChatCore.instance
@@ -358,41 +358,42 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
 
     // if (widget.currentUser?.imageUrl == null) {
 
-    //~ Fetch user
-    // fetchUser(widget.currentUser!.id, 'users').then((user) => print('fetchUser Json: $user'));
-    var getUser = FirebaseFirestore.instance
-        .collection('users')
-        .doc(widget.currentUser!.id)
-        .get()
-        .then((userDoc) {
-      // print('init user DATA: ${userDoc.data()}');
-      var data = userDoc.data() ?? {};
-      // print('init AGE: ${data['metadata']['age']}');
+    if(firestoreUserData == null){
+      //~ Fetch user
+      // fetchUser(widget.currentUser!.id, 'users').then((user) => print('fetchUser Json: $user'));
+      var getUser = FirebaseFirestore.instance
+          .collection('users')
+          .doc(widget.currentUser!.id)
+          .get()
+          .then((userDoc) {
+        // print('init user DATA: ${userDoc.data()}');
+        var data = userDoc.data() ?? {};
+        // print('init AGE: ${data['metadata']['age']}');
 
-      data['lastName'] = data['lastName'] ?? '';
-      data['role'] = data['role'] ?? 'user';
-      data['id'] = data['metadata']['id'] ?? '';
-      // data['metadata']['age'] = data['metadata']['age'] ?? 0;
-      data['createdAt'] = data['createdAt']?.millisecondsSinceEpoch;
-      data['lastSeen'] = data['lastSeen']?.millisecondsSinceEpoch;
-      data['updatedAt'] = data['updatedAt']?.millisecondsSinceEpoch;
-      data['lastHomeMessage'] = data['metadata']['lastHomeMessage'];
-      // data['metadata'] = data['updatedAt']?.millisecondsSinceEpoch;
-      // widget.currentUser = types.User.fromJson(data);
-      firestoreUserData = types.User.fromJson(data);
-      print('firestore User DATA: ${firestoreUserData?.toJson()}');
+        data['lastName'] = data['lastName'] ?? '';
+        data['role'] = data['role'] ?? 'user';
+        data['id'] = data['metadata']['id'] ?? '';
+        // data['metadata']['age'] = data['metadata']['age'] ?? 0;
+        data['createdAt'] = data['createdAt']?.millisecondsSinceEpoch;
+        data['lastSeen'] = data['lastSeen']?.millisecondsSinceEpoch;
+        data['updatedAt'] = data['updatedAt']?.millisecondsSinceEpoch;
+        data['lastHomeMessage'] = data['metadata']['lastHomeMessage'];
+        // data['metadata'] = data['updatedAt']?.millisecondsSinceEpoch;
+        // widget.currentUser = types.User.fromJson(data);
+        firestoreUserData = types.User.fromJson(data);
+        print('firestore User DATA: ${firestoreUserData?.toJson()}');
 
-      print('MyModerator');
-      config.app.isModerator = firestoreUserData?.metadata?['MyModerator'] ?? false;
-      print(config.app.isModerator);
-    });
-    // } else {
-    //   firestoreUserData = widget.currentUser;
-    //   print('widget.currentUser (from signup)'
-    //       'User DATA: ${firestoreUserData?.toJson()}');
-    //   // firestoreUserData?.metadata?['age'] = 19;
-    //   // print('Debug: ${firestoreUserData?.metadata?['age']}');
-    // }
+        print('MyModerator');
+        config.app.isModerator = firestoreUserData?.metadata?['MyModerator'] ?? false;
+        print(config.app.isModerator);
+      });
+      // } else {
+      //   firestoreUserData = widget.currentUser;
+      //   print('widget.currentUser (from signup)'
+      //       'User DATA: ${firestoreUserData?.toJson()}');
+      //   // firestoreUserData?.metadata?['age'] = 19;
+      //   // print('Debug: ${firestoreUserData?.metadata?['age']}');
+      // }
 
 // ----------------
 /*
@@ -418,9 +419,12 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
       });
       // print('widget.currentUser.toJson() ${widget.currentUser?.toJson()}');
     }*/
+    }
 
     super.initState();
   }
+
+  bool showLoader = true;
 
   @override
   Widget build(BuildContext context) {
@@ -450,50 +454,31 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                 if (snapshot.hasData) {
                   return StreamBuilder<List<types.Message>>(
                     initialData: const [],
-                    stream: FirebaseChatCore.instance.messages(snapshot.data!),
+                    stream: FirebaseChatCore.instance.messages(
+                        snapshot.data!,
+                        currentUser: firestoreUserData ?? widget.currentUser!,
+                        rilHome: true,
+                    ),
                     builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        types.Message msgWithAuthor;
-                        // print('What Stream snapshot Data get: ${snapshot.data}');
 
-                        // widget.currentUser = widget.room.users.firstWhere((user) =>
-                        //   user.id == widget.currentUser!.id);
+                      if (snapshot.hasData ) {
+                        // List<types.Message> filteredMsgs = [];
+                        // types.Message msgWithAuthor;
 
-                        // widget.currentUser = firestoreUserData(?)
-                        // print('STREAM currentUser JSON is:');
-                        // print(widget.currentUser?.toJson());
-                        // print('firestoreUserData JSON is:');
-                        // print(firestoreUserData?.toJson());
-                        List<types.Message> filteredMsgs = [];
-                        // print('snapshot.data');
-                        // print(snapshot.data);
-
-                        // print('A G E: $');
-                        // ----------------- Age filter
-
-                        snapshot.data?.forEach((msg) {
-                          print(msg.toJson());
-                          double authorAge =
-                              msg.metadata?['metadata']['age'].toDouble() ?? 0.0;
-                          double currentUserAge =
-                              firestoreUserData?.metadata?['age'].toDouble() ?? 0.0;
-
-                          // var ageFilter = 3; //{14 [17] 20}
-                          var minAge = currentUserAge - config.app.ageFilter; // ?? 14;
-                          var maxAge = currentUserAge + config.app.ageFilter; // ?? 20;
-                          // print(currentUserAge.runtimeType);
-
-                          bool inAgeRange =
-                              authorAge >= minAge && authorAge <= maxAge;
-                          if (inAgeRange || authorAge == 0.0) filteredMsgs.add(msg);
-                        });
+                        if(snapshot.data!.isEmpty && showLoader == true){
+                          Future.delayed(const Duration(seconds: 6)).then((_) {
+                            setState(() => showLoader = false);
+                            print('showLoader is now $showLoader');
+                          });
+                          return Center(child: loadingWidget(context),);}
 
                         return SafeArea(
                           bottom: false,
                           child: Chat(
                             myIsPostStyle: config.design.isPostStyle,
                             theme: DefaultChatTheme(
-                              inputBackgroundColor: cGrey300,
+                              // inputBackgroundColor: cGrey300,
+                              inputBackgroundColor: cRilDarkPurple,
                               backgroundColor: config.design.isPostStyle
                                   ? cGrey50 : Colors.white,
                               // Colors.grey[100]!
@@ -501,7 +486,8 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                             ),
                             isAttachmentUploading: _isAttachmentUploading,
                             // messages: snapshot.data ?? [],
-                            messages: config.app.isModerator && _moderatorMode ? snapshot.data! : filteredMsgs,
+                            // messages: config.app.isModerator && _moderatorMode ? snapshot.data! : filteredMsgs,
+                            messages: snapshot.data!,
                             // onAttachmentPressed: _handleAtachmentPressed,
                             // onMessageTap: _handleMessageTap,
                             sendButtonVisibilityMode:
@@ -511,8 +497,7 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                                 _handleSendPressed(partialText, firestoreUserData!),
                             user: types.User(
                                 id: FirebaseChatCore.instance.firebaseUser?.uid ??
-                                    '',
-                                firstName: 'WHATEVER'),
+                                    '', firstName: 'WHATEVER'),
                             // user: widget.currentUser!,
                             bubbleBuilder: _bubbleBuilder,
 
@@ -536,22 +521,32 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                           ),
                         );
                       } else {
-                        return GestureDetector(
-                            onTap: () async {
-                              print('Tapped');
-                            },
-                            child: const Center(child: Text('Loading..')));
+                        return const Center(
+                          child: Text(
+                            'טוען...',
+                            style: TextStyle(
+                              color: neutral2,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              height: 1.5,
+                            ),
+                            textAlign: TextAlign.center,
+                            textDirection: TextDirection.rtl,
+                          ),
+                        );
                       }
                     },
                   );
                 } else {
-                  return const Text(
-                    'Loading...',
-                    style: TextStyle(
-                      color: neutral2,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      height: 1.5,
+                  return const Center(
+                    child: Text(
+                      'Loading...',
+                      style: TextStyle(
+                        color: neutral2,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        height: 1.5,
+                      ),
                     ),
                   );
                 }
@@ -771,7 +766,7 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
     print('difference.inSeconds');
     print(difference.inSeconds);
 
-    var time2Wait = kDebugMode ? 30 : 60 * 3;
+      var time2Wait = kDebugMode ? 30 : 60 * 3;
 
     var waitUntil =
         DateTime.now().add(Duration(seconds: time2Wait - difference.inSeconds));
@@ -780,11 +775,15 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
 
     if (difference.inSeconds < time2Wait) {
       cleanSnack(context,
-          text: 'בבקשה המתן עד ' +
-              '$waitUntil'.substring(11, 16) +
-              ' (${time2Wait - difference.inSeconds}'
-                  ' שניות'
-                  ')');
+          color: cRilDarkPurple,
+          textColor: Colors.white54,
+          text: 'ניתן לפרסם שוב בעוד '
+              '$time2Wait'  ' שניות'  ' (' +
+              '${DateTime.now().add(
+                  Duration(seconds: time2Wait))}'
+                    .substring(11, 16) +
+                  ')'
+      );
     } else {
       var _user = FirebaseAuth.instance.currentUser;
       var lastHomeMessage = DateTime.now();
@@ -814,6 +813,16 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
 
       print('Message A: ${message.toJson()}');
 
+      cleanSnack(context,
+          color: cRilDarkPurple,
+          textColor: Colors.white54,
+          text: 'ניתן לפרסם שוב בעוד '
+              '${time2Wait - difference.inSeconds}'
+              ' שניות'
+              ' (' +
+              '$waitUntil'.substring(11, 16) +
+              ')'
+      );
       FirebaseChatCore.instance.sendMessage(
         message,
         widget.room.id,

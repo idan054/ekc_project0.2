@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ekc_project/Pages/ril_gDashboard.dart';
-import 'package:ekc_project/Pages/usersPage.dart';
+import 'package:ekc_project/dump/usersPage.dart';
 import 'package:ekc_project/Widgets/addPtDialog.dart';
 import 'package:ekc_project/Widgets/myAppBar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -30,7 +30,7 @@ import 'dart:io';
 import '../theme/colors.dart';
 import '../theme/constants.dart';
 import 'dummyPage.dart';
-import 'flyerChat.dart';
+import '../dump/flyerChat.dart';
 import 'flyerChatV2.dart';
 
 class ProfilePage extends StatefulWidget {

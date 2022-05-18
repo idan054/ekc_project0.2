@@ -62,7 +62,8 @@ dependencies:
   smooth_page_indicator: ^1.0.0+2
   shared_preferences: ^2.0.15
   flutter_chat_ui: ^1.5.3
-#  image_picker: ^0.8.4+4
+  stop_watch_timer: ^1.4.0
+  #  image_picker: ^0.8.4+4
 
 
   # The following adds the Cupertino Icons font to your application.

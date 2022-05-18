@@ -2,6 +2,7 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ekc_project/Pages/B_profilePage.dart';
+import 'package:ekc_project/theme/config.dart';
 import 'package:ekc_project/Pages/ril_gDashboard.dart';
 import 'package:ekc_project/Widgets/myAppBar.dart';
 import 'package:ekc_project/theme/colors.dart';
@@ -15,8 +16,8 @@ import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../theme/config.dart';
 import 'flyerChatV2.dart';
-import 'usersPage.dart';
-import 'mainPage.dart';
+import '../dump/usersPage.dart';
+import '../dump/mainPage.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
@@ -261,7 +262,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
               ),
-
+              Spacer(),
               Center(
                 child: InkWell(
                     child: Wrap(

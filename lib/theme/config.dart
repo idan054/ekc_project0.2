@@ -22,7 +22,7 @@ class Design {
 }
 
 class Debug {
-  bool alwaysSignup = true && kDebugMode;
+  bool alwaysSignup = false && kDebugMode;
 }
 
 // ? CTRL + F: Outside Lib folder:

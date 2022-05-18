@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ekc_project/Pages/flyerChat.dart';
-import 'package:ekc_project/Services/myFirebaseFlyer.dart';
+import 'package:ekc_project/dump/flyerChat.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -24,6 +23,7 @@ import 'package:uuid/uuid.dart';
 import 'package:ekc_project/Widgets/addPtDialog.dart';
 
 
+import '../dump/Services/myFirebaseFlyer.dart';
 import '../myUtil.dart';
 
 Widget sampleDrawer(context, {onPressed_newProject, projectNum}) {
@@ -91,7 +91,7 @@ Widget projectDrawer(context, currentUser, bool isProject, String? roomId) {
                       return ListTile(
                         onTap: () {
                           print(snapshot.data?[i].id);
-                          Navigator.push(
+/*                          Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => FlyerChatOriginal(
@@ -99,7 +99,7 @@ Widget projectDrawer(context, currentUser, bool isProject, String? roomId) {
                                   currentUser: currentUser,
                                   // user: _user,
                                 )),
-                          );
+                          );*/
                         },
                         title:
                         Text('Project ${i + 1}: "${snapshot.data![i].name}"'),
@@ -277,7 +277,8 @@ Widget taskDrawer(context, currentUser, bool isProject, String? roomId) {
                                           : await addTask(
                                           roomId,
                                           nameControllerPt.text,
-                                          contentControllerPt.text)
+                                          contentControllerPt.text,
+                                      0000)
                                           .whenComplete(() => print(isProject
                                           ? 'New Project Added!'
                                           : 'New Task Added'))

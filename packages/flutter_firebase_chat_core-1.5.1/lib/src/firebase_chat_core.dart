@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'firebase_chat_core_config.dart';
 import 'util.dart';
+import 'package:ekc_project/theme/config.dart' as my;
 
 /// Provides access to Firebase chat data. Singleton, use
 /// FirebaseChatCore.instance to aceess methods.
@@ -167,42 +168,76 @@ class FirebaseChatCore {
   }
 
   /// Returns a stream of messages from Firebase for a given room
-  Stream<List<types.Message>> messages(types.Room room) {
-    return FirebaseFirestore.instance
+  Stream<List<types.Message>> messages(
+      types.Room room,
+      {types.User? currentUser,
+      bool rilHome = false}) {
+
+    // final currentUser = await fetchUser(
+    //   firebaseUser!.uid, 'users');
+
+    int minAge = 0; // placeHolder only.
+    int maxAge = 0; // placeHolder only.
+    if(rilHome) {
+      int currentUserAge = currentUser!.metadata?['age'].toInt() ?? 0;
+      // var ageFilter = 3; //{14 [17] 20}
+      minAge = currentUserAge - my.config.app.ageFilter; // ?? 14;
+      maxAge = currentUserAge + my.config.app.ageFilter; // ?? 20;
+        }
+
+    // bool inAgeRange = authorAge >= minAge && authorAge <= maxAge;
+
+    List<types.Message> fetchSnapshot(QuerySnapshot<Map<String, dynamic>> snapshot){
+      return snapshot.docs.fold<List<types.Message>>(
+        [], (previousValue, doc) {
+          final data = doc.data();
+          // print('DOC DATA A - Whats Stream get $data');
+
+          // data.removeWhere((key, value) => key == 'authorPhotoURL' || key == 'authorDisplayName');
+          data['metadata'] = data['author'];
+
+          final author = room.users.firstWhere(
+                (u) => u.id == data['authorId'],
+            orElse: () => types.User(id: data['authorId'] as String),
+          );
+
+          // THOSE WILL BREAK YOUR author DATA (?)
+          data['author'] = author.toJson();
+          data['updatedAt'] = data['updatedAt']?.millisecondsSinceEpoch;
+
+
+          data['createdAt'] = data['createdAt']?.millisecondsSinceEpoch;
+          data['id'] = doc.id;
+
+          // print('DOC DATA B - Whats Stream return $data');
+
+          var lastedList = [...previousValue, types.Message.fromJson(data)];
+          lastedList.sort((oldMsg, newMsg) =>
+              newMsg.createdAt!.toDouble()
+              .compareTo(oldMsg.createdAt!.toDouble()));
+
+          return lastedList; // clean phase 2
+        },
+        // print('DOC DATA IS A $data');
+      );
+    }
+
+    return
+      rilHome && my.config.app.moderatorMode.value == false ?
+        FirebaseFirestore.instance
+          .collection('${config.roomsCollectionName}/${room.id}/messages')
+          //~ ---------------- only for Ril Home
+              .where('author.metadata.age',
+                  isGreaterThanOrEqualTo: minAge,
+                  isLessThanOrEqualTo: maxAge)
+              // .orderBy('author.metadata', descending: true)
+              .limit(100) // only 100 msgs
+          //~ ---------------- only for Ril Home
+          .snapshots().map((snapshot) => fetchSnapshot(snapshot))
+
+      : FirebaseFirestore.instance
         .collection('${config.roomsCollectionName}/${room.id}/messages')
-        .orderBy('createdAt', descending: true)
-        .snapshots()
-        .map(
-          (snapshot) {
-        return snapshot.docs.fold<List<types.Message>>(
-          [],
-              (previousValue, doc) {
-            final data = doc.data();
-            // print('DOC DATA A - Whats Stream get $data');
-
-            // data.removeWhere((key, value) => key == 'authorPhotoURL' || key == 'authorDisplayName');
-            data['metadata'] = data['author'];
-
-            final author = room.users.firstWhere(
-                  (u) => u.id == data['authorId'],
-              orElse: () => types.User(id: data['authorId'] as String),
-            );
-
-            // THOSE WILL BREAK YOUR author DATA (?)
-            data['author'] = author.toJson();
-            data['updatedAt'] = data['updatedAt']?.millisecondsSinceEpoch;
-
-
-            data['createdAt'] = data['createdAt']?.millisecondsSinceEpoch;
-            data['id'] = doc.id;
-
-            // print('DOC DATA B - Whats Stream return $data');
-            return [...previousValue, types.Message.fromJson(data)]; // clean phase 2
-          },
-          // print('DOC DATA IS A $data');
-        );
-      },
-    );
+        .snapshots().map((snapshot) => fetchSnapshot(snapshot));
   }
 
   /// Returns a stream of changes in a room from Firebase
@@ -238,7 +273,6 @@ class FirebaseChatCore {
     final collection = orderByUpdatedAt
         ? FirebaseFirestore.instance
         .collection(config.roomsCollectionName)
-        .where('userIds', arrayContains: fu.uid)
         .orderBy('updatedAt', descending: true)
         : FirebaseFirestore.instance
         .collection(config.roomsCollectionName)

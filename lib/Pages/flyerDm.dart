@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ekc_project/Pages/ril_gDashboard.dart';
-import 'package:ekc_project/Services/myFirebaseFlyer.dart';
 import 'package:ekc_project/Widgets/addUserDialog.dart';
 import 'package:ekc_project/Widgets/myAppBar.dart';
 import 'package:ekc_project/Widgets/myDrawers.dart';
@@ -24,7 +23,7 @@ import 'package:path_provider/path_provider.dart';
 
 import '../myUtil.dart';
 import 'flyerChatV2.dart';
-import 'usersPage.dart';
+import '../dump/usersPage.dart';
 
 class FlyerDm extends StatefulWidget {
 /*  const FireBaseChatPage({
@@ -33,6 +32,7 @@ class FlyerDm extends StatefulWidget {
   }) : super(key: key);*/
 
   final types.Room room;
+  final String? otherUserName;
 
   final GoogleSignInAccount? currentUser;
 
@@ -40,7 +40,7 @@ class FlyerDm extends StatefulWidget {
 
   // final currentUser;
 
-  const FlyerDm({this.currentUser, required this.room}) : super();
+  const FlyerDm({this.currentUser, required this.room, this.otherUserName}) : super();
 
   @override
   _FlyerDmState createState() => _FlyerDmState();
@@ -48,7 +48,6 @@ class FlyerDm extends StatefulWidget {
 
 class _FlyerDmState extends State<FlyerDm> {
   bool _isAttachmentUploading = false;
-  types.User? guestUser; // old
   types.User? otherUser;
   // GoogleSignInAccount? guestUser;
   // UserCredential? guestUser;
@@ -87,10 +86,10 @@ class _FlyerDmState extends State<FlyerDm> {
       widget.room.users.forEach((user) {
         if (widget.currentUser?.email != user.lastName) {
           // Lastname is MAIL!
-          setState(() {
-            guestUser = user;
-            appBarTitle = '${guestUser?.lastName}';
-          });
+          // setState(() {
+          //   guestUser = user;
+          //   appBarTitle = '${guestUser?.lastName}';
+          // });
         }
       });
     } else {
@@ -118,8 +117,7 @@ class _FlyerDmState extends State<FlyerDm> {
 
     return Scaffold(
       appBar: myAppBar(context,
-          // appBarTitle,
-          '${otherUser?.firstName}',
+          widget.otherUserName ?? otherUser?.firstName,
           actions: <Widget>[
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),

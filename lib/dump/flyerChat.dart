@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:ekc_project/Services/myFirebaseFlyer.dart';
 import 'package:ekc_project/Widgets/addUserDialog.dart';
 import 'package:ekc_project/Widgets/myAppBar.dart';
 import 'package:ekc_project/Widgets/myDrawers.dart';
@@ -21,11 +20,11 @@ import 'package:path_provider/path_provider.dart';
 import '../myUtil.dart';
 import 'usersPage.dart';
 
-class FlyerChatOriginal extends StatefulWidget {
-/*  const FireBaseChatPage({
+/*class FlyerChatOriginal extends StatefulWidget {
+*//*  const FireBaseChatPage({
     Key? key,
     required this.room,
-  }) : super(key: key);*/
+  }) : super(key: key);*//*
 
   final types.Room room;
 
@@ -132,7 +131,7 @@ class _FlyerChatOriginalState extends State<FlyerChatOriginal> {
         builder: (context, snapshot) {
           return StreamBuilder<List<types.Message>>(
             initialData: const [],
-            stream: FirebaseChatCore.instance.messages(snapshot.data!),
+            stream: FirebaseChatCore.instance.messages(snapshot.data!, widget.),
             builder: (context, snapshot) {
               return SafeArea(
                 bottom: false,
@@ -313,4 +312,4 @@ class _FlyerChatOriginalState extends State<FlyerChatOriginal> {
       _isAttachmentUploading = uploading;
     });
   }
-}
+}*/

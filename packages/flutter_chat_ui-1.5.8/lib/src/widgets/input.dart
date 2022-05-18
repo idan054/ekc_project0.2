@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:math';
+
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -30,6 +33,7 @@ class Input extends StatefulWidget {
     this.onTextChanged,
     this.onTextFieldTap,
     required this.sendButtonVisibilityMode,
+    this.myIsPostStyle = false,
   }) : super(key: key);
 
   /// See [AttachmentButton.onPressed]
@@ -56,6 +60,7 @@ class Input extends StatefulWidget {
   /// Defaults to [SendButtonVisibilityMode.editing].
   final SendButtonVisibilityMode sendButtonVisibilityMode;
 
+  final bool myIsPostStyle;
   @override
   _InputState createState() => _InputState();
 }
@@ -174,47 +179,50 @@ class _InputState extends State<Input> {
                   ),
                 Expanded(
                   child: Padding(
-                    padding: _textPadding,
-                    child: TextField(
-                      textAlign: TextAlign.right,
-                      textDirection: TextDirection.rtl,
-                      controller: _textController,
-                      cursorColor: InheritedChatTheme.of(context)
-                          .theme
-                          .inputTextCursorColor,
-                      decoration: InheritedChatTheme.of(context)
-                          .theme
-                          .inputTextDecoration
-                          .copyWith(
-                            hintStyle: InheritedChatTheme.of(context)
-                                .theme
-                                .inputTextStyle
-                                .copyWith(
-                                  color: InheritedChatTheme.of(context)
-                                      .theme
-                                      .inputTextColor
-                                      .withOpacity(0.5),
-                                ),
-                            hintText:
-                                InheritedL10n.of(context).l10n.inputPlaceholder,
-                          ),
-                      focusNode: _inputFocusNode,
-                      keyboardType: TextInputType.multiline,
-                      maxLines: 5,
-                      minLines: 1,
-                      onChanged: widget.onTextChanged,
-                      onTap: widget.onTextFieldTap,
-                      style: InheritedChatTheme.of(context)
-                          .theme
-                          .inputTextStyle
-                          .copyWith(
-                            color: InheritedChatTheme.of(context)
-                                .theme
-                                .inputTextColor,
-                          ),
-                      textCapitalization: TextCapitalization.sentences,
-                    ),
-                  ),
+                        padding: _textPadding,
+                        child: TextField(
+                          textAlign: _textController.text.isEmpty
+                              && !_inputFocusNode.hasFocus ?
+                              TextAlign.left : TextAlign.right,
+                          textDirection: TextDirection.rtl,
+                          controller: _textController,
+                          // cursorColor: InheritedChatTheme.of(context).theme.inputTextCursorColor,
+                          cursorColor: Colors.white54,
+                          cursorRadius: Radius.circular(99),
+                          decoration: InheritedChatTheme.of(context)
+                              .theme
+                              .inputTextDecoration
+                              .copyWith(
+                                hintStyle: InheritedChatTheme.of(context)
+                                    .theme
+                                    .inputTextStyle
+                                    .copyWith(
+                                      color: InheritedChatTheme.of(context)
+                                          .theme
+                                          .inputTextColor
+                                          .withOpacity(0.5),
+                                    ),
+                                hintText:
+                                    // InheritedL10n.of(context).l10n.inputPlaceholder,
+                                widget.myIsPostStyle ? 'Ril Post' : 'Message',
+                              ),
+                          focusNode: _inputFocusNode,
+                          keyboardType: TextInputType.multiline,
+                          maxLines: 5,
+                          minLines: 1,
+                          onChanged: widget.onTextChanged,
+                          onTap: widget.onTextFieldTap,
+                          style: InheritedChatTheme.of(context)
+                              .theme
+                              .inputTextStyle
+                              .copyWith(
+                                color: InheritedChatTheme.of(context)
+                                    .theme
+                                    .inputTextColor,
+                              ),
+                          textCapitalization: TextCapitalization.sentences,
+                        ),
+                      ),
                 ),
                 Visibility(
                   visible: _sendButtonVisible,
