@@ -61,18 +61,8 @@ import 'package:bubble/bubble.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FlyerChatV2 extends StatefulWidget {
-/*  const FireBaseChatPage({
-    Key? key,
-    required this.room,
-  }) : super(key: key);*/
-
   final types.Room room;
-
   types.User? currentUser;
-
-  // final UserCredential? currentUser;
-
-  // final currentUser;
 
   FlyerChatV2({Key? key, this.currentUser, required this.room})
       : super(key: key);
@@ -82,7 +72,7 @@ class FlyerChatV2 extends StatefulWidget {
 }
 
 bool localIsShown = false;
-types.User? firestoreUserData;
+types.User? flyerUser;
 
 class _FlyerChatV2State extends State<FlyerChatV2> {
   Widget _bubbleBuilder(
@@ -91,7 +81,7 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
     required nextMessageInGroup,
   }) {
     // var user = widget.currentUser;
-    var user = firestoreUserData;
+    var user = flyerUser;
 
     // print('Message C - Whats _bubbleBuilder gets: ${message.toJson()}');
 
@@ -144,7 +134,7 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                 );
               }
             : () {
-                print(firestoreUserData?.toJson());
+                print(flyerUser?.toJson());
               },
         onTap: isCurrentUser
             ? () {}
@@ -322,43 +312,16 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
   }
 
   bool _isAttachmentUploading = false;
-  var guestUser;
 
-  // GoogleSignInAccount? guestUser;
-  // UserCredential? guestUser;
   String? appBarTitle;
   List<String>? roomEmailUsers;
 
   final isDisplayed = 'isDisplayed';
 
-  /*    FirebaseChatCore.instance
-        .createGroupRoom(
-      users: [widget.currentUser!],
-      name: 'RilHome',
-    ).then((room) {
-      print('room.id');
-      print(room.id);
-      print(room.name);
-    });*/
 
   @override
   void initState() {
-    // FirebaseAuth.instance.authStateChanges();
-
-/*    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) async {
-      // if ((await SharedPreferences.getInstance()).getBool(isDisplayed) ?? false)
-      showAlert(context);
-      localIsShown = true;
-    });*/
-
-    // if(!localIsShown) {
-    //   Future.delayed(const Duration(seconds: 3), () => showAlert(context));
-    //   localIsShown = true;
-    // }
-
-    // if (widget.currentUser?.imageUrl == null) {
-
-    if(firestoreUserData == null){
+    if(flyerUser == null){
       //~ Fetch user
       // fetchUser(widget.currentUser!.id, 'users').then((user) => print('fetchUser Json: $user'));
       var getUser = FirebaseFirestore.instance
@@ -380,11 +343,11 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
         data['lastHomeMessage'] = data['metadata']['lastHomeMessage'];
         // data['metadata'] = data['updatedAt']?.millisecondsSinceEpoch;
         // widget.currentUser = types.User.fromJson(data);
-        firestoreUserData = types.User.fromJson(data);
-        print('firestore User DATA: ${firestoreUserData?.toJson()}');
+        flyerUser = types.User.fromJson(data);
+        print('firestore User DATA: ${flyerUser?.toJson()}');
 
         print('MyModerator');
-        config.app.isModerator = firestoreUserData?.metadata?['MyModerator'] ?? false;
+        config.app.isModerator = flyerUser?.metadata?['MyModerator'] ?? false;
         print(config.app.isModerator);
       });
       // } else {
@@ -420,7 +383,6 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
       // print('widget.currentUser.toJson() ${widget.currentUser?.toJson()}');
     }*/
     }
-
     super.initState();
   }
 
@@ -456,7 +418,7 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                     initialData: const [],
                     stream: FirebaseChatCore.instance.messages(
                         snapshot.data!,
-                        currentUser: firestoreUserData ?? widget.currentUser!,
+                        currentUser: flyerUser ?? widget.currentUser!,
                         rilHome: true,
                     ),
                     builder: (context, snapshot) {
@@ -494,7 +456,7 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                                 SendButtonVisibilityMode.always,
                             onPreviewDataFetched: _handlePreviewDataFetched,
                             onSendPressed: (partialText) async =>
-                                _handleSendPressed(partialText, firestoreUserData!),
+                                _handleSendPressed(partialText, flyerUser!),
                             user: types.User(
                                 id: FirebaseChatCore.instance.firebaseUser?.uid ??
                                     '', firstName: 'WHATEVER'),
@@ -540,7 +502,7 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                 } else {
                   return const Center(
                     child: Text(
-                      'Loading...',
+                      'Room Loading...',
                       style: TextStyle(
                         color: neutral2,
                         fontSize: 16,

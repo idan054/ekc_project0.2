@@ -170,8 +170,12 @@ class _LoginPageState extends State<LoginPage> {
                         }
 
                         // if(userDoc.exists){
-                        if (!config.debug.alwaysSignup
-                        || currentUser != null) { // AKA user exists
+                        print('A_loginPage currentUser $currentUser');
+                        bool isAgeSet = currentUser?['metadata']['age'] != null;
+                        if (config.debug.alwaysSignup
+                        // || currentUser != null
+                        || isAgeSet
+                        ) { // AKA user exists
                           types.User flyerUser =
                               types.User.fromJson(currentUser!);
                           setState(() => isLoading = false);
@@ -200,10 +204,10 @@ class _LoginPageState extends State<LoginPage> {
                           await FirebaseChatCore.instance
                               .createUserInFirestore(userData)
                               .whenComplete(() => print(
-                                  'firebaseDatabase_basedFlyer Completed \n(FirebaseChatCore.instance.createUserInFirestore)'
+                              'firebaseDatabase_basedFlyer Completed \n(FirebaseChatCore.instance.createUserInFirestore)'
                                   '\n userData: $userData'))
                               .onError((error, stackTrace) => print(
-                                  'firebaseDatabase_basedFlyer FAILED: $error \n-|- $stackTrace \n(FirebaseChatCore.instance.createUserInFirestore)'));
+                              'firebaseDatabase_basedFlyer FAILED: $error \n-|- $stackTrace \n(FirebaseChatCore.instance.createUserInFirestore)'));
 
                           setState(() => isLoading = false);
                           kPushNavigator(
