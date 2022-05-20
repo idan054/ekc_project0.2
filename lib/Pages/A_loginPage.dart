@@ -171,9 +171,9 @@ class _LoginPageState extends State<LoginPage> {
 
                         // if(userDoc.exists){
                         if (!config.debug.alwaysSignup
-                        && currentUser != null) { // AKA user exists
+                        || currentUser != null) { // AKA user exists
                           types.User flyerUser =
-                              types.User.fromJson(currentUser);
+                              types.User.fromJson(currentUser!);
                           setState(() => isLoading = false);
                           kPushNavigator(
                               context,
