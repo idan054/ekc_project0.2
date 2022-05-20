@@ -161,23 +161,23 @@ class _LoginPageState extends State<LoginPage> {
                         // print('userDoc.exists ${userDoc.exists}');
                         // print('userDoc.data ${userDoc.data()}');
 
-                        Map<String, dynamic>? currentUser;
+                        Map<String, dynamic>? userData;
                         try {
-                          currentUser =
+                          userData =
                               await fetchUser(fireStoreUser!.uid, 'users');
                         } catch (e) {
                           print('err 164: $e');
                         }
 
                         // if(userDoc.exists){
-                        print('A_loginPage currentUser $currentUser');
-                        bool isAgeSet = currentUser?['metadata']['age'] != null;
+                        print('A_loginPage currentUser $userData');
+                        bool isAgeSet = userData?['metadata']['age'] != null;
                         if (config.debug.alwaysSignup
                         // || currentUser != null
                         || isAgeSet
                         ) { // AKA user exists
                           types.User flyerUser =
-                              types.User.fromJson(currentUser!);
+                              types.User.fromJson(userData!);
                           setState(() => isLoading = false);
                           kPushNavigator(
                               context,
@@ -189,7 +189,7 @@ class _LoginPageState extends State<LoginPage> {
                                       type: types.RoomType.group,
                                       id: 'NAMAkmZKdEAv9AefwXhR'),
                                   // currentUser: widget.userData,),
-                                  currentUser: flyerUser,
+                                  flyerUser: flyerUser,
                                 ),
                               ),
                               replace: true);

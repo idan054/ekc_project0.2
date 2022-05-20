@@ -61,20 +61,10 @@ import 'A_loginPage.dart';
 import 'flyerDm.dart';
 
 class FlyerChatV2 extends StatefulWidget {
-/*  const FireBaseChatPage({
-    Key? key,
-    required this.room,
-  }) : super(key: key);*/
-
   final types.Room room;
+  types.User? flyerUser;
 
-  types.User? currentUser;
-
-  // final UserCredential? currentUser;
-
-  // final currentUser;
-
-  FlyerChatV2({Key? key, this.currentUser, required this.room})
+  FlyerChatV2({Key? key, this.flyerUser, required this.room})
       : super(key: key);
 
   @override

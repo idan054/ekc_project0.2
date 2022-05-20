@@ -21,6 +21,7 @@ class RoomsPage extends StatefulWidget {
 
 class _RoomsPageState extends State<RoomsPage> {
 
+  // Get Riltopia Team user.
   Future<types.User> getRtUser() async {
     // print('getRtUser()');
     types.User? _fetchedRtUser;

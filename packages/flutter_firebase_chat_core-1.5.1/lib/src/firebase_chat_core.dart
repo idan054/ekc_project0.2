@@ -178,7 +178,7 @@ class FirebaseChatCore {
 
     int minAge = 0; // placeHolder only.
     int maxAge = 0; // placeHolder only.
-    print('What message() get as currentUser Json ${currentUser?.toJson()}');
+    // print('What message() get as currentUser Json ${currentUser?.toJson()}');
     if(rilHome) {
       int currentUserAge = currentUser!.metadata?['age'].toInt() ?? 0;
       // var ageFilter = 3; //{14 [17] 20}
@@ -246,8 +246,8 @@ class FirebaseChatCore {
   /// Returns a stream of changes in a room from Firebase
   Stream<types.Room> room(String roomId) {
     final fu = firebaseUser;
-    print('what room() fu $fu');
-    print('what room() roomId $roomId');
+    // print('what room() fu $fu');
+    // print('what room() roomId $roomId');
     if (fu == null) return const Stream.empty();
 
     var room = FirebaseFirestore.instance

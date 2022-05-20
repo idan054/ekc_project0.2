@@ -361,7 +361,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                               type: types.RoomType.group,
                                               id: 'NAMAkmZKdEAv9AefwXhR'),
                                           // currentUser: widget.userData,),
-                                          currentUser: userData,
+                                          flyerUser: userData,
                                         ),
                                       ),
                                       replace: true);

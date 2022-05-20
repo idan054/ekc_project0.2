@@ -133,7 +133,7 @@ class _FlyerDmState extends State<FlyerDm> {
                                 type: types.RoomType.group,
                                 id: 'NAMAkmZKdEAv9AefwXhR'),
                             // currentUser: widget.userData,),
-                            currentUser: types.User(id: '${authUser?.uid}')),)
+                            flyerUser: types.User(id: '${authUser?.uid}')),)
                         , replace: true),
                     icon:
                     SvgPicture.asset(
