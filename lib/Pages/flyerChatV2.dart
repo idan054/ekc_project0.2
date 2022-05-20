@@ -85,28 +85,21 @@ bool localIsShown = false;
 types.User? flyerUser;
 
 class _FlyerChatV2State extends State<FlyerChatV2> {
+  User? authUser = FirebaseAuth.instance.currentUser;
+  bool _isAttachmentUploading = false;
+
   Widget _bubbleBuilder(Widget child, {
     required types.Message message,
     required nextMessageInGroup,
   }) {
-    // var user = widget.currentUser;
-    var user = flyerUser;
-
     // print('Message C - Whats _bubbleBuilder gets: ${message.toJson()}');
-
-    // String image = user?.imageUrl ?? 'https://bit.ly/3l64LIk';
     String? image = message.metadata?['imageUrl'] ?? 'https://bit.ly/3l64LIk';
-    // print('IMAGE $image');
-    // print('X IMAGE: $image');
-    // var name = message.author.firstName ?? user?.firstName;
     String name = message.metadata?['firstName'] ?? 'UserName Here.';
-    var createdAgo = timeAgo(message.createdAt);
-    var text = message.toJson()['text'];
     String age =
     '${message.metadata?['metadata']?['age'] ?? 'XY'}'.substring(0, 2);
-
-    bool isCurrentUser = user!.id == message.author.id;
-    // if(currentUser) print('user ${user.firstName} connected now.');
+    var createdAgo = timeAgo(message.createdAt);
+    var text = message.toJson()['text'];
+    bool isCurrentUser = authUser!.uid == message.author.id;
 
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -281,97 +274,14 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
         ),
       ),
     );
-
-    /*return Bubble(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if ('${user?.id}' == message.author.id)
-                Text('${user?.firstName}'),
-              CircleAvatar(
-                radius: 18,
-                backgroundImage: NetworkImage('${user?.imageUrl}'),
-              ),
-              if ('${user?.id}' != message.author.id)
-                Text('${user?.firstName}',
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14)
-                ),
-            ],
-          ),
-          child,
-        ],
-      ),
-      color: '${user?.id}' != message.author.id ||
-          message.type == types.MessageType.image
-          ? const Color(0xfff5f5f7)
-          : const Color(0xff6f61e8),
-      margin: nextMessageInGroup
-          ? const BubbleEdges.symmetric(horizontal: 6)
-          : null,
-      nip: nextMessageInGroup
-          ? BubbleNip.no
-          : '${user?.id}' != message.author.id
-          ? BubbleNip.leftBottom
-          : BubbleNip.rightBottom,
-    );*/
   }
-
-  bool _isAttachmentUploading = false;
-
-  String? appBarTitle;
-  List<String>? roomEmailUsers;
-
-  final isDisplayed = 'isDisplayed';
 
   Future<types.User> getFlyerUser() async {
     if (flyerUser != null) return flyerUser!;
-
-    User? authUser = FirebaseAuth.instance.currentUser;
     var _fetchUser = await fetchUser(authUser!.uid, 'users');
     print('fetchUser Json: $_fetchUser');
     return types.User.fromJson(_fetchUser);
   }
-
-  @override
-  void initState() {
-    if (flyerUser == null) {
-      //~ Fetch user
-/*      var getUser = FirebaseFirestore.instance
-          .collection('users')
-          .doc(widget.currentUser!.id)
-          .get()
-          .then((userDoc) {
-        // print('init user DATA: ${userDoc.data()}');
-        var data = userDoc.data() ?? {};
-        // print('init AGE: ${data['metadata']['age']}');
-
-        data['lastName'] = data['lastName'] ?? '';
-        data['role'] = data['role'] ?? 'user';
-        data['id'] = data['metadata']['id'] ?? '';
-        // data['metadata']['age'] = data['metadata']['age'] ?? 0;
-        data['createdAt'] = data['createdAt']?.millisecondsSinceEpoch;
-        data['lastSeen'] = data['lastSeen']?.millisecondsSinceEpoch;
-        data['updatedAt'] = data['updatedAt']?.millisecondsSinceEpoch;
-        data['lastHomeMessage'] = data['metadata']['lastHomeMessage'];
-        // data['metadata'] = data['updatedAt']?.millisecondsSinceEpoch;
-        // widget.currentUser = types.User.fromJson(data);
-        flyerUser = types.User.fromJson(data);
-        print('firestore User DATA: ${flyerUser?.toJson()}');
-
-        print('MyModerator');
-        config.app.isModerator = flyerUser?.metadata?['MyModerator'] ?? false;
-        print(config.app.isModerator);
-      });*/
-    }
-
-    super.initState();
-  }
-
   bool showLoader = true;
 
   @override
@@ -406,6 +316,10 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                         stream: FirebaseChatCore.instance.room(widget.room.id),
                         builder: (context, roomSnapshot) {
                           if (roomSnapshot.hasData) {
+                            print('roomSnapshot.data');
+                            print(roomSnapshot.data);
+
+
                             return StreamBuilder<List<types.Message>>(
                               initialData: const [],
                               stream: FirebaseChatCore.instance.messages(

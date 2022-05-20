@@ -57,8 +57,8 @@ import '../theme/constants.dart';
 import '../dump/usersPage.dart';
 import 'package:bubble/bubble.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import 'Pages/flyerDm.dart';
+import 'A_loginPage.dart';
+import 'flyerDm.dart';
 
 class FlyerChatV2 extends StatefulWidget {
 /*  const FireBaseChatPage({
@@ -401,112 +401,77 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                     valueListenable: config.app.moderatorMode,
                     builder: (BuildContext context, bool _moderatorMode,
                         Widget? child) {
-                      return StreamBuilder<types.Room>(
-                        initialData: widget.room,
-                        stream: FirebaseChatCore.instance.room(widget.room.id),
-                        builder: (context, roomSnapshot) {
-                          if (roomSnapshot.hasData) {
-                            return StreamBuilder<List<types.Message>>(
-                              initialData: const [],
-                              stream: FirebaseChatCore.instance.messages(
-                                roomSnapshot.data!,
-                                currentUser: fetchedFlyerUser,
-                                rilHome: true,
+                      return StreamBuilder<List<types.Message>>(
+                        initialData: const [],
+                        stream: FirebaseChatCore.instance.messages(
+                          types.Room(
+                              users: [fetchedFlyerUser!], // Adds the user to group
+                              type: types.RoomType.group,
+                              id: 'NAMAkmZKdEAv9AefwXhR'),
+                          currentUser: fetchedFlyerUser,
+                          rilHome: true,
+                        ),
+                        builder: (context, msgsSnapshot) {
+                          if (msgsSnapshot.hasData) {
+                            // List<types.Message> filteredMsgs = [];
+                            // types.Message msgWithAuthor;
+
+                            if (msgsSnapshot.data!.isEmpty &&
+                                showLoader == true &&
+                                mounted) {
+                              Future.delayed(const Duration(seconds: 6))
+                                  .then((_) {
+                                setState(() => showLoader = false);
+                                // print('showLoader is now $showLoader');
+                              });
+                              return Center(child: loadingWidget(context),);
+                            }
+
+                            return SafeArea(
+                              bottom: false,
+                              child: Chat(
+                                myIsPostStyle: config.design.isPostStyle,
+                                theme: DefaultChatTheme(
+                                  // inputBackgroundColor: cGrey300,
+                                  inputBackgroundColor: cRilDarkPurple,
+                                  backgroundColor: config.design.isPostStyle
+                                      ? cGrey50 : Colors.white,
+                                  // Colors.grey[100]!
+                                  // inputBackgroundColor: cRilDeepPurple.withOpacity(0.85),
+                                ),
+                                isAttachmentUploading: _isAttachmentUploading,
+                                // messages: snapshot.data ?? [],
+                                // messages: config.app.isModerator && _moderatorMode ? snapshot.data! : filteredMsgs,
+                                messages: msgsSnapshot.data!,
+                                // onAttachmentPressed: _handleAtachmentPressed,
+                                // onMessageTap: _handleMessageTap,
+                                sendButtonVisibilityMode:
+                                SendButtonVisibilityMode.always,
+                                onPreviewDataFetched: _handlePreviewDataFetched,
+                                onSendPressed: (partialText) async =>
+                                    _handleSendPressed(
+                                        partialText, fetchedFlyerUser),
+                                // user: widget.currentUser!,
+                                bubbleBuilder: _bubbleBuilder,
+                                showUserAvatars: false,
+                                showUserNames: true,
+                                user: fetchedFlyerUser,
+                                // customMessageBuilder: (customMessage, {required int messageWidth}){return customMessage.copyWith()},
+                                // customMessageBuilder: ,
                               ),
-                              builder: (context, msgsSnapshot) {
-                                if (msgsSnapshot.hasData) {
-                                  // List<types.Message> filteredMsgs = [];
-                                  // types.Message msgWithAuthor;
-
-                                  if (msgsSnapshot.data!.isEmpty &&
-                                      showLoader == true &&
-                                      mounted) {
-                                    Future.delayed(const Duration(seconds: 6))
-                                        .then((_) {
-                                      setState(() => showLoader = false);
-                                      // print('showLoader is now $showLoader');
-                                    });
-                                    return Center(child: loadingWidget(context),);
-                                  }
-
-                                  return SafeArea(
-                                    bottom: false,
-                                    child: Chat(
-                                      myIsPostStyle: config.design.isPostStyle,
-                                      theme: DefaultChatTheme(
-                                        // inputBackgroundColor: cGrey300,
-                                        inputBackgroundColor: cRilDarkPurple,
-                                        backgroundColor: config.design.isPostStyle
-                                            ? cGrey50 : Colors.white,
-                                        // Colors.grey[100]!
-                                        // inputBackgroundColor: cRilDeepPurple.withOpacity(0.85),
-                                      ),
-                                      isAttachmentUploading: _isAttachmentUploading,
-                                      // messages: snapshot.data ?? [],
-                                      // messages: config.app.isModerator && _moderatorMode ? snapshot.data! : filteredMsgs,
-                                      messages: msgsSnapshot.data!,
-                                      // onAttachmentPressed: _handleAtachmentPressed,
-                                      // onMessageTap: _handleMessageTap,
-                                      sendButtonVisibilityMode:
-                                      SendButtonVisibilityMode.always,
-                                      onPreviewDataFetched: _handlePreviewDataFetched,
-                                      onSendPressed: (partialText) async =>
-                                          _handleSendPressed(
-                                              partialText, fetchedFlyerUser!),
-                                      user: types.User(
-                                          id: FirebaseChatCore.instance
-                                              .firebaseUser
-                                              ?.uid ??
-                                              '', firstName: 'WHATEVER'),
-                                      // user: widget.currentUser!,
-                                      bubbleBuilder: _bubbleBuilder,
-
-                                      /*
-                              bubbleBuilder: (Widget child, {
-                                required types.Message message,
-                                required nextMessageInGroup,
-                              }) {
-                                return _bubbleBuilder(
-                                    child,
-                                    // message: message,
-                                    message: msgWithAuthor,
-                                    nextMessageInGroup: nextMessageInGroup);
-                              },
-                              */
-
-                                      showUserAvatars: false,
-                                      showUserNames: true,
-                                      // customMessageBuilder: (customMessage, {required int messageWidth}){return customMessage.copyWith()},
-                                      // customMessageBuilder: ,
-                                    ),
-                                  );
-                                } else {
-                                  return const Center(
-                                    child: Text(
-                                      'טוען...',
-                                      style: TextStyle(
-                                        color: neutral2,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        height: 1.5,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                      textDirection: TextDirection.rtl,
-                                    ),
-                                  );
-                                }
-                              },
                             );
                           } else {
-                            return Center(
+                            return const Center(
                               child: Text(
-                                '${roomSnapshot.data}',
+                                'טוען...',
                                 style: TextStyle(
                                   color: neutral2,
                                   fontSize: 16,
-                                  fontWeight: FontWeight.w500,
+                                  fontWeight: FontWeight.bold,
                                   height: 1.5,
                                 ),
+                                textAlign: TextAlign.center,
+                                textDirection: TextDirection.rtl,
                               ),
                             );
                           }

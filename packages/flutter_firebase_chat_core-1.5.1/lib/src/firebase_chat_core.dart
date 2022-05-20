@@ -197,13 +197,15 @@ class FirebaseChatCore {
           // data.removeWhere((key, value) => key == 'authorPhotoURL' || key == 'authorDisplayName');
           data['metadata'] = data['author'];
 
-          final author = room.users.firstWhere(
-                (u) => u.id == data['authorId'],
-            orElse: () => types.User(id: data['authorId'] as String),
-          );
+          // final author = room.users.firstWhere(
+          //       (u) => u.id == data['authorId'],
+          //   orElse: () => types.User(id: data['authorId'] as String),
+          // );
+          final author = currentUser;
+          // print('X $author');
 
           // THOSE WILL BREAK YOUR author DATA (?)
-          data['author'] = author.toJson();
+          data['author'] = author?.toJson();
           data['updatedAt'] = data['updatedAt']?.millisecondsSinceEpoch;
 
 
@@ -244,8 +246,8 @@ class FirebaseChatCore {
   /// Returns a stream of changes in a room from Firebase
   Stream<types.Room> room(String roomId) {
     final fu = firebaseUser;
-    // print('what room() fu $fu');
-    // print('what room() roomId $roomId');
+    print('what room() fu $fu');
+    print('what room() roomId $roomId');
     if (fu == null) return const Stream.empty();
 
     var room = FirebaseFirestore.instance
