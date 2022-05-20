@@ -284,6 +284,7 @@ class _LoginPageState extends State<LoginPage> {
                     onTap: () => launchUrl(Uri.parse(
                         'https://www.privacypolicies.com/live/4ae28974-cd40-4c8e-b265-6d6da2c7690b'))),
               ),
+              SizedBox(height: 15,),
             ],
           ), // Column
         ), // Center

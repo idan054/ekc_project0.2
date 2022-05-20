@@ -465,10 +465,10 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                         // List<types.Message> filteredMsgs = [];
                         // types.Message msgWithAuthor;
 
-                        if(snapshot.data!.isEmpty && showLoader == true){
+                        if(snapshot.data!.isEmpty && showLoader == true && mounted){
                           Future.delayed(const Duration(seconds: 6)).then((_) {
                             setState(() => showLoader = false);
-                            print('showLoader is now $showLoader');
+                            // print('showLoader is now $showLoader');
                           });
                           return Center(child: loadingWidget(context),);}
 

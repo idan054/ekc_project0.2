@@ -1,4 +1,4 @@
-
+import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter/foundation.dart';
 var config = Config();
 
@@ -13,6 +13,7 @@ class App {
   int ageFilter = 3; // +-3, so 17 will meet 14 - 20.
   bool isModerator = false;
   var moderatorMode = ValueNotifier<bool>(false);
+  types.User? riltopiaTeamUser;
 }
 
 class Design {
@@ -22,7 +23,7 @@ class Design {
 }
 
 class Debug {
-  bool alwaysSignup = false && kDebugMode;
+  bool alwaysSignup = true && kDebugMode;
 }
 
 // ? CTRL + F: Outside Lib folder:

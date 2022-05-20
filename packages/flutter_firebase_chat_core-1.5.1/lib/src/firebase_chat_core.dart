@@ -267,7 +267,6 @@ class FirebaseChatCore {
   /// (type Descending), query scope is `Collection`
   Stream<List<types.Room>> rooms({bool orderByUpdatedAt = false}) {
     final fu = firebaseUser;
-
     if (fu == null) return const Stream.empty();
 
     final collection = orderByUpdatedAt
