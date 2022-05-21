@@ -107,8 +107,9 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
             desc:
                     '${message.toJson()['text']}'
             '\n |'
-            '\n${message.author.firstName}'
-            '\n${message.author.metadata?['email']}'
+            '\n...${message.author.id.substring(0, 8)}'
+            '\n$name'
+            '\n${message.metadata?['metadata']['email']}'
             ,
             actions: [
               TextButton(
