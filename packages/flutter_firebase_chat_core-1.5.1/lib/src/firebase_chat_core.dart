@@ -86,22 +86,24 @@ class FirebaseChatCore {
 
   /// Creates a direct chat for 2 people. Add [metadata] for any additional
   /// custom data.
-  Future<types.Room> createRoom(types.User otherUser, {
+  Future<types.Room> createRoom(types.User? otherUser, {
     Map<String, dynamic>? metadata,
   }) async {
     final fu = firebaseUser;
 
     if (fu == null) return Future.error('User does not exist');
+    if (otherUser == null) return Future.error('User does not exist');
 
     final query = await FirebaseFirestore.instance
         .collection(config.roomsCollectionName)
         .where('userIds', arrayContains: fu.uid)
         .get();
 
-    final rooms =
-    await processRoomsQuery(fu, query, config.usersCollectionName);
+    final rooms = // err here IDK Y.
+      await processRoomsQuery(fu, query, config.usersCollectionName);
 
     try {
+
       return rooms.firstWhere((room) {
         if (room.type == types.RoomType.group) return false;
 
@@ -197,22 +199,14 @@ class FirebaseChatCore {
           // data.removeWhere((key, value) => key == 'authorPhotoURL' || key == 'authorDisplayName');
           data['metadata'] = data['author'];
 
-          // final author = room.users.firstWhere(
-          //       (u) => u.id == data['authorId'],
-          //   orElse: () => types.User(id: data['authorId'] as String),
-          // );
-          final author = currentUser;
-          // print('X $author');
-
-          // THOSE WILL BREAK YOUR author DATA (?)
-          data['author'] = author?.toJson();
+          final author = room.users.firstWhere(
+                (u) => u.id == data['authorId'],
+            orElse: () => types.User(id: data['authorId'] as String),
+          );
+          data['author'] = author.toJson();
           data['updatedAt'] = data['updatedAt']?.millisecondsSinceEpoch;
-
-
           data['createdAt'] = data['createdAt']?.millisecondsSinceEpoch;
           data['id'] = doc.id;
-
-          // print('DOC DATA B - Whats Stream return $data');
 
           var lastedList = [...previousValue, types.Message.fromJson(data)];
           lastedList.sort((oldMsg, newMsg) =>
@@ -244,7 +238,7 @@ class FirebaseChatCore {
   }
 
   /// Returns a stream of changes in a room from Firebase
-  Stream<types.Room> room(String roomId) {
+  Stream<types.Room>? room(String roomId) {
     final fu = firebaseUser;
     // print('what room() fu $fu');
     // print('what room() roomId $roomId');
@@ -255,7 +249,7 @@ class FirebaseChatCore {
         .doc(roomId)
         .snapshots()
         .asyncMap(
-          (doc) => processRoomDocument(doc, fu, config.usersCollectionName),
+          (doc) =>processRoomDocument(doc, fu, config.usersCollectionName),
     );
     return room;
   }

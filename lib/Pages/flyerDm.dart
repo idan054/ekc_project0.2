@@ -49,72 +49,27 @@ class FlyerDm extends StatefulWidget {
 class _FlyerDmState extends State<FlyerDm> {
   bool _isAttachmentUploading = false;
   types.User? otherUser;
-  // GoogleSignInAccount? guestUser;
-  // UserCredential? guestUser;
-  String? appBarTitle;
-  List<String>? roomEmailUsers;
   User? authUser = FirebaseAuth.instance.currentUser;
 
   @override
   void initState() {
-
     otherUser = widget.room.users
         .firstWhere((user) => user.id != authUser?.uid);
     String unreadKey = 'unreadCountFrom_'
         '${otherUser?.id.substring(0, 5)}';
 
-    print('${otherUser?.firstName} ${otherUser?.id}');
-    print(unreadKey);
-
-
-    int unreadCount = widget.room.metadata?[unreadKey] ?? 0;
+    // int unreadCount = widget.room.metadata?[unreadKey] ?? 0;
     FirebaseFirestore.instance
         .doc('rooms/${widget.room.id}').set({
       // 'metadata': {unreadKey: FieldValue.increment(0)}
       'metadata': {unreadKey: 0}
     }, SetOptions(merge:true),);
 
-
-    print('widget.room.type');
-    print(widget.room.type.toString());
-    print(widget.room.name);
-
-
-    // RoomType.direct
-    // RoomType.group
-    if (widget.room.type.toString() == 'RoomType.direct') {
-      widget.room.users.forEach((user) {
-        if (widget.currentUser?.email != user.lastName) {
-          // Lastname is MAIL!
-          // setState(() {
-          //   guestUser = user;
-          //   appBarTitle = '${guestUser?.lastName}';
-          // });
-        }
-      });
-    } else {
-      setState(() {
-        appBarTitle = widget.room.name;
-      });
-    }
-
-    // Get all users:
-    widget.room.users.forEach((user) {
-      print('XXX user.lastName ${user.lastName}');
-      // roomEmailUsers?.add(user.lastName.toString());
-      roomEmailUsers = [...?roomEmailUsers, user.lastName.toString()];
-    }
-    );
-    print('roomEmailUsers: ${roomEmailUsers?.length} ${roomEmailUsers.runtimeType} $roomEmailUsers');
-
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    // print('otherUser');
-    // print(otherUser);
-
     return Scaffold(
       appBar: myAppBar(context,
           widget.otherUserName ?? otherUser?.firstName,

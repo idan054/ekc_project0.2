@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:io';
 import 'package:ekc_project/dump/mainPage.dart';
 import 'package:ekc_project/Pages/roomsPage.dart';
@@ -82,14 +83,15 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
     required types.Message message,
     required nextMessageInGroup,
   }) {
-    // print('Message C - Whats _bubbleBuilder gets: ${message.toJson()}');
+
+    // log('Message C - Whats _bubbleBuilder gets: ${message.toJson()} \n');
     String? image = message.metadata?['imageUrl'] ?? 'https://bit.ly/3l64LIk';
+    String text = message.toJson()['text'] ?? '';
     String name = message.metadata?['firstName'] ?? 'UserName Here.';
-    String age =
-    '${message.metadata?['metadata']?['age'] ?? 'XY'}'.substring(0, 2);
-    var createdAgo = timeAgo(message.createdAt);
-    var text = message.toJson()['text'];
+    String age = '${message.metadata?['metadata']
+                      ?['age'] ?? 'XY'}'.substring(0, 2);
     bool isCurrentUser = authUser!.uid == message.author.id;
+    var createdAgo = timeAgo(message.createdAt);
 
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -98,11 +100,16 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
             && config.app.moderatorMode.value)
             ? () async {
           print('Long press taped.');
-          print(message.toJson());
+          log(message.toJson().toString());
           showCustomRilAlert(
             context,
             title: 'למחוק הודעה זו?',
-            desc: '${message.toJson()['text']}',
+            desc:
+                    '${message.toJson()['text']}'
+            '\n |'
+            '\n${message.author.firstName}'
+            '\n${message.author.metadata?['email']}'
+            ,
             actions: [
               TextButton(
                 onPressed: () async {
@@ -224,35 +231,33 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                     ),
 
                     if (!isCurrentUser)
-                      Builder(
-                          builder: (context) =>
-                              Padding(
-                                padding: const EdgeInsets.only(left: 10),
-                                child: Directionality(
-                                  textDirection: TextDirection.rtl,
-                                  child: CircleAvatar(
-                                    backgroundColor: Colors.grey[200],
-                                    radius: 20,
-                                    child: IconButton(
-                                        onPressed: () async {
-                                          final room = await FirebaseChatCore
-                                              .instance
-                                              .createRoom(message.author);
-                                          kPushNavigator(
-                                              context,
-                                              FlyerDm(
-                                                room: room,
-                                                otherUserName: name,
-                                              ));
-                                        },
-                                        icon: Icon(
-                                          Icons.send_rounded,
-                                          color: Colors.grey[500],
-                                          size: 20,
-                                        )),
-                                  ),
-                                ),
-                              ))
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10),
+                        child: Directionality(
+                          textDirection: TextDirection.rtl,
+                          child: CircleAvatar(
+                            backgroundColor: Colors.grey[200],
+                            radius: 20,
+                            child: IconButton(
+                                onPressed: () async {
+                                  print('message.author');
+                                  print(message.author.id);
+                                  final room = await FirebaseChatCore.instance.createRoom(message.author);
+                                  kPushNavigator(
+                                      context,
+                                      FlyerDm(
+                                        room: room,
+                                        otherUserName: name,
+                                      ));
+                                },
+                                icon: Icon(
+                                  Icons.send_rounded,
+                                  color: Colors.grey[500],
+                                  size: 20,
+                                )),
+                          ),
+                        ),
+                      )
 
                     // const SizedBox(width: 10),
                     // const Spacer(),
@@ -269,7 +274,7 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
   Future<types.User> getFlyerUser() async {
     if (flyerUser != null) return flyerUser!;
     var _fetchUser = await fetchUser(authUser!.uid, 'users');
-    print('fetchUser Json: $_fetchUser');
+    // print('fetchUser Json: $_fetchUser');
     return types.User.fromJson(_fetchUser);
   }
   bool showLoader = true;
@@ -297,6 +302,9 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
             builder: (context, flyerUserShot) {
               if(flyerUserShot.hasData) {
                 var fetchedFlyerUser = flyerUserShot.data;
+                config.app.isModerator = fetchedFlyerUser
+                          ?.metadata?['MyModerator'] ?? false;
+
                 return ValueListenableBuilder<bool>(
                     valueListenable: config.app.moderatorMode,
                     builder: (BuildContext context, bool _moderatorMode,
@@ -306,9 +314,8 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                         stream: FirebaseChatCore.instance.room(widget.room.id),
                         builder: (context, roomSnapshot) {
                           if (roomSnapshot.hasData) {
-                            print('roomSnapshot.data');
-                            print(roomSnapshot.data);
-
+                            // print('roomSnapshot.data');
+                            // print(roomSnapshot.data.toJson());
 
                             return StreamBuilder<List<types.Message>>(
                               initialData: const [],
@@ -319,6 +326,9 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                               ),
                               builder: (context, msgsSnapshot) {
                                 if (msgsSnapshot.hasData) {
+                                  // msgsSnapshot.data?.forEach((msg){
+                                  //   print('MSG JSON: ${msg.toJson()}');});
+
                                   // List<types.Message> filteredMsgs = [];
                                   // types.Message msgWithAuthor;
 
@@ -338,16 +348,11 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                                     child: Chat(
                                       myIsPostStyle: config.design.isPostStyle,
                                       theme: DefaultChatTheme(
-                                        // inputBackgroundColor: cGrey300,
                                         inputBackgroundColor: cRilDarkPurple,
                                         backgroundColor: config.design.isPostStyle
                                             ? cGrey50 : Colors.white,
-                                        // Colors.grey[100]!
-                                        // inputBackgroundColor: cRilDeepPurple.withOpacity(0.85),
                                       ),
                                       isAttachmentUploading: _isAttachmentUploading,
-                                      // messages: snapshot.data ?? [],
-                                      // messages: config.app.isModerator && _moderatorMode ? snapshot.data! : filteredMsgs,
                                       messages: msgsSnapshot.data!,
                                       // onAttachmentPressed: _handleAtachmentPressed,
                                       // onMessageTap: _handleMessageTap,
@@ -357,31 +362,10 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                                       onSendPressed: (partialText) async =>
                                           _handleSendPressed(
                                               partialText, fetchedFlyerUser!),
-                                      user: types.User(
-                                          id: FirebaseChatCore.instance
-                                              .firebaseUser
-                                              ?.uid ??
-                                              '', firstName: 'WHATEVER'),
-                                      // user: widget.currentUser!,
+                                      user: fetchedFlyerUser!, // author user
                                       bubbleBuilder: _bubbleBuilder,
-
-                                      /*
-                              bubbleBuilder: (Widget child, {
-                                required types.Message message,
-                                required nextMessageInGroup,
-                              }) {
-                                return _bubbleBuilder(
-                                    child,
-                                    // message: message,
-                                    message: msgWithAuthor,
-                                    nextMessageInGroup: nextMessageInGroup);
-                              },
-                              */
-
                                       showUserAvatars: false,
                                       showUserNames: true,
-                                      // customMessageBuilder: (customMessage, {required int messageWidth}){return customMessage.copyWith()},
-                                      // customMessageBuilder: ,
                                     ),
                                   );
                                 } else {

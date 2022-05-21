@@ -56,9 +56,9 @@ class _RoomsPageState extends State<RoomsPage> {
       body: StreamBuilder<List<types.Room>>(
         stream: FirebaseChatCore.instance.rooms(orderByUpdatedAt: true),
         initialData: const [],
-        builder: (context, snapshot) {
-          // print('RoomsPage data Snapshot: ${snapshot.data}');
-          if (snapshot.hasData /*&& snapshot.data!.isNotEזש'דmpty*/) {
+        builder: (context, roomSnapshot) {
+          // print('RoomsPage data Snapshot: ${roomSnapshot.data}');
+          if (roomSnapshot.hasData /*&& snapshot.data!.isNotEmpty*/) {
             return Column(
               children: [
                 const SizedBox(height: 10,),
@@ -85,9 +85,9 @@ class _RoomsPageState extends State<RoomsPage> {
                   child: ListView.builder(
                     shrinkWrap: true,
                     padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
-                    itemCount: snapshot.data?.length ?? 0,
+                    itemCount: roomSnapshot.data?.length ?? 0,
                     itemBuilder: (context, i) {
-                      var room = snapshot.data?[i];
+                      var room = roomSnapshot.data?[i];
                       User? authUser = FirebaseAuth.instance.currentUser;
                       types.User? otherUser = room?.users
                           .firstWhere((user) => user.id != authUser?.uid);
@@ -135,8 +135,7 @@ class _RoomsPageState extends State<RoomsPage> {
             );
           } else {
             return const Center(
-                child: Text(
-              'התחל שיחה עם חברים חדשים \n דרך רילטופיה!',
+                child: Text('התחל שיחה עם חברים חדשים \n דרך רילטופיה!',
               style: TextStyle(
                 color: neutral2,
                 fontSize: 16,
