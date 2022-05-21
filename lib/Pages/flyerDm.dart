@@ -1,8 +1,10 @@
 import 'dart:io';
-import 'package:ekc_project/Services/myFirebaseFlyer.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ekc_project/Pages/ril_gDashboard.dart';
 import 'package:ekc_project/Widgets/addUserDialog.dart';
 import 'package:ekc_project/Widgets/myAppBar.dart';
 import 'package:ekc_project/Widgets/myDrawers.dart';
+import 'package:ekc_project/theme/constants.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -11,6 +13,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
@@ -19,7 +22,8 @@ import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../myUtil.dart';
-import 'usersPage.dart';
+import 'flyerChatV2.dart';
+import '../dump/usersPage.dart';
 
 class FlyerDm extends StatefulWidget {
 /*  const FireBaseChatPage({
@@ -28,6 +32,7 @@ class FlyerDm extends StatefulWidget {
   }) : super(key: key);*/
 
   final types.Room room;
+  final String? otherUserName;
 
   final GoogleSignInAccount? currentUser;
 
@@ -35,7 +40,7 @@ class FlyerDm extends StatefulWidget {
 
   // final currentUser;
 
-  const FlyerDm({this.currentUser, required this.room}) : super();
+  const FlyerDm({this.currentUser, required this.room, this.otherUserName}) : super();
 
   @override
   _FlyerDmState createState() => _FlyerDmState();
@@ -43,45 +48,22 @@ class FlyerDm extends StatefulWidget {
 
 class _FlyerDmState extends State<FlyerDm> {
   bool _isAttachmentUploading = false;
-  var guestUser;
-  // GoogleSignInAccount? guestUser;
-  // UserCredential? guestUser;
-  String? appBarTitle;
-  List<String>? roomEmailUsers;
+  types.User? otherUser;
+  User? authUser = FirebaseAuth.instance.currentUser;
 
   @override
   void initState() {
-    print('widget.room.type');
-    print(widget.room.type.toString());
-    print(widget.room.name);
+    otherUser = widget.room.users
+        .firstWhere((user) => user.id != authUser?.uid);
+    String unreadKey = 'unreadCountFrom_'
+        '${otherUser?.id.substring(0, 5)}';
 
-
-    // RoomType.direct
-    // RoomType.group
-    if (widget.room.type.toString() == 'RoomType.direct') {
-      widget.room.users.forEach((user) {
-        if (widget.currentUser?.email != user.lastName) {
-          // Lastname is MAIL!
-          setState(() {
-            guestUser = user;
-            appBarTitle = '${guestUser.lastName}';
-          });
-        }
-      });
-    } else {
-      setState(() {
-        appBarTitle = widget.room.name;
-      });
-    }
-
-    // Get all users:
-    widget.room.users.forEach((user) {
-      print('XXX user.lastName ${user.lastName}');
-      // roomEmailUsers?.add(user.lastName.toString());
-      roomEmailUsers = [...?roomEmailUsers, user.lastName.toString()];
-    }
-    );
-    print('roomEmailUsers: ${roomEmailUsers?.length} ${roomEmailUsers.runtimeType} $roomEmailUsers');
+    // int unreadCount = widget.room.metadata?[unreadKey] ?? 0;
+    FirebaseFirestore.instance
+        .doc('rooms/${widget.room.id}').set({
+      // 'metadata': {unreadKey: FieldValue.increment(0)}
+      'metadata': {unreadKey: 0}
+    }, SetOptions(merge:true),);
 
     super.initState();
   }
@@ -89,16 +71,38 @@ class _FlyerDmState extends State<FlyerDm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer:
-          // true = Projects Drawer
-          projectDrawer(context, widget.currentUser, true, widget.room.id),
-      endDrawer:
-          // false = Task Drawer
-          taskDrawer(context, widget.currentUser, false, widget.room.id),
-      //
-      // appBar: myAppBar('Chat with ${widget.room.users.first.lastName}'),
-      appBar: myAppBar(appBarTitle, actions: <Widget>[
-        widget.room.type.toString() == 'RoomType.direct' ? Container() : Builder(
+      appBar: myAppBar(context,
+          widget.otherUserName ?? otherUser?.firstName,
+          actions: <Widget>[
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: CircleAvatar(
+                radius: 40 / 2,
+                backgroundColor: Colors.grey[300],
+                child: IconButton(
+                    onPressed: () => kPushNavigator(context,
+                        GDashboard(homePage:
+                        FlyerChatV2(
+                            room: types.Room(
+                                users: [types.User(id: '${authUser?.uid}')], // Adds the user to group
+                                type: types.RoomType.group,
+                                id: 'NAMAkmZKdEAv9AefwXhR'),
+                            // currentUser: widget.userData,),
+                            flyerUser: types.User(id: '${authUser?.uid}')),)
+                        , replace: true),
+                    icon:
+                    SvgPicture.asset(
+                      'assets/svg_icons/CleanLogo.svg',
+                      height: 30,
+                      color: Colors.grey[900],
+                      // color: StreamChatTheme.of(context).colorTheme.accentPrimary,
+                    ),),
+              ),
+            )
+
+
+
+/*        widget.room.type.toString() == 'RoomType.direct' ? Container() : Builder(
           // builder needed for Scaffold.of(context).openEndDrawer()
           builder: (context) => IconButton(
             icon: const Icon(Icons.group_add),
@@ -124,7 +128,7 @@ class _FlyerDmState extends State<FlyerDm> {
             onPressed: () => Scaffold.of(context).openEndDrawer(),
             tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
           ),
-        ),
+        ),*/
       ]),
       body: StreamBuilder<types.Room>(
         initialData: widget.room,

@@ -1,10 +1,12 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+
 
 // 1. Set Class
 // 2. Insert details to class
 // 3. Get Details any time!
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+
 class UserDetails extends ChangeNotifier {
 // Set Up Values
   String? email;

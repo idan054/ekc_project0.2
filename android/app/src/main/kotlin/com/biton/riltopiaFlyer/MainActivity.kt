@@ -1,4 +1,4 @@
-package com.example.ekc_project
+package com.biton.riltopiaFlyer
 
 import io.flutter.embedding.android.FlutterActivity
 

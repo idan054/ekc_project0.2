@@ -1,42 +1,49 @@
 {
   "project_info": {
-    "project_number": "792300859247",
-    "firebase_url": "https://ekcproject-f2e7f-default-rtdb.europe-west1.firebasedatabase.app",
-    "project_id": "ekcproject-f2e7f",
-    "storage_bucket": "ekcproject-f2e7f.appspot.com"
+    "project_number": "204189904288",
+    "project_id": "riltopiaflyer",
+    "storage_bucket": "riltopiaflyer.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:792300859247:android:e8b41cb474af9b6f60429a",
+        "mobilesdk_app_id": "1:204189904288:android:ab56ddba92a11dbbe708c5",
         "android_client_info": {
-          "package_name": "com.example.ekc_project"
+          "package_name": "com.biton.riltopiaFlyer"
         }
       },
       "oauth_client": [
         {
-          "client_id": "792300859247-o68cc1cqvl0m4oconh6708ov16t4cfji.apps.googleusercontent.com",
+          "client_id": "204189904288-70lscqig5d994bt7366ouh8fuoc67htm.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.ekc_project",
-            "certificate_hash": "59bdf197119f09e204f574743c76a64aeb7b90e5"
+            "package_name": "com.biton.riltopiaFlyer",
+            "certificate_hash": "2068458eb2474d85bb47a2742f7ff3f71f8af14f"
           }
         },
         {
-          "client_id": "792300859247-8kc26lmjgqrj8c4esorv0pa0sma1r19c.apps.googleusercontent.com",
+          "client_id": "204189904288-megg0gdmgkak7mddduro0e0gfrgpmfo9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.biton.riltopiaFlyer",
+            "certificate_hash": "67cbf627fdfaec80dff97a8b5818260b6e59a737"
+          }
+        },
+        {
+          "client_id": "204189904288-dfa42tjer3p92utho1s5230r4dsa5htj.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAA4KoZer3K51C1IlWR3W8kjw7VK2sDuhQ"
+          "current_key": "AIzaSyDWe51wgXbS1WZwsH1dVApWdtd9MN-h420"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "792300859247-7i6i5hqhei7rpf5r41puask2knfbe848.apps.googleusercontent.com",
+              "client_id": "204189904288-dfa42tjer3p92utho1s5230r4dsa5htj.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

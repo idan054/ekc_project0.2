@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.ekc_project">
+    package="com.biton.riltopiaFlyer">
    <application
-        android:label="ekc_project"
+        android:label="RilTopia"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

@@ -29,6 +29,13 @@ Future<Map<String, dynamic>> fetchUser(
       .doc(userId)
       .get();
 
+  // FirebaseFirestore.instance.snapshotsInSync();
+
+  // if(doc.data() == null) return {}; // my null safety
+  if(doc.data() == null){
+    print('Check this: fetchUser() gets $userId');
+    print('Check this: ${doc.id}');
+  }
   final data = doc.data()!;
 
   data['createdAt'] = data['createdAt']?.millisecondsSinceEpoch;
@@ -47,13 +54,14 @@ Future<List<types.Room>> processRoomsQuery(
   QuerySnapshot<Map<String, dynamic>> query,
   String usersCollectionName,
 ) async {
-  final futures = query.docs.map(
+  var futures = query.docs.map(
     (doc) => processRoomDocument(
       doc,
       firebaseUser,
       usersCollectionName,
     ),
   );
+  // futures.skipWhile((doc) => false);
 
   return await Future.wait(futures);
 }
@@ -66,6 +74,7 @@ Future<types.Room> processRoomDocument(
 ) async {
   final data = doc.data()!;
 
+
   data['createdAt'] = data['createdAt']?.millisecondsSinceEpoch;
   data['id'] = doc.id;
   data['updatedAt'] = data['updatedAt']?.millisecondsSinceEpoch;
@@ -76,15 +85,33 @@ Future<types.Room> processRoomDocument(
   final userIds = data['userIds'] as List<dynamic>;
   final userRoles = data['userRoles'] as Map<String, dynamic>?;
 
+  // print('Come on A!');
+  // userIds.forEach((userId) {print(userId); });
+
   final users = await Future.wait(
     userIds.map(
-      (userId) => fetchUser(
-        userId as String,
-        usersCollectionName,
-        role: userRoles?[userId] as String?,
-      ),
+      (userId) {
+        print('Current UID: $userId');
+        Future<Map<String, dynamic>> fetchedUser;
+          fetchedUser = fetchUser(
+            userId as String,
+            usersCollectionName,
+            role: userRoles?[userId] as String?,
+          ).catchError((doc){
+            return fetchUser(
+              'RtGHUgiIP5b5jkag1sYPo7tg0nD2', // AKA Riltopia Team user.
+              'users',
+              role: userRoles?[userId] as String?,
+            );
+          });
+
+        // print('fetchedUser');
+        // print(fetchedUser);
+        return fetchedUser;
+      }
     ),
   );
+  // users.forEach((user) {print('user: $user'); });
 
   if (type == types.RoomType.direct.toShortString()) {
     try {

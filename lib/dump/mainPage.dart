@@ -1,5 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:ekc_project/Pages/usersPage.dart';
+import 'package:ekc_project/dump/usersPage.dart';
 import 'package:ekc_project/Widgets/addPtDialog.dart';
 import 'package:ekc_project/Widgets/myAppBar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -43,7 +43,7 @@ class _MainPageState extends State<MainPage> {
   void _createRoom(types.User otherUser, BuildContext context) async {
     final room = await FirebaseChatCore.instance.createRoom(otherUser);
 
-    Navigator.push(
+/*    Navigator.push(
       context,
       MaterialPageRoute(
           builder: (context) => FlyerChatOriginal(
@@ -51,7 +51,7 @@ class _MainPageState extends State<MainPage> {
             currentUser: widget.googleSign_user,
             // user: _user,
           )),
-    );
+    );*/
 
     // Navigate to the Chat screen
   }
@@ -65,7 +65,7 @@ class _MainPageState extends State<MainPage> {
         drawer: projectDrawer(context, widget.googleSign_user, true, null),
 
         // appBar: myAppBar('Find someone to chat'),
-        appBar: myAppBar('Home Page',
+        appBar: myAppBar(context, 'Home Page',
             actions: <Widget>[
               Builder(
                 // builder needed for Scaffold.of(context).openEndDrawer()

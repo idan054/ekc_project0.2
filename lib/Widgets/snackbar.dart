@@ -19,11 +19,12 @@ cleanSnack(BuildContext context,{
         // backgroundColor: Colors.grey[100]?.withOpacity(0.85),
         backgroundColor: color == null ?
             Colors.grey[100]?.withOpacity(0.85) : color,
-        padding: const EdgeInsets.all(10),
+        margin: const EdgeInsets.fromLTRB(10, 10, 10, 80),
         // content: Text(S.of(context).warning(message)),
         content: Text(
           '$text',
           textAlign: TextAlign.center,
+          textDirection: TextDirection.rtl,
           style: TextStyle(
               color: textColor == null ? Colors.black : textColor,
               fontSize: 16,

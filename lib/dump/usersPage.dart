@@ -42,13 +42,14 @@ class _UsersPageState extends State<UsersPage> {
   void _createRoom(types.User otherUser, BuildContext context) async {
     final room = await FirebaseChatCore.instance.createRoom(otherUser);
 
-    Navigator.push(
+/*    Navigator.push(
       context,
       MaterialPageRoute(
           builder: (context) => FlyerChatOriginal(
                 room: room,
                 currentUser: widget.googleSign_user,         )),
     );
+                */
 
     // Navigate to the Chat screen
   }
@@ -58,7 +59,7 @@ class _UsersPageState extends State<UsersPage> {
     return Scaffold(
       drawer: projectDrawer(context, widget.googleSign_user, true, null),
 
-      appBar: myAppBar('Find someone to chat'),
+      appBar: myAppBar(context, 'Find someone to chat'),
       // appBar: myAppBar(''),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
