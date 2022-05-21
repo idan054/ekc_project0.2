@@ -98,46 +98,6 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: InkWell(
-        onLongPress: (config.app.isModerator
-            && config.app.moderatorMode.value)
-            ? () async {
-          print('Long press taped.');
-          log(message.toJson().toString());
-          showCustomRilAlert(
-            context,
-            title: 'למחוק הודעה זו?',
-            desc:
-                    '${message.toJson()['text']}'
-            '\n |'
-            '\n...${message.author.id.substring(0, 8)}'
-            '\n$name'
-            '\n${message.metadata?['metadata']['email']}'
-            ,
-            actions: [
-              TextButton(
-                onPressed: () async {
-                  await FirebaseFirestore.instance
-                      .collection('rooms/ClZEotxQ0ybSVlNykN0e/messages')
-                      .doc(message.id)
-                      .delete();
-                  kNavigator(context).pop();
-                },
-                child: const Text('מחק הודעה',
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.red)),
-              ),
-              TextButton(
-                onPressed: () => kNavigator(context).pop(),
-                child: const Text('ביטול',
-                    style: TextStyle(color: Colors.grey)),
-              ),
-            ],
-          );
-        }
-            : () {
-          print(flyerUser?.toJson());
-        },
         onTap: isCurrentUser
             ? () {}
             : () async {
@@ -162,25 +122,60 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
           // color: Colors.white,
           child: Column(
             children: [
-              const SizedBox(
-                height: 2,
-              ),
+             InkWell(
+               child: SizedBox(
+                  height: 25,
+                  child:
+                  Container(
+                    alignment: Alignment.centerRight,
+                      padding: const EdgeInsets.only(right: 10, top: 7),
+                      child: Icon(
+                        Icons.more_horiz,
+                        color: Colors.grey[400],
+                        size: 20,
+                      )),
+                ),
+               onTap: () async {
+                 print('Long press taped.');
+                 log(message.toJson().toString());
+                 // if(config.app.isModerator
+                 //     && config.app.moderatorMode.value)
+                 showCustomRilAlert(
+                   context,
+                   title: 'למחוק הודעה זו?',
+                   desc:
+                   '${message.toJson()['text']}'
+                       '\n |'
+                       '\n...${message.author.id.substring(0, 8)}'
+                       '\n$name'
+                       '\n${message.metadata?['metadata']['email']}'
+                   ,
+                   actions: [
+                     TextButton(
+                       onPressed: () async {
+                         await FirebaseFirestore.instance
+                             .collection('rooms/ClZEotxQ0ybSVlNykN0e/messages')
+                             .doc(message.id)
+                             .delete();
+                         kNavigator(context).pop();
+                       },
+                       child: const Text('מחק הודעה',
+                           style: TextStyle(
+                               fontWeight: FontWeight.bold,
+                               color: Colors.red)),
+                     ),
+                     TextButton(
+                       onPressed: () => kNavigator(context).pop(),
+                       child: const Text('ביטול',
+                           style: TextStyle(color: Colors.grey)),
+                     ),
+                   ],
+                 );
+               },
+             ),
+
               Container(
-                height: 20,
-                padding: const EdgeInsets.only(right: 10, left: 10),
-                alignment: Alignment.centerRight,
-/*                child:
-                  InkWell(
-                    child:
-                    Icon(
-                      Icons.more_horiz,
-                      color: Colors.grey[400]!,
-                   ),
-                    onTap: () {},
-                  ),*/
-              ),
-              Container(
-                padding: const EdgeInsets.only(right: 10, left: 10),
+                padding: const EdgeInsets.only(right: 10, left: 5),
                 alignment: Alignment.topRight,
                 child: Text(
                   text,
@@ -667,12 +662,7 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
       cleanSnack(context,
           color: cRilDarkPurple,
           textColor: Colors.white54,
-          text: 'ניתן לפרסם שוב בעוד '
-              '${time2Wait - difference.inSeconds}'
-              ' שניות'
-              ' (' +
-              '$waitUntil'.substring(11, 16) +
-              ')'
+          text: 'ניתן לפרסם שוב בעוד 3 דקות'
       );
       FirebaseChatCore.instance.sendMessage(
         message,
