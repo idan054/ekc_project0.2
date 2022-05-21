@@ -282,7 +282,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               'firebaseDatabase_basedFlyer FAILED: $error \n-|- $stackTrace \n(FirebaseChatCore.instance.createUserInFirestore)'));
 
                       // final room = await FirebaseChatCore.instance
-                      //     .room('NAMAkmZKdEAv9AefwXhR');
+                      //     .room('ClZEotxQ0ybSVlNykN0e');
 
                       // Fixing push replacement
                       // showRilAlert(context, false);
@@ -357,7 +357,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                               users: [widget.flyerUser!],
                                               // Adds the user to group
                                               type: types.RoomType.group,
-                                              id: 'NAMAkmZKdEAv9AefwXhR'),
+                                              id: 'ClZEotxQ0ybSVlNykN0e'),
                                           // currentUser: widget.userData,),
                                           flyerUser: userData,
                                         ),

@@ -54,6 +54,8 @@ Future<List<types.Room>> processRoomsQuery(
   QuerySnapshot<Map<String, dynamic>> query,
   String usersCollectionName,
 ) async {
+  print('processRoomsQuery A');
+
   var futures = query.docs.map(
     (doc) => processRoomDocument(
       doc,
@@ -64,6 +66,7 @@ Future<List<types.Room>> processRoomsQuery(
   // futures.skipWhile((doc) => false);
 
   return await Future.wait(futures);
+
 }
 
 /// Returns a [types.Room] created from Firebase document
@@ -73,6 +76,7 @@ Future<types.Room> processRoomDocument(
   String usersCollectionName,
 ) async {
   final data = doc.data()!;
+  print('processRoomDocument A');
 
 
   data['createdAt'] = data['createdAt']?.millisecondsSinceEpoch;
@@ -125,6 +129,10 @@ Future<types.Room> processRoomDocument(
     } catch (e) {
       // Do nothing if other user is not found, because he should be found.
       // Consider falling back to some default values.
+
+      // "Uncaught Error: Bad state: No element" Safety
+      // print('EE $e');
+
     }
   }
 

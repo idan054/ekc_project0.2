@@ -186,7 +186,7 @@ class _LoginPageState extends State<LoginPage> {
                                       users: [types.User.fromJson(userDataFetched!)],
                                       // Adds the user to group
                                       type: types.RoomType.group,
-                                      id: 'NAMAkmZKdEAv9AefwXhR'),
+                                      id: 'ClZEotxQ0ybSVlNykN0e'),
                                   // currentUser: widget.userData,),
                                   flyerUser: types.User.fromJson(userDataFetched),
                                 ),

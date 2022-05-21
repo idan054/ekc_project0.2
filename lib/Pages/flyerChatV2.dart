@@ -117,7 +117,7 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
               TextButton(
                 onPressed: () async {
                   await FirebaseFirestore.instance
-                      .collection('rooms/NAMAkmZKdEAv9AefwXhR/messages')
+                      .collection('rooms/ClZEotxQ0ybSVlNykN0e/messages')
                       .doc(message.id)
                       .delete();
                   kNavigator(context).pop();
@@ -398,6 +398,12 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
       ),
     );
   }
+
+/*  @override
+  void initState() {
+    FirebaseChatCore.instance.createGroupRoom(name: 'RilHome', users: []);
+    super.initState();
+  }*/
 
   Future<types.User> getFlyerUser() async {
     if (flyerUser != null) return flyerUser!;

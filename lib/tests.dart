@@ -125,7 +125,7 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
               TextButton(
                 onPressed: () async {
                   await FirebaseFirestore.instance
-                      .collection('rooms/NAMAkmZKdEAv9AefwXhR/messages')
+                      .collection('rooms/ClZEotxQ0ybSVlNykN0e/messages')
                       .doc(message.id)
                       .delete();
                   kNavigator(context).pop();
@@ -408,7 +408,7 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                           types.Room(
                               users: [fetchedFlyerUser!], // Adds the user to group
                               type: types.RoomType.group,
-                              id: 'NAMAkmZKdEAv9AefwXhR'),
+                              id: 'ClZEotxQ0ybSVlNykN0e'),
                           currentUser: fetchedFlyerUser,
                           rilHome: true,
                         ),

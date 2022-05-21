@@ -250,7 +250,11 @@ class FirebaseChatCore {
         .doc(roomId)
         .snapshots()
         .asyncMap(
-          (doc) =>processRoomDocument(doc, fu, config.usersCollectionName),
+          (doc) {
+            print('what room() doc ${doc.data()}');
+            return
+              processRoomDocument(doc, fu, config.usersCollectionName);
+          },
     );
     return room;
   }
@@ -269,6 +273,8 @@ class FirebaseChatCore {
     final fu = firebaseUser;
     if (fu == null) return const Stream.empty();
 
+    print('rooms A');
+
     final collection = orderByUpdatedAt
         ? FirebaseFirestore.instance
         .collection(config.roomsCollectionName)
@@ -276,6 +282,16 @@ class FirebaseChatCore {
         : FirebaseFirestore.instance
         .collection(config.roomsCollectionName)
         .where('userIds', arrayContains: fu.uid);
+
+    /*    List<QueryDocumentSnapshot<Map<String, dynamic>>> cleanDocs = [];
+    snapShots.forEach((snapShot) {
+      for (var doc in snapShot.docs) {
+        List uIds = doc.data()['userIds'];
+        if(uIds[0] != uIds[1]){
+          cleanDocs.add(doc);
+        }
+      }
+    });*/
 
     return collection.snapshots().asyncMap(
           (query) =>
@@ -357,7 +373,7 @@ class FirebaseChatCore {
       print('sendMessage() B');
       // Todo combine to 1 request
       await FirebaseFirestore.instance.collection('rooms/$roomId/messages').add(messageMap);
-      if(roomId != 'NAMAkmZKdEAv9AefwXhR') { // AKA RilHome
+      if(roomId != 'ClZEotxQ0ybSVlNykN0e') { // AKA RilHome
         await FirebaseFirestore.instance
             .doc('rooms/$roomId')
             .set({

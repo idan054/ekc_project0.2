@@ -54,8 +54,7 @@ this.orderIndex
 // Room Project is actually a 1 user Group Room in Flyer
 Future addProjectRoom(
     BuildContext context, String name, GoogleSignInAccount currentUser) async {
-  final room = await FirebaseChatCore.instance.createGroupRoom(
-      name: name, users: [], metadata: {'defaultKey': 'defaultValue'});
+  final room = await FirebaseChatCore.instance.createGroupRoom(name: 'RilHome', users: [],);
   print(room.id);
   // Navigator.push(
   //   context,
