@@ -182,7 +182,8 @@ class FirebaseChatCore {
     int maxAge = 0; // placeHolder only.
     // print('What message() get as currentUser Json ${currentUser?.toJson()}');
     if(rilHome) {
-      int currentUserAge = currentUser!.metadata?['age'].toInt() ?? 0;
+      int currentUserAge = (currentUser?.metadata?['age'] ?? 0).toInt();
+
       // var ageFilter = 3; //{14 [17] 20}
       minAge = currentUserAge - my.config.app.ageFilter; // ?? 14;
       maxAge = currentUserAge + my.config.app.ageFilter; // ?? 20;

@@ -57,8 +57,9 @@ import '../theme/constants.dart';
 import '../dump/usersPage.dart';
 import 'package:bubble/bubble.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'A_loginPage.dart';
-import 'flyerDm.dart';
+import 'Pages/A_loginPage.dart';
+import 'Pages/flyerDm.dart';
+
 
 class FlyerChatV2 extends StatefulWidget {
 /*  const FireBaseChatPage({

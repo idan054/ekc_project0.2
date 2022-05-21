@@ -85,8 +85,8 @@ Future<types.Room> processRoomDocument(
   final userIds = data['userIds'] as List<dynamic>;
   final userRoles = data['userRoles'] as Map<String, dynamic>?;
 
-  print('Come on A!');
-  userIds.forEach((userId) {print(userId); });
+  // print('Come on A!');
+  // userIds.forEach((userId) {print(userId); });
 
   final users = await Future.wait(
     userIds.map(
@@ -105,8 +105,8 @@ Future<types.Room> processRoomDocument(
             );
           });
 
-        print('fetchedUser');
-        print(fetchedUser);
+        // print('fetchedUser');
+        // print(fetchedUser);
         return fetchedUser;
       }
     ),

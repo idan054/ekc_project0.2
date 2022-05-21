@@ -161,40 +161,39 @@ class _LoginPageState extends State<LoginPage> {
                         // print('userDoc.exists ${userDoc.exists}');
                         // print('userDoc.data ${userDoc.data()}');
 
-                        Map<String, dynamic>? userData;
+                        Map<String, dynamic>? userDataFetched;
                         try {
-                          userData =
+                          userDataFetched =
                               await fetchUser(fireStoreUser!.uid, 'users');
                         } catch (e) {
                           print('err 164: $e');
                         }
 
                         // if(userDoc.exists){
-                        print('A_loginPage currentUser $userData');
-                        bool isAgeSet = userData?['metadata']['age'] != null;
+                        print('A_loginPage currentUser $userDataFetched');
+                        bool isAgeSet = userDataFetched?['metadata']['age'] != null;
+                        print('isAgeSet $isAgeSet');
                         if (config.debug.alwaysSignup
                         // || currentUser != null
                         || isAgeSet
                         ) { // AKA user exists
-                          types.User flyerUser =
-                              types.User.fromJson(userData!);
                           setState(() => isLoading = false);
                           kPushNavigator(
                               context,
                               GDashboard(
                                 homePage: FlyerChatV2(
                                   room: types.Room(
-                                      users: [flyerUser],
+                                      users: [types.User.fromJson(userDataFetched!)],
                                       // Adds the user to group
                                       type: types.RoomType.group,
                                       id: 'NAMAkmZKdEAv9AefwXhR'),
                                   // currentUser: widget.userData,),
-                                  flyerUser: flyerUser,
+                                  flyerUser: types.User.fromJson(userDataFetched),
                                 ),
                               ),
                               replace: true);
                         } else { // AKA new user
-                          var userData = types.User(
+                          var flyerUser = types.User(
                               firstName: fireStoreUser?.displayName,
                               id: fireStoreUser?.uid ?? UniqueKey().toString(),
                               imageUrl: fireStoreUser?.photoURL,
@@ -202,17 +201,17 @@ class _LoginPageState extends State<LoginPage> {
                               metadata: {'email': fireStoreUser?.email});
 
                           await FirebaseChatCore.instance
-                              .createUserInFirestore(userData)
+                              .createUserInFirestore(flyerUser)
                               .whenComplete(() => print(
                               'firebaseDatabase_basedFlyer Completed \n(FirebaseChatCore.instance.createUserInFirestore)'
-                                  '\n userData: $userData'))
+                                  '\n flyerUser: $flyerUser'))
                               .onError((error, stackTrace) => print(
                               'firebaseDatabase_basedFlyer FAILED: $error \n-|- $stackTrace \n(FirebaseChatCore.instance.createUserInFirestore)'));
 
                           setState(() => isLoading = false);
                           kPushNavigator(
                             context,
-                            ProfilePage(userData: userData), /*replace: true*/
+                            ProfilePage(flyerUser: flyerUser), /*replace: true*/
                           );
                         }
                       }

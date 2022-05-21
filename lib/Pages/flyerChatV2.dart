@@ -59,6 +59,7 @@ import '../dump/usersPage.dart';
 import 'package:bubble/bubble.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'A_loginPage.dart';
+import 'B_profilePage.dart';
 import 'flyerDm.dart';
 
 class FlyerChatV2 extends StatefulWidget {
@@ -77,6 +78,7 @@ types.User? flyerUser;
 
 class _FlyerChatV2State extends State<FlyerChatV2> {
   User? authUser = FirebaseAuth.instance.currentUser;
+  bool showLoader = true;
   bool _isAttachmentUploading = false;
 
   Widget _bubbleBuilder(Widget child, {
@@ -272,28 +274,9 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
     );
   }
 
-  Future<types.User> getFlyerUser() async {
-    if (flyerUser != null) return flyerUser!;
-    var _fetchUser = await fetchUser(authUser!.uid, 'users');
-    // print('fetchUser Json: $_fetchUser');
-    return types.User.fromJson(_fetchUser);
-  }
-  bool showLoader = true;
-
   @override
   Widget build(BuildContext context) {
     print('[Build] flyerChatV2');
-
-    /*if(!localIsShown) {
-      Future.delayed(const Duration(seconds: 3), () => showAlert(context));
-      localIsShown = true;
-    }*/
-
-    var _timePassed = 0;
-    var timeLeft = 60 * 5 - _timePassed;
-
-    // print('BUILD currentUser JSON is:');
-    // print(firestoreUserData?.toJson());
 
     return WillPopScope(
       onWillPop: () async => false,
@@ -302,13 +285,12 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
             future: getFlyerUser(),
             builder: (context, flyerUserShot) {
               if(flyerUserShot.hasData) {
-                var fetchedFlyerUser = flyerUserShot.data;
-                config.app.isModerator = fetchedFlyerUser
-                          ?.metadata?['MyModerator'] ?? false;
+                types.User fetchedFlyerUser = flyerUserShot.data!;
 
                 return ValueListenableBuilder<bool>(
                     valueListenable: config.app.moderatorMode,
-                    builder: (BuildContext context, bool _moderatorMode,
+                    builder: (BuildContext context,
+                        bool _moderatorMode,
                         Widget? child) {
                       return StreamBuilder<types.Room>(
                         initialData: widget.room,
@@ -327,18 +309,13 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                               ),
                               builder: (context, msgsSnapshot) {
                                 if (msgsSnapshot.hasData) {
-                                  // msgsSnapshot.data?.forEach((msg){
-                                  //   print('MSG JSON: ${msg.toJson()}');});
-
-                                  // List<types.Message> filteredMsgs = [];
-                                  // types.Message msgWithAuthor;
 
                                   if (msgsSnapshot.data!.isEmpty &&
                                       showLoader == true &&
                                       mounted) {
                                     Future.delayed(const Duration(seconds: 6))
                                         .then((_) {
-                                      setState(() => showLoader = false);
+                                          if(mounted) setState(() => showLoader = false);
                                       // print('showLoader is now $showLoader');
                                     });
                                     return Center(child: loadingWidget(context),);
@@ -362,8 +339,8 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                                       onPreviewDataFetched: _handlePreviewDataFetched,
                                       onSendPressed: (partialText) async =>
                                           _handleSendPressed(
-                                              partialText, fetchedFlyerUser!),
-                                      user: fetchedFlyerUser!, // author user
+                                              partialText, fetchedFlyerUser),
+                                      user: fetchedFlyerUser, // author user
                                       bubbleBuilder: _bubbleBuilder,
                                       showUserAvatars: false,
                                       showUserNames: true,
@@ -418,29 +395,33 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
               }
             }
         ),
-
-        /*floatingActionButton: Offstage(
-          offstage: timeLeft <= 0,
-          child: FloatingActionButton(
-            onPressed: (){},
-            child: StatefulBuilder(
-                builder: (context, setState){
-*/ /*                  Timer.periodic(const Duration(seconds: 1), (timer) {
-                    setState((){
-                      print('1 sec passed.');
-                      print('$timeLeft');
-                      print('${timeLeft <= 0}');
-                      timeLeft = timeLeft - 1;
-                    if (timeLeft <= 0) timer.cancel();
-                    });
-                    // timer.cancel();
-                  });*/ /*
-                  return Text('$timeLeft');
-                }),
-          ),
-        ),*/
       ),
     );
+  }
+
+  Future<types.User> getFlyerUser() async {
+    if (flyerUser != null) return flyerUser!;
+    var _fetchUser = await fetchUser(authUser!.uid, 'users');
+    // print('fetchUser Json: $_fetchUser');
+
+    // check Moderator & if signed up
+    _handleSetUser(types.User.fromJson(_fetchUser));
+
+    return types.User.fromJson(_fetchUser);
+  }
+
+  void _handleSetUser(types.User flyerUser){
+    config.app.isModerator = flyerUser
+        .metadata?['MyModerator'] ?? false;
+
+    bool isAgeSet = flyerUser.metadata?['age'] != null;
+    print('flyerChatV2.dart isAgeSet $isAgeSet');
+    if(!isAgeSet){
+      kPushNavigator(
+          context,
+          ProfilePage(flyerUser: flyerUser), replace: true
+      );
+    }
   }
 
   void _handleAtachmentPressed() {

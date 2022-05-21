@@ -27,6 +27,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
 import 'dart:async';
 import 'dart:io';
+import '../Widgets/snackbar.dart';
 import '../theme/colors.dart';
 import '../theme/constants.dart';
 import 'dummyPage.dart';
@@ -35,13 +36,13 @@ import 'flyerChatV2.dart';
 
 class ProfilePage extends StatefulWidget {
   // bool isGoogleSign_user;
-  final types.User? userData;
+  final types.User? flyerUser;
 
   // UserCredential? classic_currentUser;
   // final currentUser;
   //
   // AllUsersPage({this.currentUser, required this.isGoogleSign_user});
-  const ProfilePage({Key? key, this.userData}) : super(key: key);
+  const ProfilePage({Key? key, this.flyerUser}) : super(key: key);
 
   // const AllUsersPage({Key? key}) : super(key: key);
 
@@ -72,9 +73,6 @@ class _ProfilePageState extends State<ProfilePage> {
     // var fUSer = FirebaseAuth.instance.currentUser;
 
     return Scaffold(
-
-        // appBar: myAppBar('Find someone to chat'),
-        // appBar: myAppBar(context, '${widget.userData?.firstName}'),
         appBar: myAppBar(context, 'יצירת פרופיל'),
         body: Column(
           children: [
@@ -246,7 +244,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 child: InkWell(
                   borderRadius: BorderRadius.circular(10),
                   onTap: () async {
-                    var user = widget.userData;
+                    var user = widget.flyerUser;
 
                     //the birthday's date
                     var difference =
@@ -255,7 +253,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     print('Age is $age');
 
                     await fUSer?.updateDisplayName(nameController.text);
-                    var userData = widget.userData?.copyWith(
+                    var userData = widget.flyerUser?.copyWith(
                         // firstName: '${user?.firstName}',
                         firstName: nameController.text,
                         imageUrl: '$imageUrl',
@@ -356,7 +354,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       GDashboard(
                                         homePage: FlyerChatV2(
                                           room: types.Room(
-                                              users: [widget.userData!],
+                                              users: [widget.flyerUser!],
                                               // Adds the user to group
                                               type: types.RoomType.group,
                                               id: 'NAMAkmZKdEAv9AefwXhR'),
@@ -439,38 +437,4 @@ class _ProfilePageState extends State<ProfilePage> {
           ],
         ));
   }
-}
-
-cleanSnack(
-  BuildContext context, {
-  required String text,
-  Color? color,
-  Color? textColor,
-  int sec = 3,
-  SnackBarAction? action,
-}) {
-  return ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-    behavior: SnackBarBehavior.floating,
-    // padding: const EdgeInsets.only(bottom: 15),
-    // backgroundColor: kColorSpiderRed.withOpacity(0.80),
-    // backgroundColor: Colors.grey[100]?.withOpacity(0.85),
-    backgroundColor:
-        color == null ? Colors.grey[100]?.withOpacity(0.85) : color,
-    padding: const EdgeInsets.all(10),
-    // content: Text(S.of(context).warning(message)),
-    content: Text(
-      '$text',
-      textAlign: TextAlign.center,
-      style: TextStyle(
-          color: textColor == null ? Colors.black : textColor,
-          fontSize: 16,
-          fontWeight: FontWeight.bold),
-    ),
-    duration: Duration(seconds: sec),
-    action: action,
-    // action: SnackBarAction(
-    //   label: 'סגור',
-    //   onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar(),),
-  ));
 }
