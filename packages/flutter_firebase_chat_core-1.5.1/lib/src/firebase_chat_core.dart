@@ -181,14 +181,13 @@ class FirebaseChatCore {
     int minAge = 0; // placeHolder only.
     int maxAge = 0; // placeHolder only.
     // print('What message() get as currentUser Json ${currentUser?.toJson()}');
+
     if(rilHome) {
       int currentUserAge = (currentUser?.metadata?['age'] ?? 0).toInt();
-
       // var ageFilter = 3; //{14 [17] 20}
       minAge = currentUserAge - my.config.app.ageFilter; // ?? 14;
       maxAge = currentUserAge + my.config.app.ageFilter; // ?? 20;
-        }
-
+    }
     // bool inAgeRange = authorAge >= minAge && authorAge <= maxAge;
 
     List<types.Message> fetchSnapshot(QuerySnapshot<Map<String, dynamic>> snapshot){
@@ -209,12 +208,36 @@ class FirebaseChatCore {
           data['createdAt'] = data['createdAt']?.millisecondsSinceEpoch;
           data['id'] = doc.id;
 
-          var lastedList = [...previousValue, types.Message.fromJson(data)];
-          lastedList.sort((oldMsg, newMsg) =>
+          var myNewList = [...previousValue, types.Message.fromJson(data)];
+          //~ Remove posts from blockedUsers
+          List? blockedUsers = currentUser?.metadata?['blockedUsers'];
+          if(blockedUsers != null && rilHome){
+            for (var blckUserId in blockedUsers) {
+              myNewList.removeWhere((msg) => msg.author.id == blckUserId);
+            }}
+
+          //~ Sort posts by createdAt
+          myNewList.sort((oldMsg, newMsg) =>
               newMsg.createdAt!.toDouble()
               .compareTo(oldMsg.createdAt!.toDouble()));
 
-          return lastedList; // clean phase 2
+          //~ Move reported posts to Top for Moderators
+          if(my.config.app.isModerator
+              && my.config.app.moderatorMode.value) {
+            myNewList.sort((msg1, msg2) {
+              bool isMsg1Reported;
+              bool isMsg2Reported;
+              isMsg1Reported =
+                  msg1.metadata?['metadata']['msgReported'] ?? false;
+              isMsg2Reported =
+                  msg2.metadata?['metadata']['msgReported'] ?? false;
+
+              int result = '$isMsg2Reported'.compareTo('$isMsg1Reported');
+              return result;
+            });
+          }
+
+          return myNewList; // clean phase 2
         },
         // print('DOC DATA IS A $data');
       );
@@ -222,16 +245,16 @@ class FirebaseChatCore {
 
     return
       rilHome && my.config.app.moderatorMode.value == false ?
+          //~ ---------------- only for Ril Home
         FirebaseFirestore.instance
           .collection('${config.roomsCollectionName}/${room.id}/messages')
-          //~ ---------------- only for Ril Home
               .where('author.metadata.age',
                   isGreaterThanOrEqualTo: minAge,
                   isLessThanOrEqualTo: maxAge)
               // .orderBy('author.metadata', descending: true)
               .limit(100) // only 100 msgs
-          //~ ---------------- only for Ril Home
           .snapshots().map((snapshot) => fetchSnapshot(snapshot))
+          //~ ---------------- only for Ril Home
 
       : FirebaseFirestore.instance
         .collection('${config.roomsCollectionName}/${room.id}/messages')

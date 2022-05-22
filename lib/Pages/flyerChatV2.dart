@@ -62,37 +62,37 @@ import 'A_loginPage.dart';
 import 'B_profilePage.dart';
 import 'flyerDm.dart';
 
+bool localIsShown = false;
+types.User? flyerUser; // temp Provider
+
 class FlyerChatV2 extends StatefulWidget {
   final types.Room room;
   types.User? flyerUser;
 
-  FlyerChatV2({Key? key, this.flyerUser, required this.room})
-      : super(key: key);
+  FlyerChatV2({Key? key, this.flyerUser, required this.room}) : super(key: key);
 
   @override
   _FlyerChatV2State createState() => _FlyerChatV2State();
 }
-
-bool localIsShown = false;
-types.User? flyerUser;
 
 class _FlyerChatV2State extends State<FlyerChatV2> {
   User? authUser = FirebaseAuth.instance.currentUser;
   bool showLoader = true;
   bool _isAttachmentUploading = false;
 
-  Widget _bubbleBuilder(Widget child, {
+  Widget _bubbleBuilder(
+    Widget child, {
     required types.Message message,
     required nextMessageInGroup,
   }) {
-
-    // log('Message C - Whats _bubbleBuilder gets: ${message.toJson()} \n');
+    log('Message C - Whats _bubbleBuilder gets: ${message.toJson()} \n');
     String? image = message.metadata?['imageUrl'] ?? 'https://bit.ly/3l64LIk';
     String text = message.toJson()['text'] ?? '';
     String name = message.metadata?['firstName'] ?? 'UserName Here.';
-    String age = '${message.metadata?['metadata']
-                      ?['age'] ?? 'XY'}'.substring(0, 2);
+    String age =
+        '${message.metadata?['metadata']?['age'] ?? 'XY'}'.substring(0, 2);
     bool isCurrentUser = authUser!.uid == message.author.id;
+    bool msgReported = message.metadata?['metadata']['msgReported'] ?? false;
     var createdAgo = timeAgo(message.createdAt);
 
     return Directionality(
@@ -101,14 +101,14 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
         onTap: isCurrentUser
             ? () {}
             : () async {
-          final room = await FirebaseChatCore.instance
-              .createRoom(message.author);
-          kPushNavigator(
-              context,
-              FlyerDm(
-                room: room,
-              ));
-        },
+                final room =
+                    await FirebaseChatCore.instance.createRoom(message.author);
+                kPushNavigator(
+                    context,
+                    FlyerDm(
+                      room: room,
+                    ));
+              },
         child: Card(
           margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
           shape: RoundedRectangleBorder(
@@ -117,63 +117,80 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
           ),
           elevation: 0,
           shadowColor: Colors.black87,
-          color: config.design.isPostStyle ?
-          Colors.white : Colors.grey[100]!,
+          color: config.design.isPostStyle ? Colors.white : Colors.grey[100]!,
           // color: Colors.white,
           child: Column(
             children: [
-             InkWell(
-               child: SizedBox(
+              InkWell(
+                child: SizedBox(
                   height: 25,
-                  child:
-                  Container(
-                    alignment: Alignment.centerRight,
-                      padding: const EdgeInsets.only(right: 10, top: 7),
-                      child: Icon(
-                        Icons.more_horiz,
-                        color: Colors.grey[400],
-                        size: 20,
+                  child: Container(
+                      alignment: Alignment.centerRight,
+                      padding: const EdgeInsets.only(right: 10, left: 10, top: 7),
+                      child:
+                      isCurrentUser ? null :
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Icon(
+                            Icons.more_horiz,
+                            color: Colors.grey[400],
+                            size: 20,
+                          ),
+                          if(msgReported && config.app.isModerator
+                                         && config.app.moderatorMode.value)
+                          Icon(
+                            Icons.flag,
+                            color: Colors.red[700]?.withOpacity(0.50),
+                            size: 20,
+                          ),
+                        ],
                       )),
                 ),
-               onTap: () async {
-                 print('Long press taped.');
-                 log(message.toJson().toString());
-                 // if(config.app.isModerator
-                 //     && config.app.moderatorMode.value)
-                 showCustomRilAlert(
-                   context,
-                   title: 'למחוק הודעה זו?',
-                   desc:
-                   '${message.toJson()['text']}'
-                       '\n |'
-                       '\n...${message.author.id.substring(0, 8)}'
-                       '\n$name'
-                       '\n${message.metadata?['metadata']['email']}'
-                   ,
-                   actions: [
-                     TextButton(
-                       onPressed: () async {
-                         await FirebaseFirestore.instance
-                             .collection('rooms/ClZEotxQ0ybSVlNykN0e/messages')
-                             .doc(message.id)
-                             .delete();
-                         kNavigator(context).pop();
-                       },
-                       child: const Text('מחק הודעה',
-                           style: TextStyle(
-                               fontWeight: FontWeight.bold,
-                               color: Colors.red)),
-                     ),
-                     TextButton(
-                       onPressed: () => kNavigator(context).pop(),
-                       child: const Text('ביטול',
-                           style: TextStyle(color: Colors.grey)),
-                     ),
-                   ],
-                 );
-               },
-             ),
-
+                onTap: () async {
+                  print('Long press taped.');
+                  log(message.toJson().toString());
+                  //   _handleDeleteAlert(context, message);
+                  showCustomRilAlert(context,
+                      titleWidget: Directionality(
+                        textDirection: TextDirection.rtl,
+                        child: Column(
+                          children:  [
+                            if(!config.app.isModerator)
+                            ListTile(
+                              title: const Text('דווח על הפוסט'),
+                              leading: const Icon(Icons.flag),
+                              onTap: () async {
+                                await _handleReportMsg(context, message);
+                                setState(() => kNavigator(context).pop());
+                              },
+                            ),
+                            if(config.app.isModerator
+                                && config.app.moderatorMode.value)
+                              ListTile(
+                                title: Text('מחק הודעה זו'),
+                                subtitle: Text('זמין למנהלים בלבד'),
+                                leading: Icon(Icons.delete),
+                                onTap: () async {
+                                  // _handleDeleteAlert(context, message)
+                                await _handleDeleteMsg(message);
+                                  kNavigator(context).pop();
+                                },
+                              ),
+                            ListTile(
+                              title: Text('חסום משתמש זה'),
+                              subtitle: Text('לעולם לא יוצגו פוסטים ממשתמש זה'),
+                              leading: Icon(Icons.block),
+                              onTap: () async {
+                                await _handleBlockUser(context, message);
+                                setState(() => kNavigator(context).pop());
+                              },
+                            ),
+                          ],
+                        ),
+                      ));
+                },
+              ),
               Container(
                 padding: const EdgeInsets.only(right: 10, left: 5),
                 alignment: Alignment.topRight,
@@ -200,8 +217,8 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                           title: Text(
                             '$name ($age)',
                             style: TextStyle(
-                              // color: Colors.primaries[Random().nextInt(Colors.primaries.length)].shade600,
-                              // color: Colors.black
+                                // color: Colors.primaries[Random().nextInt(Colors.primaries.length)].shade600,
+                                // color: Colors.black
                                 color: Colors.grey[600]!,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 14),
@@ -210,11 +227,11 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                           subtitle: Text(
                             /*' · '*/
                             'לפני '
-                                '$createdAgo',
+                            '$createdAgo',
                             textDirection: TextDirection.rtl,
                             style: TextStyle(
-                              // color: Colors.primaries[Random().nextInt(Colors.primaries.length)].shade600,
-                              // color: Colors.black
+                                // color: Colors.primaries[Random().nextInt(Colors.primaries.length)].shade600,
+                                // color: Colors.black
                                 color: Colors.grey[600],
                                 fontWeight: FontWeight.normal,
                                 fontSize: 12),
@@ -240,7 +257,8 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                                 onPressed: () async {
                                   print('message.author');
                                   print(message.author.id);
-                                  final room = await FirebaseChatCore.instance.createRoom(message.author);
+                                  final room = await FirebaseChatCore.instance
+                                      .createRoom(message.author);
                                   kPushNavigator(
                                       context,
                                       FlyerDm(
@@ -279,13 +297,12 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
         body: FutureBuilder<types.User>(
             future: getFlyerUser(),
             builder: (context, flyerUserShot) {
-              if(flyerUserShot.hasData) {
+              if (flyerUserShot.hasData) {
                 types.User fetchedFlyerUser = flyerUserShot.data!;
 
                 return ValueListenableBuilder<bool>(
                     valueListenable: config.app.moderatorMode,
-                    builder: (BuildContext context,
-                        bool _moderatorMode,
+                    builder: (BuildContext context, bool _moderatorMode,
                         Widget? child) {
                       return StreamBuilder<types.Room>(
                         initialData: widget.room,
@@ -304,16 +321,18 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                               ),
                               builder: (context, msgsSnapshot) {
                                 if (msgsSnapshot.hasData) {
-
                                   if (msgsSnapshot.data!.isEmpty &&
                                       showLoader == true &&
                                       mounted) {
                                     Future.delayed(const Duration(seconds: 6))
                                         .then((_) {
-                                          if(mounted) setState(() => showLoader = false);
+                                      if (mounted)
+                                        setState(() => showLoader = false);
                                       // print('showLoader is now $showLoader');
                                     });
-                                    return Center(child: loadingWidget(context),);
+                                    return Center(
+                                      child: loadingWidget(context),
+                                    );
                                   }
 
                                   return SafeArea(
@@ -322,20 +341,25 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                                       myIsPostStyle: config.design.isPostStyle,
                                       theme: DefaultChatTheme(
                                         inputBackgroundColor: cRilDarkPurple,
-                                        backgroundColor: config.design.isPostStyle
-                                            ? cGrey50 : Colors.white,
+                                        backgroundColor:
+                                            config.design.isPostStyle
+                                                ? cGrey50
+                                                : Colors.white,
                                       ),
-                                      isAttachmentUploading: _isAttachmentUploading,
+                                      isAttachmentUploading:
+                                          _isAttachmentUploading,
                                       messages: msgsSnapshot.data!,
                                       // onAttachmentPressed: _handleAtachmentPressed,
                                       // onMessageTap: _handleMessageTap,
                                       sendButtonVisibilityMode:
-                                      SendButtonVisibilityMode.always,
-                                      onPreviewDataFetched: _handlePreviewDataFetched,
+                                          SendButtonVisibilityMode.always,
+                                      onPreviewDataFetched:
+                                          _handlePreviewDataFetched,
                                       onSendPressed: (partialText) async =>
                                           _handleSendPressed(
                                               partialText, fetchedFlyerUser),
-                                      user: fetchedFlyerUser, // author user
+                                      user: fetchedFlyerUser,
+                                      // author user
                                       bubbleBuilder: _bubbleBuilder,
                                       showUserAvatars: false,
                                       showUserNames: true,
@@ -373,8 +397,7 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                           }
                         },
                       );
-                    }
-                );
+                    });
               } else {
                 return const Center(
                   child: Text(
@@ -388,8 +411,7 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
                   ),
                 );
               }
-            }
-        ),
+            }),
       ),
     );
   }
@@ -411,17 +433,13 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
     return types.User.fromJson(_fetchUser);
   }
 
-  void _handleSetUser(types.User flyerUser){
-    config.app.isModerator = flyerUser
-        .metadata?['MyModerator'] ?? false;
+  void _handleSetUser(types.User flyerUser) {
+    config.app.isModerator = flyerUser.metadata?['MyModerator'] ?? false;
 
     bool isAgeSet = flyerUser.metadata?['age'] != null;
     print('flyerChatV2.dart isAgeSet $isAgeSet');
-    if(!isAgeSet){
-      kPushNavigator(
-          context,
-          ProfilePage(flyerUser: flyerUser), replace: true
-      );
+    if (!isAgeSet) {
+      kPushNavigator(context, ProfilePage(flyerUser: flyerUser), replace: true);
     }
   }
 
@@ -561,8 +579,10 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
     }
   }
 
-  void _handlePreviewDataFetched(types.TextMessage message,
-      types.PreviewData previewData,) {
+  void _handlePreviewDataFetched(
+    types.TextMessage message,
+    types.PreviewData previewData,
+  ) {
     final updatedMessage = message.copyWith(previewData: previewData);
 
     FirebaseChatCore.instance.updateMessage(updatedMessage, widget.room.id);
@@ -574,8 +594,8 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
     });
   }
 
-  void _handleSendPressed(types.PartialText message,
-      types.User currentUser) async {
+  void _handleSendPressed(
+      types.PartialText message, types.User currentUser) async {
     print('my little msg $message');
     // var newMsg = message.metadata?.update
     //   ('8', (value) => 'New', ifAbsent: () => 'Mercury');
@@ -613,7 +633,7 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
     var time2Wait = kDebugMode ? 30 : 60 * 3;
 
     var waitUntil =
-    DateTime.now().add(Duration(seconds: time2Wait - difference.inSeconds));
+        DateTime.now().add(Duration(seconds: time2Wait - difference.inSeconds));
     print('waitUntil');
     print(waitUntil);
 
@@ -622,12 +642,12 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
           color: cRilDarkPurple,
           textColor: Colors.white54,
           text: 'ניתן לפרסם שוב בעוד '
-              '$time2Wait' ' שניות' ' (' +
-              '${DateTime.now().add(
-                  Duration(seconds: time2Wait))}'
+                  '$time2Wait'
+                  ' שניות'
+                  ' (' +
+              '${DateTime.now().add(Duration(seconds: time2Wait))}'
                   .substring(11, 16) +
-              ')'
-      );
+              ')');
     } else {
       var _user = FirebaseAuth.instance.currentUser;
       var lastHomeMessage = DateTime.now();
@@ -648,12 +668,10 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
       // create or update
       await FirebaseChatCore.instance
           .createUserInFirestore(_userData)
-          .whenComplete(() =>
-          print(
+          .whenComplete(() => print(
               'firebaseDatabase_basedFlyer Completed \n(FirebaseChatCore.instance.createUserInFirestore)'
-                  '\n userData: $_userData'))
-          .onError((error, stackTrace) =>
-          print(
+              '\n userData: $_userData'))
+          .onError((error, stackTrace) => print(
               'firebaseDatabase_basedFlyer FAILED: $error \n-|- $stackTrace \n(FirebaseChatCore.instance.createUserInFirestore)'));
       // });
 
@@ -662,8 +680,7 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
       cleanSnack(context,
           color: cRilDarkPurple,
           textColor: Colors.white54,
-          text: 'ניתן לפרסם שוב בעוד 3 דקות'
-      );
+          text: 'ניתן לפרסם שוב בעוד 3 דקות');
       FirebaseChatCore.instance.sendMessage(
         message,
         widget.room.id,
@@ -678,138 +695,207 @@ showRilAlert(context, bool exitProfile) async {
     barrierDismissible: true,
     context: context,
     // barrierColor: StreamChatTheme.of(context).colorTheme.overlay,
-    builder: (context) =>
-        Center(
-            child: AlertDialog(
-              // contentPadding: EdgeInsets.zero,
-              // titlePadding: EdgeInsets.zero,
-              actionsAlignment: MainAxisAlignment.center,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
+    builder: (context) => Center(
+        child: AlertDialog(
+      // contentPadding: EdgeInsets.zero,
+      // titlePadding: EdgeInsets.zero,
+      actionsAlignment: MainAxisAlignment.center,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      title: Center(
+          child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 13.0),
+            child: Text(
+              exitProfile ? 'תרצה לצאת' : 'ברוכים הבאים אל',
+              style: const TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 25),
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                exitProfile ? ' מרילטופיה?' : 'רילטופיה',
+                textDirection: TextDirection.rtl,
+                style: const TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 25),
               ),
-              title:
-              Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 13.0),
-                        child: Text(
-                          exitProfile ? 'תרצה לצאת' : 'ברוכים הבאים אל',
-                          style: const TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 25),
-                        ),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            exitProfile ? ' מרילטופיה?' : 'רילטופיה',
-                            textDirection: TextDirection.rtl,
-                            style: const TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 25),
-                          ),
 
-                          SvgPicture.asset(
-                            'assets/svg_icons/CleanLogo.svg',
-                            height: 30,
-                            // color: StreamChatTheme.of(context).colorTheme.accentPrimary,
-                          ),
-                          // trailing: Image.asset('assets/RilTopialLogoAndTxt.png',
-                          //   height: 45,)
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-                      const Center(
-                          child: Text(
-                            'כולם כאן בגיל שלך (+3-)'
-                                '\n זה המקום להכיר, לשתף, לעזור ולהיות מי שאתה!',
-                            style: TextStyle(
-                              color: neutral2,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              height: 1.5,
-                            ),
-                            textAlign: TextAlign.center,
-                            textDirection: TextDirection.rtl,
-                          )),
-                    ],
-                  )),
-              // content: Text("Saved successfully"),
-              actions: [
-                TextButton(
-                  onPressed: () => kNavigator(context).pop(),
-                  child: Text(exitProfile ? 'חזור' : 'התחל',
-                      style: const TextStyle(
-                          fontWeight: FontWeight.bold, color: cRilPurple)),
-                ),
-                if (exitProfile)
-                  TextButton(
-                    onPressed: () => kPushNavigator(context, const LoginPage()),
-                    child: const Text(
-                        'יציאה', style: TextStyle(color: Colors.grey)),
-                  ),
-              ],
-            )),
+              SvgPicture.asset(
+                'assets/svg_icons/CleanLogo.svg',
+                height: 30,
+                // color: StreamChatTheme.of(context).colorTheme.accentPrimary,
+              ),
+              // trailing: Image.asset('assets/RilTopialLogoAndTxt.png',
+              //   height: 45,)
+            ],
+          ),
+          const SizedBox(height: 20),
+          const Center(
+              child: Text(
+            'כולם כאן בגיל שלך (+3-)'
+            '\n זה המקום להכיר, לשתף, לעזור ולהיות מי שאתה!',
+            style: TextStyle(
+              color: neutral2,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              height: 1.5,
+            ),
+            textAlign: TextAlign.center,
+            textDirection: TextDirection.rtl,
+          )),
+        ],
+      )),
+      // content: Text("Saved successfully"),
+      actions: [
+        TextButton(
+          onPressed: () => kNavigator(context).pop(),
+          child: Text(exitProfile ? 'חזור' : 'התחל',
+              style: const TextStyle(
+                  fontWeight: FontWeight.bold, color: cRilPurple)),
+        ),
+        if (exitProfile)
+          TextButton(
+            onPressed: () => kPushNavigator(context, const LoginPage()),
+            child: const Text('יציאה', style: TextStyle(color: Colors.grey)),
+          ),
+      ],
+    )),
   );
 }
 
-showCustomRilAlert(context, {
-  String? title,
-  String? desc,
-  List<Widget>? actions,
-  Widget? titleWidget
-}) async {
+_handleBlockUser(context, types.Message message) async {
+  User? authUser = FirebaseAuth.instance.currentUser;
+  var firestoreDoc = FirebaseFirestore.instance.doc('users/${authUser?.uid}');
+
+  await firestoreDoc.set({
+    'metadata': {'blockedUsers':
+    FieldValue.arrayUnion([(message.author.id)])}
+  }, SetOptions(merge:true),);
+
+  cleanSnack(context, text: 'המשתמש נחסם ולא תראה ממנו יותר פוסטים.',
+      color: Colors.red[700],
+      textColor: Colors.white,
+      action: SnackBarAction(
+        textColor: Colors.white,
+        label: 'ביטול',
+        onPressed: () async {
+          await firestoreDoc.set({
+            'metadata': {'blockedUsers':
+            FieldValue.arrayRemove([(message.author.id)])}
+          }, SetOptions(merge:true),);
+
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          cleanSnack(context, text: 'הפעולה בוטלה');
+  }));
+}
+
+_handleReportMsg(context, types.Message message) async {
+  await FirebaseFirestore.instance
+      .collection('rooms/ClZEotxQ0ybSVlNykN0e/messages')
+      .doc(message.id).set({
+    'author': {
+        'metadata' :
+        {'msgReported': true}
+      }
+    }, SetOptions(merge:true),);
+
+  cleanSnack(context, text: 'הפוסט דווח ויטופל בהקדם!',
+      textColor: Colors.white,
+      color: Colors.red[700]);
+}
+
+_handleDeleteMsg(types.Message message) async {
+  await FirebaseFirestore.instance
+      .collection('rooms/ClZEotxQ0ybSVlNykN0e/messages')
+      .doc(message.id)
+      .delete();
+}
+
+_handleDeleteAlert(context, types.Message message) {
+  return showCustomRilAlert(
+    context,
+    title: 'למחוק הודעה זו?',
+    desc: '${message.toJson()['text']}'
+        '\n |'
+        '\n...${message.author.id.substring(0, 8)}'
+        '\n${message.author.firstName ?? message.metadata?['firstName']}'
+        '\n${message.metadata?['metadata']['email']}',
+    actions: [
+      TextButton(
+        onPressed: () async {
+          await _handleDeleteMsg(message);
+          kNavigator(context).pop();
+        },
+        child: const Text('מחק הודעה',
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red)),
+      ),
+      TextButton(
+        onPressed: () => kNavigator(context).pop(),
+        child: const Text('ביטול', style: TextStyle(color: Colors.grey)),
+      ),
+    ],
+  );
+}
+
+showCustomRilAlert(context,
+    {String? title,
+    String? desc,
+    List<Widget>? actions,
+    Widget? titleWidget}) async {
   showDialog(
     barrierDismissible: true,
     context: context,
     // barrierColor: StreamChatTheme.of(context).colorTheme.overlay,
-    builder: (context) =>
-        Center(
-            child: AlertDialog(
-              // contentPadding: EdgeInsets.zero,
-              // titlePadding: EdgeInsets.zero,
-              actionsAlignment: MainAxisAlignment.center,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
+    builder: (context) => Center(
+        child: AlertDialog(
+      // contentPadding: EdgeInsets.zero,
+      // titlePadding: EdgeInsets.zero,
+      actionsAlignment: MainAxisAlignment.center,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      title: titleWidget ??
+          Center(
+              child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 13.0),
+                child: Text(
+                  '$title',
+                  textDirection: TextDirection.rtl,
+                  style: const TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 25),
+                ),
               ),
-              title:
-              titleWidget ?? Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 13.0),
-                        child: Text(
-                          '$title',
-                          textDirection: TextDirection.rtl,
-                          style: const TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 25),
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      Center(
-                          child: Text(
-                            '$desc',
-                            style: const TextStyle(
-                              color: neutral2,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              height: 1.5,
-                            ),
-                            textAlign: TextAlign.center,
-                            textDirection: TextDirection.rtl,
-                          )),
-                    ],
-                  )),
-              // content: Text("Saved successfully"),
-              actions: actions,
-            )),
+              const SizedBox(height: 20),
+              Center(
+                  child: Text(
+                '$desc',
+                style: const TextStyle(
+                  color: neutral2,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  height: 1.5,
+                ),
+                textAlign: TextAlign.center,
+                textDirection: TextDirection.rtl,
+              )),
+            ],
+          )),
+      // content: Text("Saved successfully"),
+      actions: actions,
+    )),
   );
 }
