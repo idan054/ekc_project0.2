@@ -85,7 +85,7 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
     required types.Message message,
     required nextMessageInGroup,
   }) {
-    log('Message C - Whats _bubbleBuilder gets: ${message.toJson()} \n');
+    // log('Message C - Whats _bubbleBuilder gets: ${message.toJson()} \n');
     String? image = message.metadata?['imageUrl'] ?? 'https://bit.ly/3l64LIk';
     String text = message.toJson()['text'] ?? '';
     String name = message.metadata?['firstName'] ?? 'UserName Here.';
@@ -437,7 +437,7 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
     config.app.isModerator = flyerUser.metadata?['MyModerator'] ?? false;
 
     bool isAgeSet = flyerUser.metadata?['age'] != null;
-    print('flyerChatV2.dart isAgeSet $isAgeSet');
+    // print('flyerChatV2.dart isAgeSet $isAgeSet');
     if (!isAgeSet) {
       kPushNavigator(context, ProfilePage(flyerUser: flyerUser), replace: true);
     }

@@ -33,8 +33,8 @@ Future<Map<String, dynamic>> fetchUser(
 
   // if(doc.data() == null) return {}; // my null safety
   if(doc.data() == null){
-    print('Check this: fetchUser() gets $userId');
-    print('Check this: ${doc.id}');
+    // print('Check this: fetchUser() gets $userId');
+    // print('Check this: ${doc.id}');
   }
   final data = doc.data()!;
 
@@ -76,8 +76,6 @@ Future<types.Room> processRoomDocument(
   String usersCollectionName,
 ) async {
   final data = doc.data()!;
-  print('processRoomDocument A');
-
 
   data['createdAt'] = data['createdAt']?.millisecondsSinceEpoch;
   data['id'] = doc.id;
@@ -95,7 +93,7 @@ Future<types.Room> processRoomDocument(
   final users = await Future.wait(
     userIds.map(
       (userId) {
-        print('Current UID: $userId');
+        // print('Current UID: $userId');
         Future<Map<String, dynamic>> fetchedUser;
           fetchedUser = fetchUser(
             userId as String,

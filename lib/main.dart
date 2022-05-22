@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     User? authUser = FirebaseAuth.instance.currentUser;
-    print('FireAuth USER ${authUser?.displayName}');
+    // print('FireAuth USER ${authUser?.displayName}');
 
     return MaterialApp(
       title: 'Flutter Demo',

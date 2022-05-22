@@ -14,6 +14,7 @@ class App {
   bool isModerator = false;
   var moderatorMode = ValueNotifier<bool>(false);
   types.User? riltopiaTeamUser;
+  types.Room? riltopiaTeamRoom;
 }
 
 class Design {

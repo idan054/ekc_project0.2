@@ -172,7 +172,7 @@ class _LoginPageState extends State<LoginPage> {
                         // if(userDoc.exists){
                         print('A_loginPage currentUser $userDataFetched');
                         bool isAgeSet = userDataFetched?['metadata']['age'] != null;
-                        print('isAgeSet $isAgeSet');
+                        // print('isAgeSet $isAgeSet');
                         if (config.debug.alwaysSignup
                         // || currentUser != null
                         || isAgeSet

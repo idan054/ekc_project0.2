@@ -22,9 +22,11 @@ class RoomsPage extends StatefulWidget {
 class _RoomsPageState extends State<RoomsPage> {
 
   // Get Riltopia Team user.
-  Future<types.User> getRtUser() async {
+  // Future<types.User> getRtUser() async {
+  Future<Map<String, dynamic>> getRtUserAndRoom() async {
     // print('getRtUser()');
     types.User? _fetchedRtUser;
+    types.Room? _riltopiaTeamRoom;
     if(config.app.riltopiaTeamUser != null){
       // print('!= null: ${config.app.riltopiaTeamUser?.toJson()}');
       _fetchedRtUser = config.app.riltopiaTeamUser;
@@ -40,7 +42,22 @@ class _RoomsPageState extends State<RoomsPage> {
         config.app.riltopiaTeamUser = _fetchedRtUser;
       });
     }
-      return _fetchedRtUser!;
+
+    // if(config.app.riltopiaTeamRoom != null){
+    //   _riltopiaTeamRoom = config.app.riltopiaTeamRoom;
+    // } else {
+      // Todo add sharedPref Map to save api calls.
+      _riltopiaTeamRoom = await FirebaseChatCore.instance
+          .createRoom(_fetchedRtUser!);
+
+        print('_riltopiaTeamRoom.toJson()');
+        print(_riltopiaTeamRoom.toJson());
+        config.app.riltopiaTeamRoom = _riltopiaTeamRoom;
+      // }
+      return {
+      'fetchedRtUser' : _fetchedRtUser!,
+      'riltopiaTeamRoom' : _riltopiaTeamRoom,
+      };
   }
 
   @override
@@ -62,19 +79,23 @@ class _RoomsPageState extends State<RoomsPage> {
             return Column(
               children: [
                 const SizedBox(height: 10,),
-                FutureBuilder<types.User>(
-                    future: getRtUser(),
+                // FutureBuilder<types.User>(
+                FutureBuilder<Map<String, dynamic>>(
+                    future: getRtUserAndRoom(),
                     builder: (context, snapshot) {
                       if(snapshot.hasData) {
-                        var fetchedRtUser = snapshot.data;
+                        var fetchedRtUser = snapshot.data?['fetchedRtUser'];
+                        var fetchedRtRoom = snapshot.data?['riltopiaTeamRoom'];
+
+                        print('FF fetchedRtRoom $fetchedRtRoom');
+
                         return buildChatCard(
                           context,
                           otherUser: fetchedRtUser,
+                          room: fetchedRtRoom,
                           onTap: () async {
-                            final room = await FirebaseChatCore.instance
-                                .createRoom(fetchedRtUser!);
                             kPushNavigator(
-                                context, FlyerDm(room: room));
+                                context, FlyerDm(room: fetchedRtRoom));
                           },
                         );
                       } else {
@@ -158,8 +179,10 @@ class _RoomsPageState extends State<RoomsPage> {
         '${otherUser?.id.substring(0, 5)}';
 
     int unreadCount = room?.metadata?[unreadKey] ?? 0;
-    // print('room metadata');
-    // print(room?.metadata?.toString());
+    print('room metadata');
+    print(room?.metadata?.toString());
+    print('otherUser?.id');
+    print(otherUser?.id);
 
     bool normalUser = true;
     if(otherUser?.id == 'RtGHUgiIP5b5jkag1sYPo7tg0nD2') // AKA RilTopiaTeam

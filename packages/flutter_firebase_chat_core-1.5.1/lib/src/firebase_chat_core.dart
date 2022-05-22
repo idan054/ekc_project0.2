@@ -274,7 +274,7 @@ class FirebaseChatCore {
         .snapshots()
         .asyncMap(
           (doc) {
-            print('what room() doc ${doc.data()}');
+            // print('what room() doc ${doc.data()}');
             return
               processRoomDocument(doc, fu, config.usersCollectionName);
           },

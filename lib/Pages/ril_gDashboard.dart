@@ -73,7 +73,7 @@ class _GDashboardState extends State<GDashboard> {
   Widget build(BuildContext context) {
     print('[Build] GDashboard');
     User? authUser = FirebaseAuth.instance.currentUser;
-    print('FireAuth USER ${authUser?.displayName}');
+    // print('FireAuth USER ${authUser?.displayName}');
 
     var screenWidth = MediaQuery.of(context).size.width;
 
