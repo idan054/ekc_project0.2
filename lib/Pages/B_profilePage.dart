@@ -29,20 +29,21 @@ import 'dart:async';
 import 'dart:io';
 import '../Widgets/snackbar.dart';
 import '../theme/colors.dart';
+import '../theme/config.dart';
 import '../theme/constants.dart';
+import 'A_loginPage.dart';
 import 'dummyPage.dart';
 import '../dump/flyerChat.dart';
-import 'flyerChatV2.dart';
+import 'C_rilHomePage.dart';
 
 class ProfilePage extends StatefulWidget {
   // bool isGoogleSign_user;
   final types.User? flyerUser;
+  final bool fromLoginPage;
 
-  // UserCredential? classic_currentUser;
-  // final currentUser;
-  //
-  // AllUsersPage({this.currentUser, required this.isGoogleSign_user});
-  const ProfilePage({Key? key, this.flyerUser}) : super(key: key);
+  const ProfilePage({Key? key, this.flyerUser,
+    required this.fromLoginPage})
+      : super(key: key);
 
   // const AllUsersPage({Key? key}) : super(key: key);
 
@@ -73,7 +74,7 @@ class _ProfilePageState extends State<ProfilePage> {
     // var fUSer = FirebaseAuth.instance.currentUser;
 
     return Scaffold(
-        appBar: myAppBar(context, 'יצירת פרופיל'),
+        appBar: myAppBar(context, widget.fromLoginPage ? 'יצירת פרופיל' : 'עריכת פרופיל'),
         body: Column(
           children: [
             const SizedBox(height: 20),
@@ -172,8 +173,9 @@ class _ProfilePageState extends State<ProfilePage> {
                   child: SizedBox(
                     // width min 120 or size - max padding
                     // width: '${fUSer?.displayName}'.length * 12, // 19
-                    width: '${nameController.text}'.length * 18 < 120 ?
-                        140 : '${nameController.text}'.length * 16, // 19
+                    width: '${nameController.text}'.length * 18 < 120
+                        ? 140
+                        : '${nameController.text}'.length * 16, // 19
                     height: 60,
                     child: TextField(
                       controller: nameController,
@@ -183,25 +185,27 @@ class _ProfilePageState extends State<ProfilePage> {
                       textDirection: TextDirection.rtl,
                       textAlign: TextAlign.right,
                       cursorColor: cRilDeepPurple,
-                      onChanged: (val)=>setState(() {}),
+                      onChanged: (val) => setState(() {}),
                       decoration: InputDecoration(
                         // prefixIcon: Icon(Icons.create_rounded, size: 22, color: cRilDeepPurple),
                         filled: false,
                         enabledBorder: InputBorder.none,
                         // hintText: '${fUSer?.displayName}',
                         focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12.0),
-                            borderSide: BorderSide(
-                            color: cRilDeepPurple, width: 2),
-                            ),
+                          borderRadius: BorderRadius.circular(12.0),
+                          borderSide:
+                              BorderSide(color: cRilDeepPurple, width: 2),
+                        ),
                         hintText: '${fUSer?.displayName}',
                         hintStyle: const TextStyle(
                             color: Colors.black,
-                            fontWeight: FontWeight.bold, fontSize: 24),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 24),
                       ),
                       style: const TextStyle(
                           color: Colors.black,
-                          fontWeight: FontWeight.bold, fontSize: 24),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 24),
                     ),
                   ),
                 ),
@@ -214,14 +218,22 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ],
             ),
-            if(nameNode.hasFocus)
-            if(nameNode.hasFocus)
-              const SizedBox(height: 8,),
+            if (nameNode.hasFocus)
+              if (nameNode.hasFocus)
+                const SizedBox(
+                  height: 8,
+                ),
+            (widget.fromLoginPage || config.app.isModerator) ?
             const Text(
               'מה תאריך הלידה שלך?',
               textDirection: TextDirection.rtl,
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
-            ),
+            )
+              : const SizedBox(
+                height: 150,
+              ),
+
+            if(widget.fromLoginPage || config.app.isModerator)
             Directionality(
               textDirection: TextDirection.rtl,
               child: Container(
@@ -288,104 +300,104 @@ class _ProfilePageState extends State<ProfilePage> {
                       // showRilAlert(context, false);
                       // await Future.delayed(const Duration(seconds: 4), () => Navigator.of(context).popUntil((route) => route.isFirst));
                       showCustomRilAlert(context,
-                      title: '${nameController.text}' ', האם תרצה להמשיך?',
-                      desc: 'שים לב ❤️, לא ניתן לשנות פרטים אלו.',
-                      actions: [
-                        TextButton(
-                          onPressed: () async {
-                            kNavigator(context).pop();
-                            showCustomRilAlert(context,
-                              titleWidget: Center(
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const Padding(
-                                      padding: EdgeInsets.only(top: 13.0),
-                                      child: Text( 'ברוכים הבאים אל',
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 25),
-                                      ),
-                                    ),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        const Text(
-                                           'רילטופיה',
-                                          textDirection: TextDirection.rtl,
+                          title: '${nameController.text}' ', הגיל לא ניתן לשינוי',
+                          desc: 'האם אתה בטוח שתרצה להמשיך?',
+                          actions: [
+                            TextButton(
+                              onPressed: () async {
+                                kNavigator(context).pop();
+                                showCustomRilAlert(
+                                  context,
+                                  titleWidget: Center(
+                                      child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const Padding(
+                                        padding: EdgeInsets.only(top: 13.0),
+                                        child: Text(
+                                          'ברוכים הבאים אל',
                                           style: TextStyle(
                                               color: Colors.black,
                                               fontWeight: FontWeight.bold,
                                               fontSize: 25),
                                         ),
-                                        SvgPicture.asset(
-                                          'assets/svg_icons/CleanLogo.svg',
-                                          height: 30,
-                                          // color: StreamChatTheme.of(context).colorTheme.accentPrimary,
-                                        ),
-                                        // trailing: Image.asset('assets/RilTopialLogoAndTxt.png',
-                                        //   height: 45,)
-                                      ],
-                                    ),
-                                    const SizedBox(height: 20),
-                                    const Center(
-                                        child: Text(
-                                          'כולם כאן בגיל שלך (+3-)'
-                                              '\n זה המקום להכיר, לשתף, לעזור ולהיות מי שאתה!',
-                                          style: TextStyle(
-                                            color: neutral2,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                            height: 1.5,
-                                          ),
-                                          textAlign: TextAlign.center,
-                                          textDirection: TextDirection.rtl,
-                                        )),
-                                  ],
-                                )),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    // kNavigator(context).pop();
-                                    // Navigator.of(context).popUntil((route) => route.isFirst);
-                                  kPushNavigator(
-                                      context,
-                                      GDashboard(
-                                        homePage: FlyerChatV2(
-                                          room: types.Room(
-                                              users: [widget.flyerUser!],
-                                              // Adds the user to group
-                                              type: types.RoomType.group,
-                                              id: 'ClZEotxQ0ybSVlNykN0e'),
-                                          // currentUser: widget.userData,),
-                                          flyerUser: userData,
-                                        ),
                                       ),
-                                      replace: true);
-                                  },
-                                  child: const Text( 'התחל',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold, color: cRilPurple)),
-                                ),
-                              ],
-                            );
-                          },
-                          child: const Text('המשך',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: cRilDeepPurple
-                              )),
-                        ),
-                        TextButton(
-                          onPressed: () => kNavigator(context).pop(),
-                          child: const Text('חזור',
-                              style: TextStyle(
-                                  color: Colors.grey
-                              )),
-                        ),
-                      ]
-                      );
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          const Text(
+                                            'רילטופיה',
+                                            textDirection: TextDirection.rtl,
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 25),
+                                          ),
+                                          SvgPicture.asset(
+                                            'assets/svg_icons/CleanLogo.svg',
+                                            height: 30,
+                                            // color: StreamChatTheme.of(context).colorTheme.accentPrimary,
+                                          ),
+                                          // trailing: Image.asset('assets/RilTopialLogoAndTxt.png',
+                                          //   height: 45,)
+                                        ],
+                                      ),
+                                      const SizedBox(height: 20),
+                                      const Center(
+                                          child: Text(
+                                        'כולם כאן בגיל שלך (+3-)'
+                                        '\n זה המקום להכיר, לשתף, לעזור ולהיות מי שאתה!',
+                                        style: TextStyle(
+                                          color: neutral2,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          height: 1.5,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                        textDirection: TextDirection.rtl,
+                                      )),
+                                    ],
+                                  )),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        // kNavigator(context).pop();
+                                        // Navigator.of(context).popUntil((route) => route.isFirst);
+                                        kPushNavigator(
+                                            context,
+                                            GDashboard(
+                                              homePage: RilHomePage(
+                                                room: types.Room(
+                                                    users: [widget.flyerUser!],
+                                                    // Adds the user to group
+                                                    type: types.RoomType.group,
+                                                    id: 'ClZEotxQ0ybSVlNykN0e'),
+                                                // currentUser: widget.userData,),
+                                                flyerUser: userData,
+                                              ),
+                                            ),
+                                            replace: true);
+                                      },
+                                      child: const Text('התחל',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: cRilPurple)),
+                                    ),
+                                  ],
+                                );
+                              },
+                              child: const Text('המשך', // המשך
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: cRilDeepPurple)),
+                            ),
+                            TextButton(
+                              onPressed: () => kNavigator(context).pop(),
+                              child: const Text('חזור',
+                                  style: TextStyle(color: Colors.grey)),
+                            ),
+                          ]);
                     }
                   },
                   child: Container(
@@ -398,31 +410,59 @@ class _ProfilePageState extends State<ProfilePage> {
                           width: 2),
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: const ListTile(
+                    child: ListTile(
                       visualDensity: VisualDensity.compact,
                       title: Text(
-                        'סיום',
-                        style: TextStyle(
+                        widget.fromLoginPage ? 'סיום' : 'שמור וחזור',
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),
                       ),
 
-/*                subtitle: Text(
-                        AppLocalizations.of(context).streamTestAccount,
-                        style: StreamChatTheme.of(context)
-                            .textTheme
-                            .footnote
-                            .copyWith(
-                          color: StreamChatTheme.of(context)
-                              .colorTheme
-                              .textLowEmphasis,
-                        ),
-                      ),*/
-                      trailing: Icon(
+                      trailing: const Icon(
                         Icons.done_rounded,
                         color: cRilPurple,
+                        size: 28,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
+            Directionality(
+              textDirection: TextDirection.rtl,
+              child: Padding(
+                padding:
+                const EdgeInsets.symmetric(horizontal: 20.0, vertical: 4),
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(10),
+                  onTap: () => kPushNavigator(context, const LoginPage()),
+                  child: Container(
+                    padding: const EdgeInsets.all(8.0),
+                    decoration: BoxDecoration(
+                      // color: StreamChatTheme.of(context).colorTheme.barsBg,
+                      border: Border.all(
+                          color: Colors.grey[400]!,
+                          width: 2),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: ListTile(
+                      visualDensity: VisualDensity.compact,
+                      title: Text(
+                        'יציאה',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey,
+                        ),
+                      ),
+
+                      trailing: Icon(
+                        Icons.logout,
+                        color: Colors.grey[400],
                         size: 28,
                       ),
                     ),

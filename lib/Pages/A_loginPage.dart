@@ -15,7 +15,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../theme/config.dart';
-import 'flyerChatV2.dart';
+import 'C_rilHomePage.dart';
 import '../dump/usersPage.dart';
 import '../dump/mainPage.dart';
 
@@ -181,7 +181,7 @@ class _LoginPageState extends State<LoginPage> {
                           kPushNavigator(
                               context,
                               GDashboard(
-                                homePage: FlyerChatV2(
+                                homePage: RilHomePage(
                                   room: types.Room(
                                       users: [types.User.fromJson(userDataFetched!)],
                                       // Adds the user to group
@@ -211,7 +211,8 @@ class _LoginPageState extends State<LoginPage> {
                           setState(() => isLoading = false);
                           kPushNavigator(
                             context,
-                            ProfilePage(flyerUser: flyerUser), /*replace: true*/
+                            ProfilePage(flyerUser: flyerUser,
+                              fromLoginPage: true,), /*replace: true*/
                           );
                         }
                       }

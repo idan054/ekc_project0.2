@@ -22,7 +22,7 @@ import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../myUtil.dart';
-import 'flyerChatV2.dart';
+import 'C_rilHomePage.dart';
 import '../dump/usersPage.dart';
 
 class FlyerDm extends StatefulWidget {
@@ -82,7 +82,7 @@ class _FlyerDmState extends State<FlyerDm> {
                 child: IconButton(
                     onPressed: () => kPushNavigator(context,
                         GDashboard(homePage:
-                        FlyerChatV2(
+                        RilHomePage(
                             room: types.Room(
                                 users: [types.User(id: '${authUser?.uid}')], // Adds the user to group
                                 type: types.RoomType.group,

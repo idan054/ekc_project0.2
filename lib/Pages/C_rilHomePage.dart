@@ -65,17 +65,17 @@ import 'flyerDm.dart';
 bool localIsShown = false;
 types.User? flyerUser; // temp Provider
 
-class FlyerChatV2 extends StatefulWidget {
+class RilHomePage extends StatefulWidget {
   final types.Room room;
   types.User? flyerUser;
 
-  FlyerChatV2({Key? key, this.flyerUser, required this.room}) : super(key: key);
+  RilHomePage({Key? key, this.flyerUser, required this.room}) : super(key: key);
 
   @override
-  _FlyerChatV2State createState() => _FlyerChatV2State();
+  _RilHomePageState createState() => _RilHomePageState();
 }
 
-class _FlyerChatV2State extends State<FlyerChatV2> {
+class _RilHomePageState extends State<RilHomePage> {
   User? authUser = FirebaseAuth.instance.currentUser;
   bool showLoader = true;
   bool _isAttachmentUploading = false;
@@ -437,9 +437,10 @@ class _FlyerChatV2State extends State<FlyerChatV2> {
     config.app.isModerator = flyerUser.metadata?['MyModerator'] ?? false;
 
     bool isAgeSet = flyerUser.metadata?['age'] != null;
-    // print('flyerChatV2.dart isAgeSet $isAgeSet');
+    // print('C_rilHomePage.dart isAgeSet $isAgeSet');
     if (!isAgeSet) {
-      kPushNavigator(context, ProfilePage(flyerUser: flyerUser), replace: true);
+      kPushNavigator(context, ProfilePage(flyerUser: flyerUser,
+        fromLoginPage: true,), replace: true);
     }
   }
 

@@ -1,4 +1,4 @@
-import 'package:ekc_project/Pages/flyerChatV2.dart';
+import 'package:ekc_project/Pages/C_rilHomePage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
               if (snapshot.hasData) {
                 return
                 GDashboard(homePage:
-                  FlyerChatV2(
+                  RilHomePage(
                     room: types.Room(
                         users: [types.User(id: '${authUser?.uid}')], // Adds the user to group
                         type: types.RoomType.group,

@@ -1,6 +1,6 @@
 import 'dart:math';
 import 'package:stop_watch_timer/stop_watch_timer.dart';  // Import stop_watch_timer
-import 'package:ekc_project/Pages/flyerChatV2.dart';
+import 'package:ekc_project/Pages/C_rilHomePage.dart';
 import 'package:ekc_project/Pages/roomsPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -17,13 +17,10 @@ import '../theme/colors.dart';
 import '../theme/config.dart';
 import '../theme/constants.dart';
 import 'A_loginPage.dart';
+import 'B_profilePage.dart';
 
 class GDashboard extends StatefulWidget {
   final Widget homePage;
-
-  // final UserCredential? currentUser;
-
-  // final currentUser;
 
   const GDashboard({required this.homePage}) : super();
 
@@ -90,26 +87,23 @@ class _GDashboardState extends State<GDashboard> {
           actions: [
             Center(
               child:
-                  // pickedImage != null ?
-                  // CircleAvatar(
-                  //     backgroundColor: Colors.grey,
-                  //     radius: 39 / 2, // 40
-                  //     child: CircleAvatar(
-                  //         backgroundColor: Colors.grey,
-                  //         radius: 35, // 40
-                  //         backgroundImage: FileImage(
-                  //             File(pickedImage!.path)))
-                  // ) :
+
                   InkWell(
-                onTap: () => showRilAlert(context, true),
-                child: CircleAvatar(
-                    backgroundColor: Colors.grey[400]!,
-                    radius: 42 / 2,
-                    child: CircleAvatar(
+                // onTap: () => showRilAlert(context, true),
+                onTap: () =>
+                    kPushNavigator(
+                      context,
+                      ProfilePage(flyerUser: flyerUser,
+                        fromLoginPage: false,),
+                    ),
+                  child: CircleAvatar(
                       backgroundColor: Colors.grey[400]!,
-                      radius: 37 / 2,
-                      backgroundImage: NetworkImage('${authUser?.photoURL}'),
-                    )),
+                      radius: 42 / 2,
+                      child: CircleAvatar(
+                        backgroundColor: Colors.grey[400]!,
+                        radius: 37 / 2,
+                        backgroundImage: NetworkImage('${authUser?.photoURL}'),
+                      )),
               ),
             ),
             const SizedBox(width: 20),
