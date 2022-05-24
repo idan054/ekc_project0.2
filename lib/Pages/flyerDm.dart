@@ -1,15 +1,12 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ekc_project/Pages/ril_gDashboard.dart';
-import 'package:ekc_project/Widgets/addUserDialog.dart';
 import 'package:ekc_project/Widgets/myAppBar.dart';
-import 'package:ekc_project/Widgets/myDrawers.dart';
 import 'package:ekc_project/theme/constants.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
@@ -20,25 +17,13 @@ import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
-
-import '../myUtil.dart';
 import 'C_rilHomePage.dart';
-import '../dump/usersPage.dart';
+
 
 class FlyerDm extends StatefulWidget {
-/*  const FireBaseChatPage({
-    Key? key,
-    required this.room,
-  }) : super(key: key);*/
-
   final types.Room room;
   final String? otherUserName;
-
   final GoogleSignInAccount? currentUser;
-
-  // final UserCredential? currentUser;
-
-  // final currentUser;
 
   const FlyerDm({this.currentUser, required this.room, this.otherUserName}) : super();
 

@@ -16,8 +16,6 @@ import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../theme/config.dart';
 import 'C_rilHomePage.dart';
-import '../dump/usersPage.dart';
-import '../dump/mainPage.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;

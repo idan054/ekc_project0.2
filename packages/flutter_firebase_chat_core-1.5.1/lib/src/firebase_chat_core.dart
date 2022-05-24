@@ -221,6 +221,7 @@ class FirebaseChatCore {
               newMsg.createdAt!.toDouble()
               .compareTo(oldMsg.createdAt!.toDouble()));
 
+          // Todo: Currently this is INSTEAD createdAt
           //~ Move reported posts to Top for Moderators
           if(my.config.app.isModerator
               && my.config.app.moderatorMode.value) {

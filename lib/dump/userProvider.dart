@@ -3,6 +3,7 @@
 // 1. Set Class
 // 2. Insert details to class
 // 3. Get Details any time!
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -67,3 +68,12 @@ class UserDetails extends ChangeNotifier {
   child: MyApp(),
   ),*/
 }
+
+//~ Stream tasks
+Stream<QuerySnapshot<Map<String, dynamic>>> streamTasks({String? roomId}) {
+  return FirebaseFirestore.instance
+      .collection('rooms/$roomId/tasks')
+      .get()
+      .asStream();
+}
+

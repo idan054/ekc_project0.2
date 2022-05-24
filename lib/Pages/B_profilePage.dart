@@ -1,30 +1,15 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ekc_project/Pages/ril_gDashboard.dart';
-import 'package:ekc_project/dump/usersPage.dart';
-import 'package:ekc_project/Widgets/addPtDialog.dart';
 import 'package:ekc_project/Widgets/myAppBar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
-import 'dart:convert';
-import 'package:ekc_project/Widgets/myDrawers.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart'
-    show LengthLimitingTextInputFormatter, rootBundle;
-import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/date_symbol_data_local.dart';
-import 'package:mime/mime.dart';
-import 'package:open_file/open_file.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:uuid/uuid.dart';
 import 'dart:async';
 import 'dart:io';
 import '../Widgets/snackbar.dart';
@@ -32,8 +17,6 @@ import '../theme/colors.dart';
 import '../theme/config.dart';
 import '../theme/constants.dart';
 import 'A_loginPage.dart';
-import 'dummyPage.dart';
-import '../dump/flyerChat.dart';
 import 'C_rilHomePage.dart';
 
 class ProfilePage extends StatefulWidget {

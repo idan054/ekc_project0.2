@@ -1,7 +1,4 @@
 import 'dart:io';
-import 'package:ekc_project/Widgets/addUserDialog.dart';
-import 'package:ekc_project/Widgets/myAppBar.dart';
-import 'package:ekc_project/Widgets/myDrawers.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -16,9 +13,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
-
-import '../myUtil.dart';
-import 'usersPage.dart';
 
 class FlyerDmOriginal extends StatefulWidget {
 /*  const FireBaseChatPage({
@@ -88,43 +82,6 @@ class _FlyerDmOriginalState extends State<FlyerDmOriginal> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer:
-          // true = Projects Drawer
-          projectDrawer(context, widget.currentUser, true, widget.room.id),
-      endDrawer:
-          // false = Task Drawer
-          taskDrawer(context, widget.currentUser, false, widget.room.id),
-      //
-      // appBar: myAppBar('Chat with ${widget.room.users.first.lastName}'),
-      appBar: myAppBar(context, appBarTitle, actions: <Widget>[
-        widget.room.type.toString() == 'RoomType.direct' ? Container() : Builder(
-          // builder needed for Scaffold.of(context).openEndDrawer()
-          builder: (context) => IconButton(
-            icon: const Icon(Icons.group_add),
-            onPressed: () async {
-              showDialog(
-                  context: context,
-                  builder: (BuildContext dialogContext) {
-                    return AddUserDialog(
-                      currentUsers: roomEmailUsers,
-                      contentFieldController: projectAddUserController,
-                      currentUser: widget.currentUser,
-                      room: widget.room,
-
-                    );
-                  });
-            },
-          ),
-        ),
-        Builder(
-          // builder needed for Scaffold.of(context).openEndDrawer()
-          builder: (context) => IconButton(
-            icon: const Icon(Icons.list),
-            onPressed: () => Scaffold.of(context).openEndDrawer(),
-            tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
-          ),
-        ),
-      ]),
       body: StreamBuilder<types.Room>(
         initialData: widget.room,
         stream: FirebaseChatCore.instance.room(widget.room.id),

@@ -1,63 +1,29 @@
 import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
-import 'package:ekc_project/dump/mainPage.dart';
-import 'package:ekc_project/Pages/roomsPage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart' as intl;
-
-import 'package:ekc_project/Widgets/addUserDialog.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ekc_project/dump/flyerChat.dart';
-import 'package:ekc_project/Widgets/addPtDialog.dart';
-import 'package:ekc_project/Widgets/myAppBar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
-import 'dart:convert';
-import 'package:ekc_project/Widgets/myDrawers.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/date_symbol_data_local.dart';
 import 'package:mime/mime.dart';
 import 'package:open_file/open_file.dart';
-import 'package:uuid/uuid.dart';
-import 'package:ekc_project/Widgets/myAppBar.dart';
-import 'package:ekc_project/Widgets/myDrawers.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
-import 'package:flutter_chat_ui/flutter_chat_ui.dart';
-import 'package:flutter_chat_ui/flutter_chat_ui.dart' as lol;
-import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
-import 'package:image_picker/image_picker.dart';
-import 'package:mime/mime.dart';
-import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
-
 import '../Widgets/cardPost.dart';
 import '../Widgets/loadingWidget.dart';
 import '../Widgets/snackbar.dart';
-import '../myUtil.dart';
 import '../theme/colors.dart';
 import '../theme/config.dart';
 import '../theme/constants.dart';
-import '../dump/usersPage.dart';
-import 'package:bubble/bubble.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'A_loginPage.dart';
 import 'B_profilePage.dart';
 import 'flyerDm.dart';
@@ -137,8 +103,7 @@ class _RilHomePageState extends State<RilHomePage> {
                             color: Colors.grey[400],
                             size: 20,
                           ),
-                          if(msgReported && config.app.isModerator
-                                         && config.app.moderatorMode.value)
+                          if(msgReported && config.app.moderatorMode.value)
                           Icon(
                             Icons.flag,
                             color: Colors.red[700]?.withOpacity(0.50),
@@ -156,17 +121,7 @@ class _RilHomePageState extends State<RilHomePage> {
                         textDirection: TextDirection.rtl,
                         child: Column(
                           children:  [
-                            if(!config.app.isModerator)
-                            ListTile(
-                              title: const Text('דווח על הפוסט'),
-                              leading: const Icon(Icons.flag),
-                              onTap: () async {
-                                await _handleReportMsg(context, message);
-                                setState(() => kNavigator(context).pop());
-                              },
-                            ),
-                            if(config.app.isModerator
-                                && config.app.moderatorMode.value)
+                            config.app.moderatorMode.value ?
                               ListTile(
                                 title: Text('מחק הודעה זו'),
                                 subtitle: Text('זמין למנהלים בלבד'),
@@ -176,7 +131,15 @@ class _RilHomePageState extends State<RilHomePage> {
                                 await _handleDeleteMsg(message);
                                   kNavigator(context).pop();
                                 },
-                              ),
+                              ) :
+                            ListTile(
+                              title: const Text('דווח על הפוסט'),
+                              leading: const Icon(Icons.flag),
+                              onTap: () async {
+                                await _handleReportMsg(context, message);
+                                setState(() => kNavigator(context).pop());
+                              },
+                            ),
                             ListTile(
                               title: Text('חסום משתמש זה'),
                               subtitle: Text('לעולם לא יוצגו פוסטים ממשתמש זה'),
