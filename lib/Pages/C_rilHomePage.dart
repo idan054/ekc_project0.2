@@ -24,6 +24,7 @@ import '../Widgets/snackbar.dart';
 import '../theme/colors.dart';
 import '../theme/config.dart';
 import '../theme/constants.dart';
+import '../theme/textV2.dart';
 import 'A_loginPage.dart';
 import 'B_profilePage.dart';
 import 'flyerDmChat.dart';
@@ -159,11 +160,7 @@ class _RilHomePageState extends State<RilHomePage> {
                 alignment: Alignment.topRight,
                 child: Text(
                   text,
-                  style: const TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.normal,
-                    fontSize: 16,
-                  ),
+                  style: kTextTheme(context).bodyText1
                 ),
               ),
               Container(
@@ -179,26 +176,15 @@ class _RilHomePageState extends State<RilHomePage> {
                           visualDensity: VisualDensity.standard,
                           title: Text(
                             '$name ($age)',
-                            style: TextStyle(
-                                // color: Colors.primaries[Random().nextInt(Colors.primaries.length)].shade600,
-                                // color: Colors.black
-                                color: Colors.grey[600]!,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14),
-                            // style: bodyText1Format(context)
+                            style:  kTextTheme(context).subtitle1,
                           ),
                           subtitle: Text(
                             /*' · '*/
                             'לפני '
                             '$createdAgo',
                             textDirection: TextDirection.rtl,
-                            style: TextStyle(
-                                // color: Colors.primaries[Random().nextInt(Colors.primaries.length)].shade600,
-                                // color: Colors.black
-                                color: Colors.grey[600],
-                                fontWeight: FontWeight.normal,
-                                fontSize: 12),
-                            // style: bodyText1Format(context)
+                            style: kTextTheme(context).subtitle1
+                                  ?.copyWith(fontSize: 12),
                           ),
                           contentPadding: EdgeInsets.zero,
                           leading: CircleAvatar(
@@ -329,15 +315,10 @@ class _RilHomePageState extends State<RilHomePage> {
                                     ),
                                   );
                                 } else {
-                                  return const Center(
+                                  return Center(
                                     child: Text(
                                       'טוען...',
-                                      style: TextStyle(
-                                        color: neutral2,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        height: 1.5,
-                                      ),
+                                      style: kTextTheme(context).caption,
                                       textAlign: TextAlign.center,
                                       textDirection: TextDirection.rtl,
                                     ),
@@ -349,12 +330,7 @@ class _RilHomePageState extends State<RilHomePage> {
                             return Center(
                               child: Text(
                                 '${roomSnapshot.data}',
-                                style: TextStyle(
-                                  color: neutral2,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                  height: 1.5,
-                                ),
+                                style: kTextTheme(context).caption,
                               ),
                             );
                           }
@@ -362,15 +338,10 @@ class _RilHomePageState extends State<RilHomePage> {
                       );
                     });
               } else {
-                return const Center(
+                return Center(
                   child: Text(
                     'Loading...',
-                    style: TextStyle(
-                      color: neutral2,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      height: 1.5,
-                    ),
+                    style: kTextTheme(context).caption,
                   ),
                 );
               }
@@ -675,10 +646,7 @@ showRilAlert(context, bool exitProfile) async {
             padding: const EdgeInsets.only(top: 13.0),
             child: Text(
               exitProfile ? 'תרצה לצאת' : 'ברוכים הבאים אל',
-              style: const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 25),
+              style: kTextTheme(context).caption,
             ),
           ),
           Row(
@@ -687,32 +655,18 @@ showRilAlert(context, bool exitProfile) async {
               Text(
                 exitProfile ? ' מרילטופיה?' : 'רילטופיה',
                 textDirection: TextDirection.rtl,
-                style: const TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 25),
+                style: kTextTheme(context).headline1,
               ),
 
-              SvgPicture.asset(
-                'assets/svg_icons/CleanLogo.svg',
-                height: 30,
-                // color: StreamChatTheme.of(context).colorTheme.accentPrimary,
-              ),
-              // trailing: Image.asset('assets/RilTopialLogoAndTxt.png',
-              //   height: 45,)
+              SvgPicture.asset('assets/svg_icons/CleanLogo.svg', height: 30,),
             ],
           ),
           const SizedBox(height: 20),
-          const Center(
+           Center(
               child: Text(
             'כולם כאן בגיל שלך (+3-)'
             '\n זה המקום להכיר, לשתף, לעזור ולהיות מי שאתה!',
-            style: TextStyle(
-              color: neutral2,
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              height: 1.5,
-            ),
+            style: kTextTheme(context).caption,
             textAlign: TextAlign.center,
             textDirection: TextDirection.rtl,
           )),
@@ -818,11 +772,8 @@ showCustomRilAlert(context,
   showDialog(
     barrierDismissible: true,
     context: context,
-    // barrierColor: StreamChatTheme.of(context).colorTheme.overlay,
     builder: (context) => Center(
         child: AlertDialog(
-      // contentPadding: EdgeInsets.zero,
-      // titlePadding: EdgeInsets.zero,
       actionsAlignment: MainAxisAlignment.center,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
@@ -837,22 +788,14 @@ showCustomRilAlert(context,
                 child: Text(
                   '$title',
                   textDirection: TextDirection.rtl,
-                  style: const TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 25),
+                  style: kTextTheme(context).headline1,
                 ),
               ),
               const SizedBox(height: 20),
               Center(
                   child: Text(
                 '$desc',
-                style: const TextStyle(
-                  color: neutral2,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  height: 1.5,
-                ),
+                style: kTextTheme(context).caption,
                 textAlign: TextAlign.center,
                 textDirection: TextDirection.rtl,
               )),

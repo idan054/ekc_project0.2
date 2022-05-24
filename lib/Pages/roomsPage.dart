@@ -155,14 +155,9 @@ class _RoomsPageState extends State<RoomsPage> {
               ],
             );
           } else {
-            return const Center(
+            return Center(
                 child: Text('התחל שיחה עם חברים חדשים \n דרך רילטופיה!',
-              style: TextStyle(
-                color: neutral2,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                height: 1.5,
-              ),
+              style: kTextTheme(context).caption,
               textAlign: TextAlign.center,
               textDirection: TextDirection.rtl,
             ));

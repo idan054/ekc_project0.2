@@ -1,11 +1,9 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_chat_ui/src/widgets/inherited_l10n.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:photo_view/photo_view_gallery.dart';
-
 import '../chat_l10n.dart';
 import '../chat_theme.dart';
 import '../conditional/conditional.dart';
@@ -21,6 +19,7 @@ import 'inherited_chat_theme.dart';
 import 'inherited_user.dart';
 import 'input.dart';
 import 'message.dart';
+import 'package:ekc_project/theme/constants.dart';
 
 /// Entry widget, represents the complete chat. If you wrap it in [SafeArea] and
 /// it should be full screen, set [SafeArea]'s `bottom` to `false`.
@@ -314,14 +313,9 @@ class _ChatState extends State<Chat> {
             horizontal: 24,
           ),
           child: widget.myIsPostStyle
-              ? const Text(
+              ? Text(
                   'לא נמצאו פוסטים\nנסה לכתוב אחד משלך!',
-                  style: TextStyle(
-                    color: neutral2,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    height: 1.5,
-                  ),
+                  style: kTextTheme(context).caption,
                   textAlign: TextAlign.center,
                   textDirection: TextDirection.rtl,
                 )

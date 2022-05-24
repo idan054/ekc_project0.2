@@ -29,12 +29,7 @@ PreferredSizeWidget? myAppBar(context, String? title, {actions = const <Widget> 
     title: Align(
       alignment: Alignment.centerRight,
       child: Text(title ?? '',
-      style: const TextStyle(
-        color: neutral0,
-        fontSize: 18,
-        fontWeight: FontWeight.bold,
-        height: 1.2,
-      ),),
+      style: kTextTheme(context).bodyText2),
     ),
     actions: actions,
   );}

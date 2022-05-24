@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 //~ Universal
 Size kMediaQuerySize(context) => MediaQuery.of(context).size;
-ThemeData kTheme(context) => Theme.of(context);
+TextTheme kTextTheme(context) => Theme.of(context).textTheme;
 
 //~ Provider shortcuts
 // Provider models shortcuts

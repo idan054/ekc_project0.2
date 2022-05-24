@@ -335,16 +335,11 @@ class _GDashboardState extends State<GDashboard> {
           children: [
             const RoomsPage(),
             widget.homePage, // [flyerChatV2.dart]
-            const Scaffold(
+             Scaffold(
               body: Center(
                   child: Text(
                 'Coming soon...',
-                style: TextStyle(
-                  color: neutral2,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  height: 1.5,
-                ),
+                style: kTextTheme(context).caption,
               )),
             )
           ],

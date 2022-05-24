@@ -16,6 +16,7 @@ import '../Widgets/snackbar.dart';
 import '../theme/colors.dart';
 import '../theme/config.dart';
 import '../theme/constants.dart';
+import '../theme/textV2.dart';
 import 'A_loginPage.dart';
 import 'C_rilHomePage.dart';
 
@@ -180,24 +181,16 @@ class _ProfilePageState extends State<ProfilePage> {
                               BorderSide(color: cRilDeepPurple, width: 2),
                         ),
                         hintText: '${fUSer?.displayName}',
-                        hintStyle: const TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 24),
-                      ),
-                      style: const TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 24),
+                        hintStyle: kTextTheme(context).headline1),
+                        style: kTextTheme(context).headline1,
                     ),
                   ),
                 ),
                 const SizedBox(width: 7),
-                const Text(
+                Text(
                   'שלום',
                   textDirection: TextDirection.rtl,
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 24),
+                  style: kTextTheme(context).headline1
                 ),
               ],
             ),
@@ -207,10 +200,10 @@ class _ProfilePageState extends State<ProfilePage> {
                   height: 8,
                 ),
             (widget.fromLoginPage || config.app.isModerator) ?
-            const Text(
+            Text(
               'מה תאריך הלידה שלך?',
               textDirection: TextDirection.rtl,
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+              style: kTextTheme(context).headline1,
             )
               : const SizedBox(
                 height: 150,
@@ -295,48 +288,34 @@ class _ProfilePageState extends State<ProfilePage> {
                                       child: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      const Padding(
-                                        padding: EdgeInsets.only(top: 13.0),
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 13.0),
                                         child: Text(
                                           'ברוכים הבאים אל',
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 25),
+                                          style: kTextTheme(context).headline1,
                                         ),
                                       ),
                                       Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
                                         children: [
-                                          const Text(
+                                          Text(
                                             'רילטופיה',
                                             textDirection: TextDirection.rtl,
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 25),
+                                            style: kTextTheme(context).headline1,
                                           ),
                                           SvgPicture.asset(
                                             'assets/svg_icons/CleanLogo.svg',
                                             height: 30,
-                                            // color: StreamChatTheme.of(context).colorTheme.accentPrimary,
                                           ),
-                                          // trailing: Image.asset('assets/RilTopialLogoAndTxt.png',
-                                          //   height: 45,)
                                         ],
                                       ),
                                       const SizedBox(height: 20),
-                                      const Center(
+                                       Center(
                                           child: Text(
                                         'כולם כאן בגיל שלך (+3-)'
                                         '\n זה המקום להכיר, לשתף, לעזור ולהיות מי שאתה!',
-                                        style: TextStyle(
-                                          color: neutral2,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          height: 1.5,
-                                        ),
+                                        style: kTextTheme(context).caption,
                                         textAlign: TextAlign.center,
                                         textDirection: TextDirection.rtl,
                                       )),
@@ -345,8 +324,6 @@ class _ProfilePageState extends State<ProfilePage> {
                                   actions: [
                                     TextButton(
                                       onPressed: () {
-                                        // kNavigator(context).pop();
-                                        // Navigator.of(context).popUntil((route) => route.isFirst);
                                         kPushNavigator(
                                             context,
                                             GDashboard(
@@ -397,11 +374,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       visualDensity: VisualDensity.compact,
                       title: Text(
                         widget.fromLoginPage ? 'סיום' : 'שמור וחזור',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
+                        style: kTextTheme(context).bodyText2,
                       ),
 
                       trailing: const Icon(
@@ -436,11 +409,8 @@ class _ProfilePageState extends State<ProfilePage> {
                       visualDensity: VisualDensity.compact,
                       title: Text(
                         'יציאה',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey,
-                        ),
+                        style: kTextTheme(context).bodyText2
+                                ?.copyWith(color: Colors.grey)
                       ),
 
                       trailing: Icon(

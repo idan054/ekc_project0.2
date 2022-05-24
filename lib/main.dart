@@ -1,4 +1,5 @@
 import 'package:ekc_project/Pages/C_rilHomePage.dart';
+import 'package:ekc_project/theme/textV2.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -28,6 +29,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        textTheme: buildLightText()
       ),
         home: StreamBuilder<User?>(
             stream: FirebaseAuth.instance.authStateChanges(),

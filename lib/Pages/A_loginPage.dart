@@ -7,6 +7,7 @@ import 'package:ekc_project/Pages/ril_gDashboard.dart';
 import 'package:ekc_project/Widgets/myAppBar.dart';
 import 'package:ekc_project/theme/colors.dart';
 import 'package:ekc_project/theme/constants.dart';
+import 'package:ekc_project/theme/textV2.dart';
 import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
@@ -18,6 +19,7 @@ import '../theme/config.dart';
 import 'C_rilHomePage.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 
 class LoginPage extends StatefulWidget {
@@ -52,10 +54,7 @@ class _LoginPageState extends State<LoginPage> {
                 padding: const EdgeInsets.only(top: 13.0),
                 child: Text(
                   'ברוכים הבאים אל',
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 25),
+                  style: kTextTheme(context).headline1,
                 ),
               ),
               Row(
@@ -63,10 +62,7 @@ class _LoginPageState extends State<LoginPage> {
                 children: [
                   Text(
                     'רילטופיה',
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 25),
+                    style: kTextTheme(context).headline1,
                   ),
 
                   SvgPicture.asset(
@@ -169,28 +165,34 @@ class _LoginPageState extends State<LoginPage> {
 
                         // if(userDoc.exists){
                         print('A_loginPage currentUser $userDataFetched');
-                        bool isAgeSet = userDataFetched?['metadata']['age'] != null;
+                        bool isAgeSet =
+                            userDataFetched?['metadata']['age'] != null;
                         // print('isAgeSet $isAgeSet');
                         if (config.debug.alwaysSignup
-                        // || currentUser != null
-                        || isAgeSet
-                        ) { // AKA user exists
+                            // || currentUser != null
+                            ||
+                            isAgeSet) {
+                          // AKA user exists
                           setState(() => isLoading = false);
                           kPushNavigator(
                               context,
                               GDashboard(
                                 homePage: RilHomePage(
                                   room: types.Room(
-                                      users: [types.User.fromJson(userDataFetched!)],
+                                      users: [
+                                        types.User.fromJson(userDataFetched!)
+                                      ],
                                       // Adds the user to group
                                       type: types.RoomType.group,
                                       id: 'ClZEotxQ0ybSVlNykN0e'),
                                   // currentUser: widget.userData,),
-                                  flyerUser: types.User.fromJson(userDataFetched),
+                                  flyerUser:
+                                      types.User.fromJson(userDataFetched),
                                 ),
                               ),
                               replace: true);
-                        } else { // AKA new user
+                        } else {
+                          // AKA new user
                           var flyerUser = types.User(
                               firstName: fireStoreUser?.displayName,
                               id: fireStoreUser?.uid ?? UniqueKey().toString(),
@@ -201,16 +203,18 @@ class _LoginPageState extends State<LoginPage> {
                           await FirebaseChatCore.instance
                               .createUserInFirestore(flyerUser)
                               .whenComplete(() => print(
-                              'firebaseDatabase_basedFlyer Completed \n(FirebaseChatCore.instance.createUserInFirestore)'
+                                  'firebaseDatabase_basedFlyer Completed \n(FirebaseChatCore.instance.createUserInFirestore)'
                                   '\n flyerUser: $flyerUser'))
                               .onError((error, stackTrace) => print(
-                              'firebaseDatabase_basedFlyer FAILED: $error \n-|- $stackTrace \n(FirebaseChatCore.instance.createUserInFirestore)'));
+                                  'firebaseDatabase_basedFlyer FAILED: $error \n-|- $stackTrace \n(FirebaseChatCore.instance.createUserInFirestore)'));
 
                           setState(() => isLoading = false);
                           kPushNavigator(
                             context,
-                            ProfilePage(flyerUser: flyerUser,
-                              fromLoginPage: true,), /*replace: true*/
+                            ProfilePage(
+                              flyerUser: flyerUser,
+                              fromLoginPage: true,
+                            ), /*replace: true*/
                           );
                         }
                       }
@@ -234,24 +238,8 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         title: Text(
                           isLoading ? 'מיד נכנסים...' : 'התחבר באמצעות גוגל',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
+                          style: kTextTheme(context).bodyText2,
                         ),
-
-/*                subtitle: Text(
-                        AppLocalizations.of(context).streamTestAccount,
-                        style: StreamChatTheme.of(context)
-                            .textTheme
-                            .footnote
-                            .copyWith(
-                          color: StreamChatTheme.of(context)
-                              .colorTheme
-                              .textLowEmphasis,
-                        ),
-                      ),*/
                         trailing: Transform.scale(
                             scale: -1,
                             child: const Icon(
@@ -279,14 +267,16 @@ class _LoginPageState extends State<LoginPage> {
                           'Terms of use',
                           // 'לתנאי המדיניות',
                           style:
-                          TextStyle(color: Colors.blue[600]!, fontSize: 12),
+                              TextStyle(color: Colors.blue[600]!, fontSize: 12),
                         ),
                       ],
                     ),
                     onTap: () => launchUrl(Uri.parse(
                         'https://www.privacypolicies.com/live/4ae28974-cd40-4c8e-b265-6d6da2c7690b'))),
               ),
-              SizedBox(height: 15,),
+              SizedBox(
+                height: 15,
+              ),
             ],
           ), // Column
         ), // Center
@@ -321,26 +311,14 @@ Widget buildInfoListTile(
           child: ListTile(
             visualDensity: VisualDensity.compact,
             leading: SvgPicture.asset(
-              '$svgAsset',
+              svgAsset,
               height: 30,
               color: Colors.grey[500]?.withOpacity(0.75),
-              // color: StreamChatTheme.of(context).colorTheme.textLowEmphasis.withOpacity(0.6),
             ),
-            title: Text(
-              '$title',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-            ),
+            title: Text(title, style: kTextTheme(context).bodyText2),
             subtitle: Text(
-              '$subTitle',
-              style: TextStyle(
-                fontSize: 14,
-                // fontWeight: FontWeight.bold,
-                color: Colors.grey[700],
-              ),
+              subTitle,
+              style: kTextTheme(context).subtitle1,
             ),
           ),
         ),

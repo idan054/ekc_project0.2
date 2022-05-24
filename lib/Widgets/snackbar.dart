@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../theme/constants.dart';
+import '../theme/textV2.dart';
+
 cleanSnack(BuildContext context,{
   required String text,
   Color? color,
@@ -18,10 +21,8 @@ cleanSnack(BuildContext context,{
           text,
           textAlign: TextAlign.center,
           textDirection: TextDirection.rtl,
-          style: TextStyle(
-              color: textColor ?? Colors.black,
-              fontSize: 16,
-              fontWeight: FontWeight.bold),
+          style: kTextTheme(context).bodyText2
+                    ?.copyWith(color: textColor ?? Colors.black,)
         ),
         duration: Duration(seconds: sec),
         action: action,
