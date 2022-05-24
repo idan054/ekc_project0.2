@@ -18,7 +18,7 @@ import 'package:open_file/open_file.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
-import '../Widgets/cardPost.dart';
+import '../Services/fetchTimeAgo.dart';
 import '../Widgets/loadingWidget.dart';
 import '../Widgets/snackbar.dart';
 import '../theme/colors.dart';
@@ -26,7 +26,7 @@ import '../theme/config.dart';
 import '../theme/constants.dart';
 import 'A_loginPage.dart';
 import 'B_profilePage.dart';
-import 'flyerDm.dart';
+import 'flyerDmChat.dart';
 
 bool localIsShown = false;
 types.User? flyerUser; // temp Provider
@@ -59,7 +59,7 @@ class _RilHomePageState extends State<RilHomePage> {
         '${message.metadata?['metadata']?['age'] ?? 'XY'}'.substring(0, 2);
     bool isCurrentUser = authUser!.uid == message.author.id;
     bool msgReported = message.metadata?['metadata']['msgReported'] ?? false;
-    var createdAgo = timeAgo(message.createdAt);
+    var createdAgo = fetchTimeAgo(message.createdAt);
 
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -71,7 +71,7 @@ class _RilHomePageState extends State<RilHomePage> {
                     await FirebaseChatCore.instance.createRoom(message.author);
                 kPushNavigator(
                     context,
-                    FlyerDm(
+                    FlyerDmChat(
                       room: room,
                     ));
               },
@@ -224,7 +224,7 @@ class _RilHomePageState extends State<RilHomePage> {
                                       .createRoom(message.author);
                                   kPushNavigator(
                                       context,
-                                      FlyerDm(
+                                      FlyerDmChat(
                                         room: room,
                                         otherUserName: name,
                                       ));

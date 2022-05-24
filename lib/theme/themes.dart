@@ -31,7 +31,7 @@ ThemeData buildLightTheme() {
     primaryColor: primaryColor, // Colors.black,
     backgroundColor: backgroundColor, // Colors.white,
     scaffoldBackgroundColor: scaffoldBackground,
-    iconTheme: IconThemeData(color: cGrey300),
+    iconTheme: const IconThemeData(color: cGrey300),
   );
 }
 

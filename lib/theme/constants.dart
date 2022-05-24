@@ -1,18 +1,19 @@
 
 import 'package:flutter/material.dart';
 
+/// Shortcuts:
 
-// Contexts shortcuts
-MediaQueryData kMediaQuery(context) => MediaQuery.of(context);
+//~ Universal
+Size kMediaQuerySize(context) => MediaQuery.of(context).size;
 ThemeData kTheme(context) => Theme.of(context);
-NavigatorState kNavigator(context) => Navigator.of(context);
 
+//~ Provider shortcuts
 // Provider models shortcuts
 // UniModel kUniModel(context, {bool listen = false})
 //             => Provider.of<UniModel>(context, listen: listen);
 
-
-// Smart navigation shortcuts
+//~ Navigation shortcuts
+NavigatorState kNavigator(context) => Navigator.of(context);
 Future<dynamic> kPushNavigator(context, screen,{bool replace = false}) {
     // Fixing push replacement
     if (replace) Navigator.of(context).popUntil((route) => route.isFirst);

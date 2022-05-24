@@ -90,7 +90,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 Positioned(
                   bottom: 0,
-                  left: kMediaQuery(context).size.width * 0.525,
+                  left: kMediaQuerySize(context).size.width * 0.525,
                   child: InkWell(
                     onTap: () async {
                       //~ 1: Choosing picture

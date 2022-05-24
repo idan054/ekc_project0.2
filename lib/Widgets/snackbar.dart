@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 
 cleanSnack(BuildContext context,{
@@ -14,19 +12,14 @@ cleanSnack(BuildContext context,{
       SnackBar(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
         behavior: SnackBarBehavior.floating,
-        // padding: const EdgeInsets.only(bottom: 15),
-        // backgroundColor: kColorSpiderRed.withOpacity(0.80),
-        // backgroundColor: Colors.grey[100]?.withOpacity(0.85),
-        backgroundColor: color == null ?
-            Colors.grey[100]?.withOpacity(0.85) : color,
+        backgroundColor: color ?? Colors.grey[100]?.withOpacity(0.85),
         margin: const EdgeInsets.fromLTRB(10, 10, 10, 80),
-        // content: Text(S.of(context).warning(message)),
         content: Text(
-          '$text',
+          text,
           textAlign: TextAlign.center,
           textDirection: TextDirection.rtl,
           style: TextStyle(
-              color: textColor == null ? Colors.black : textColor,
+              color: textColor ?? Colors.black,
               fontSize: 16,
               fontWeight: FontWeight.bold),
         ),

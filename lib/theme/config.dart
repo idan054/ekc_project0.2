@@ -27,8 +27,9 @@ class Debug {
   bool alwaysSignup = kDebugMode && false;
 }
 
+/// Notes:
 // ? CTRL + F: Outside Lib folder:
-//~ Hot to use ValueNotifier:
+//~ How to to use ValueNotifier:
 // 1 make a void that change the val by val.value
 // 2 change type to ValueNotifier
 // 3 add ValueListenableBuilder

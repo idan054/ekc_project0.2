@@ -10,7 +10,7 @@ import '../theme/colors.dart';
 import '../theme/config.dart';
 import '../theme/constants.dart';
 import 'A_loginPage.dart';
-import 'flyerDm.dart';
+import 'flyerDmChat.dart';
 
 class RoomsPage extends StatefulWidget {
   const RoomsPage({Key? key}) : super(key: key);
@@ -95,7 +95,7 @@ class _RoomsPageState extends State<RoomsPage> {
                           room: fetchedRtRoom,
                           onTap: () async {
                             kPushNavigator(
-                                context, FlyerDm(room: fetchedRtRoom));
+                                context, FlyerDmChat(room: fetchedRtRoom));
                           },
                         );
                       } else {
@@ -139,7 +139,7 @@ class _RoomsPageState extends State<RoomsPage> {
                                     .createRoom(otherUser);
                                 kPushNavigator(
                                     context,
-                                    FlyerDm(
+                                    FlyerDmChat(
                                       room: room,
                                     ));
                               },
@@ -326,7 +326,7 @@ class _RoomsPageState extends State<RoomsPage> {
 
                                         kPushNavigator(
                                             context,
-                                            FlyerDm(
+                                            FlyerDmChat(
                                               room: room,
                                             ));
                                       },

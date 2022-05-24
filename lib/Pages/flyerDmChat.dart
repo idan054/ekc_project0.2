@@ -20,18 +20,18 @@ import 'package:path_provider/path_provider.dart';
 import 'C_rilHomePage.dart';
 
 
-class FlyerDm extends StatefulWidget {
+class FlyerDmChat extends StatefulWidget {
   final types.Room room;
   final String? otherUserName;
   final GoogleSignInAccount? currentUser;
 
-  const FlyerDm({this.currentUser, required this.room, this.otherUserName}) : super();
+  const FlyerDmChat({this.currentUser, required this.room, this.otherUserName}) : super();
 
   @override
-  _FlyerDmState createState() => _FlyerDmState();
+  _FlyerDmChatState createState() => _FlyerDmChatState();
 }
 
-class _FlyerDmState extends State<FlyerDm> {
+class _FlyerDmChatState extends State<FlyerDmChat> {
   bool _isAttachmentUploading = false;
   types.User? otherUser;
   User? authUser = FirebaseAuth.instance.currentUser;

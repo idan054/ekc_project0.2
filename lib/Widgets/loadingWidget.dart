@@ -2,9 +2,6 @@ import 'package:ekc_project/theme/colors.dart';
 import 'package:flutter/material.dart';
 
 void showLoader(context) {
-  // print('isShowLoader $isHideLoader');
-  // isHideLoader = isHideLoader != isHideLoader;
-  // print('isShowLoader $isHideLoader');
   showDialog(
       barrierDismissible: false,
       context: context,
@@ -13,24 +10,20 @@ void showLoader(context) {
         return loadingWidget(context);
       });
 }
+
 Widget loadingWidget(context, {bool myDark = false}) =>
   Center(
     child: Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        color:
-        myDark ?
-          Colors.grey
-        : Colors.white,
-      ),
       height: 100,
       width: 100,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        color: myDark ? Colors.grey : Colors.white,
+      ),
       child: Center(
         child: CircularProgressIndicator(
           strokeWidth: 3,
-          color: myDark ?
-          Colors.white
-          : cRilPurple),
+          color: myDark ? Colors.white : cRilPurple),
       ),
     ),
   );
